@@ -67,7 +67,8 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 - Clone the repository 
 ### Frontend Setup
 1. Run `$ cd campusxchange-ui`
-2. Run `$ npm start` and access the application at `http://localhost:3000`
+2. Run `$ npm i`
+3. Run `$ npm start` and access the application at `http://localhost:3000`
 
 ### Backend Setup
 
