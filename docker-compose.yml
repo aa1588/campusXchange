@@ -1,0 +1,16 @@
+---
+version: '3.7'
+services:
+  postgres-db:
+    container_name: postgres-campusxchange
+    image: postgres
+    environment:
+      POSTGRES_DB: campusxchange
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgres-campusxchange:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: always
