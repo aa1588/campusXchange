@@ -47,7 +47,7 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 - Docker (for containerization)
 
 ## Testing
-- Junit, TestContainers, Mockito
+- Junit, TestContainers, Mockito, AssertJ
 
 
 ### Deployment
