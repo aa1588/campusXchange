@@ -80,7 +80,7 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 - Run `mvn spotless:apply` before every push for spotless code
 
 ## Contributing Frontend
-- Run `npx prettier --write .` before every push for Prettier Formatting
+- Run `npx run pc` before every commit for Pre-Commit Prettier Formatting
 
 ## License
 
