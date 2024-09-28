@@ -6,13 +6,12 @@ import com.unt.campusxchange.users.entity.ROLE;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.repo.UserRepository;
 import com.unt.campusxchange.users.security.JWTProvider;
+import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.security.SecureRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +43,4 @@ public class AuthService {
         user.setOtp(generateOTP());
         return userRepository.save(user).getId();
     }
-
 }

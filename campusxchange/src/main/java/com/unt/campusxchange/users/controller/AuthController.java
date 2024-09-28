@@ -16,14 +16,14 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping
-    public String test(){
+    public String test() {
         return "test";
     }
 
     @PostMapping("register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest){
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest registerRequest) {
         Integer i = authService.registerUser(registerRequest);
-        return new ResponseEntity<>(new RegisterResponse("user registered with ID-" + i.toString()), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                new RegisterResponse("user registered with ID-" + i.toString()), HttpStatus.CREATED);
     }
-
 }

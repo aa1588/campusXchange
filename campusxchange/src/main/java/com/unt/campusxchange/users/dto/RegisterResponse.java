@@ -1,4 +1,3 @@
 package com.unt.campusxchange.users.dto;
 
-public record RegisterResponse(String message) {
-}
+public record RegisterResponse(String message) {}
