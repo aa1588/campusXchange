@@ -1,11 +1,21 @@
 package com.unt.campusxchange.users.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@EntityListeners(AuditingEntityListener.class)  // Enable JPA auditing
 public class User {
 
     @Id
@@ -36,10 +46,12 @@ public class User {
     @Column(nullable = false)
     private String otp;
 
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT NULL")
+    //@LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
 }
