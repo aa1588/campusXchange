@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueEmail {
 
-    String message() default "Email is already in use";
+    String message() default "Email must be unique and must end with @my.unt.edu";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
