@@ -1,14 +1,22 @@
 package com.unt.campusxchange.users.service;
 
+import com.unt.campusxchange.users.dto.LoginRequest;
+import com.unt.campusxchange.users.dto.LoginResponse;
 import com.unt.campusxchange.users.dto.RegisterRequest;
 import com.unt.campusxchange.users.entity.AccountStatus;
 import com.unt.campusxchange.users.entity.ROLE;
 import com.unt.campusxchange.users.entity.User;
+import com.unt.campusxchange.users.exception.InvalidOTPException;
+import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import com.unt.campusxchange.users.security.JWTProvider;
 import java.security.SecureRandom;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,5 +50,32 @@ public class AuthService {
         user.setAccountStatus(AccountStatus.INACTIVE);
         user.setOtp(generateOTP());
         return userRepository.save(user).getId();
+    }
+
+    public String getOTP(Integer id){
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()) {
+            return user.get().getOtp();
+        }
+        throw new UserNotFoundException("User Not found with given id: " + id);
+    }
+
+    public boolean activateAccount(Integer id, String otp) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with given id: " + id));
+
+        if (!user.getOtp().equals(otp)) {
+            throw new InvalidOTPException("Provided OTP " + otp + " doesn't match our records");
+        }
+
+        user.setAccountStatus(AccountStatus.ACTIVE);
+        userRepository.save(user);
+        return true;
+    }
+
+    public LoginResponse login(LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+        String token = jwtProvider.createToken(authentication);
+        return new LoginResponse("SUCCESS", token);
     }
 }
