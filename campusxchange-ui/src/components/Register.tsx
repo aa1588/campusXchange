@@ -131,6 +131,7 @@ const Register = () => {
             initialValues={{ otp: "" }}
             validationSchema={otpSchema}
             onSubmit={handleOtpSubmission}
+            enableReinitialize
           >
             <Form>
               <div className="form-group">
