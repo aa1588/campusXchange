@@ -1,27 +1,15 @@
-import { Component } from "react";
-
+import React from "react";
 
 type Props = {};
 
-type State = {
-}
+const Home: React.FC<Props> = () => {
+  return (
+    <div className="container">
+      <header className="jumbotron">
+        <h1>CampusXchange</h1>
+      </header>
+    </div>
+  );
+};
 
-export default class Home extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      content: ""
-    };
-  }
-
-  render() {
-    return (
-      <div className="container">
-        <header className="jumbotron">
-          <h1>CampusXchange</h1>
-        </header>
-      </div>
-    );
-  }
-}
+export default Home;
