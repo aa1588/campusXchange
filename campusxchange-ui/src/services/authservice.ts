@@ -15,7 +15,9 @@ class AuthService {
     }
 
     verifyOtp(userid: string, otp: string){
-        return axios.get(API_URL + "account/activate/" + userid);
+        return axios.post(API_URL + "account/activate/" + userid, {
+            otp
+        });
     }
 }
 
