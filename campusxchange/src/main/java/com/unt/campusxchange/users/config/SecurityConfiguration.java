@@ -17,8 +17,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -28,8 +26,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.stream.Collectors;
 
 @EnableWebSecurity
 @Configuration
@@ -83,10 +79,10 @@ public class SecurityConfiguration {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-//    @Bean
-//    public GrantedAuthoritiesMapper authoritiesMapper() {
-//        return authorities -> authorities.stream()
-//                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
-//                .collect(Collectors.toList());
-//    }
+    //    @Bean
+    //    public GrantedAuthoritiesMapper authoritiesMapper() {
+    //        return authorities -> authorities.stream()
+    //                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+    //                .collect(Collectors.toList());
+    //    }
 }

@@ -11,13 +11,13 @@ public class RoleBasedSecurityTestController {
 
     @PreAuthorize("hasAuthority('SCOPE_[ROLE_USER]')")
     @GetMapping("/hello")
-    public String hello(){
+    public String hello() {
         return "hello";
     }
+
     @PreAuthorize("hasAuthority('SCOPE_[ROLE_USER]')")
     @GetMapping("/test")
-    public String test(){
+    public String test() {
         return "test";
     }
-
 }
