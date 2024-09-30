@@ -34,4 +34,40 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(problemDetail);
     }
+
+    @ExceptionHandler(InvalidOTPException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidOTPException(InvalidOTPException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Doesn't match Records");
+        problemDetail.setType(URI.create("https://example.com/problems/invalid-otp"));
+        problemDetail.setTitle("Invalid OTP");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleUserNotFoundException(UserNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "User not found");
+        problemDetail.setType(URI.create("https://example.com/problems/user-not-found"));
+        problemDetail.setTitle("User Not Found");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(InactiveAccountException.class)
+    public ResponseEntity<ProblemDetail> handleInactiveAccountException(InactiveAccountException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Inactive Account");
+        problemDetail.setType(URI.create("https://example.com/problems/inactive-account"));
+        problemDetail.setTitle("Inactive Account");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
 }
