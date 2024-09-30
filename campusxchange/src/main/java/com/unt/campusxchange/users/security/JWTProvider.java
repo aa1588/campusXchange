@@ -24,6 +24,7 @@ public class JWTProvider {
 
         // get role
         String role = principal.getAuthorities().toString();
+
         // get user id
         Optional<com.unt.campusxchange.users.entity.User> userOptional =
                 userRepository.findByEmail(principal.getUsername());
@@ -38,7 +39,7 @@ public class JWTProvider {
                 .expiresAt(now.plusSeconds(EXPIRATION_TIME_IN_SECONDS))
                 .subject(principal.getUsername())
                 .claim("userId", userID)
-                .claim("role", role)
+                .claim("scope", role)
                 .build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

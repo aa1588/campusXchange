@@ -24,8 +24,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest registerRequest) {
         Integer i = authService.registerUser(registerRequest);
-        return new ResponseEntity<>(
-                new RegisterResponse(i.toString()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new RegisterResponse(i.toString()), HttpStatus.CREATED);
     }
 
     @GetMapping("/otp/{id}")
