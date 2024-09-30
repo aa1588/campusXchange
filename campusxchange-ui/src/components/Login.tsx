@@ -9,7 +9,7 @@ type Props = {};
 
 type State = {
   redirect: string | null,
-  username: string,
+  email: string,
   password: string,
   loading: boolean,
   message: string
@@ -22,7 +22,7 @@ export default class Login extends Component<Props, State> {
 
     this.state = {
       redirect: null,
-      username: "",
+      email: "",
       password: "",
       loading: false,
       message: ""
@@ -31,13 +31,13 @@ export default class Login extends Component<Props, State> {
 
   validationSchema() {
     return Yup.object().shape({
-      username: Yup.string().required("This field is required!"),
+      email: Yup.string().required("This field is required!"),
       password: Yup.string().required("This field is required!"),
     });
   }
 
-  handleLogin(formValue: { username: string; password: string }) {
-    const { username, password } = formValue;
+  handleLogin(formValue: { email: string; password: string }) {
+    const { email, password } = formValue;
 
     this.setState({
       message: "",
@@ -45,7 +45,7 @@ export default class Login extends Component<Props, State> {
     });
 
 
-    // AuthService.login(username, password).then(
+    // AuthService.login(email, password).then(
     //   () => {
     //     this.setState({
     //       redirect: "/profile"
@@ -75,7 +75,7 @@ export default class Login extends Component<Props, State> {
     const { loading, message } = this.state;
 
     const initialValues = {
-      username: "",
+      email: "",
       password: "",
     };
 
@@ -95,10 +95,10 @@ export default class Login extends Component<Props, State> {
           >
             <Form>
               <div className="form-group">
-                <label htmlFor="username">Username</label>
-                <Field name="username" type="text" className="form-control" />
+                <label htmlFor="email">Email</label>
+                <Field name="email" type="text" className="form-control" />
                 <ErrorMessage
-                  name="username"
+                  name="email"
                   component="div"
                   className="alert alert-danger"
                 />

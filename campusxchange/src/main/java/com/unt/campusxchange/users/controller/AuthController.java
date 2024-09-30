@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     private final AuthService authService;
@@ -24,7 +25,7 @@ public class AuthController {
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest registerRequest) {
         Integer i = authService.registerUser(registerRequest);
         return new ResponseEntity<>(
-                new RegisterResponse("user registered with ID-" + i.toString()), HttpStatus.CREATED);
+                new RegisterResponse(i.toString()), HttpStatus.CREATED);
     }
 
     @GetMapping("/otp/{id}")
