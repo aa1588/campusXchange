@@ -1,7 +1,8 @@
 package com.unt.campusxchange.users.security;
 
-
 import com.unt.campusxchange.users.repo.UserRepository;
+import java.time.Instant;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -9,9 +10,6 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +22,13 @@ public class JWTProvider {
     public String createToken(Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
 
-        //get role
+        // get role
         String role = principal.getAuthorities().toString();
-        //get user id
-        Optional<com.unt.campusxchange.users.entity.User> userOptional = userRepository.findByEmail(principal.getUsername());
-        var userID = userOptional.map(com.unt.campusxchange.users.entity.User::getId).orElse(null);
+        // get user id
+        Optional<com.unt.campusxchange.users.entity.User> userOptional =
+                userRepository.findByEmail(principal.getUsername());
+        var userID =
+                userOptional.map(com.unt.campusxchange.users.entity.User::getId).orElse(null);
 
         var now = Instant.now();
         assert userID != null;

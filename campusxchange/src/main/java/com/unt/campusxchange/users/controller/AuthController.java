@@ -28,14 +28,15 @@ public class AuthController {
     }
 
     @GetMapping("/otp/{id}")
-    public ResponseEntity<OTPResponse> getOTP(@PathVariable Integer id){
-        //change this controller to support sending OTP in email later
+    public ResponseEntity<OTPResponse> getOTP(@PathVariable Integer id) {
+        // change this controller to support sending OTP in email later
         String otp = authService.getOTP(id);
         return new ResponseEntity<>(new OTPResponse(otp), HttpStatus.OK);
     }
 
     @PostMapping("/account/activate/{id}")
-    public ResponseEntity<ActivateAccountResponse> activateAccount(@PathVariable Integer id, @RequestBody ActivateAccountRequest activateAccountRequest){
+    public ResponseEntity<ActivateAccountResponse> activateAccount(
+            @PathVariable Integer id, @RequestBody ActivateAccountRequest activateAccountRequest) {
         if (authService.activateAccount(id, activateAccountRequest.otp())) {
             return ResponseEntity.ok(new ActivateAccountResponse("SUCCESS", "Account Activated."));
         } else {
@@ -45,9 +46,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest){
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         var loginResponse = authService.login(loginRequest);
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
-
 }

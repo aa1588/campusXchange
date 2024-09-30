@@ -1,4 +1,3 @@
 package com.unt.campusxchange.users.dto;
 
-public record OTPResponse(String otp) {
-}
+public record OTPResponse(String otp) {}

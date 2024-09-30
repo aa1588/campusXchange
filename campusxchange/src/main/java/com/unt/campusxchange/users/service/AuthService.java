@@ -6,13 +6,13 @@ import com.unt.campusxchange.users.dto.RegisterRequest;
 import com.unt.campusxchange.users.entity.AccountStatus;
 import com.unt.campusxchange.users.entity.ROLE;
 import com.unt.campusxchange.users.entity.User;
+import com.unt.campusxchange.users.exception.InactiveAccountException;
 import com.unt.campusxchange.users.exception.InvalidOTPException;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import com.unt.campusxchange.users.security.JWTProvider;
 import java.security.SecureRandom;
 import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,16 +52,17 @@ public class AuthService {
         return userRepository.save(user).getId();
     }
 
-    public String getOTP(Integer id){
+    public String getOTP(Integer id) {
         Optional<User> user = userRepository.findById(id);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             return user.get().getOtp();
         }
         throw new UserNotFoundException("User Not found with given id: " + id);
     }
 
     public boolean activateAccount(Integer id, String otp) {
-        User user = userRepository.findById(id)
+        User user = userRepository
+                .findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with given id: " + id));
 
         if (!user.getOtp().equals(otp)) {
@@ -74,8 +75,14 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
-        String token = jwtProvider.createToken(authentication);
-        return new LoginResponse("SUCCESS", token);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+        // check if the user account is active
+        Optional<User> user = userRepository.findByEmail(loginRequest.email());
+        if (user.isPresent() && user.get().getAccountStatus().equals(AccountStatus.ACTIVE)) {
+            String token = jwtProvider.createToken(authentication);
+            return new LoginResponse("SUCCESS", token);
+        }
+        throw new InactiveAccountException("Can't login because account is INACTIVE.");
     }
 }
