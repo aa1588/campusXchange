@@ -26,13 +26,6 @@ public class AuthController {
         return new ResponseEntity<>(new RegisterResponse(i.toString()), HttpStatus.CREATED);
     }
 
-    @GetMapping("/otp/{id}")
-    public ResponseEntity<OTPResponse> getOTP(@PathVariable Integer id) {
-        // change this controller to support sending OTP in email later
-        String otp = authService.getOTP(id);
-        return new ResponseEntity<>(new OTPResponse(otp), HttpStatus.OK);
-    }
-
     @PostMapping("/account/activate/{id}")
     public ResponseEntity<ActivateAccountResponse> activateAccount(
             @PathVariable Integer id, @RequestBody ActivateAccountRequest activateAccountRequest) {
