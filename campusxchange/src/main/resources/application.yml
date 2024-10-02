@@ -1,3 +1,7 @@
+# Application PORT
+server:
+  port: 8080
+  shutdown: graceful
 spring:
   application:
     name: campusxchange-api
@@ -7,7 +11,6 @@ spring:
     username: admin
     password: password
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,13 +18,23 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true  # Show SQL queries in the console
-# Application PORT
-server:
-  port: 8080
+  # Mail Properties
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: campusxchange24@gmail.com
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 #JWT Keys Configuration
 jwt:
   public-key: classpath:app.pub
   private-key: classpath:app.key
+#Spring Security Log Level Debug
 logging:
   level:
     org:

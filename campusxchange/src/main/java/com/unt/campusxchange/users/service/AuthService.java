@@ -1,5 +1,6 @@
 package com.unt.campusxchange.users.service;
 
+import com.unt.campusxchange.notification.EmailService;
 import com.unt.campusxchange.users.dto.LoginRequest;
 import com.unt.campusxchange.users.dto.LoginResponse;
 import com.unt.campusxchange.users.dto.RegisterRequest;
@@ -30,6 +31,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTProvider jwtProvider;
+    private final EmailService emailService;
 
     private static final SecureRandom random = new SecureRandom();
 
@@ -48,7 +50,9 @@ public class AuthService {
         user.setPhone(registerRequest.phone());
         user.setRole(ROLE.USER);
         user.setAccountStatus(AccountStatus.INACTIVE);
-        user.setOtp(generateOTP());
+        var otp = generateOTP();
+        user.setOtp(otp);
+        emailService.sendEmailWithOTP(registerRequest.email(), otp);
         return userRepository.save(user).getId();
     }
 
