@@ -24,6 +24,13 @@ class AuthService {
             otp,
         })
     }
+
+    login(email: string, password: string){
+        return axios.post(API_URL + 'login', {
+            email,
+            password
+        });
+    }
 }
 
 export default new AuthService()
