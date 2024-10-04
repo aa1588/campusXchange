@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import AuthService from '../services/authservice'
+import { redirect } from 'react-router-dom'
 
 const Register = () => {
+    const [redirect, setRedirect] = useState<string | null>(null)
     const [successful, setSuccessful] = useState(false)
+    const [register, setRegister] = useState(true);
     const [message, setMessage] = useState('')
     const [userid, setUserid] = useState('')
+    const [loading, setLoading] = useState<boolean>(false)
 
     const validationSchema = Yup.object().shape({
         firstname: Yup.string().required('This field is required!'),
@@ -43,13 +48,15 @@ const Register = () => {
         const { firstname, lastname, email, phone, password } = formValue
 
         setMessage('')
-        setSuccessful(false)
+        setLoading(true);
 
         AuthService.register(firstname, lastname, email, phone, password).then(
             (response) => {
                 setMessage('Please enter the OTP provided in your email.')
                 setUserid(response.data.message)
                 setSuccessful(true)
+                setLoading(false)
+                setRegister(false)
             },
             (error) => {
                 const resMessage =
@@ -61,21 +68,31 @@ const Register = () => {
 
                 setMessage(resMessage)
                 setSuccessful(false)
+                setSuccessful(false)
             }
         )
     }
 
     const handleOtpSubmission = (formValue: { otp: string }) => {
         const { otp } = formValue
+        setLoading(true);
 
         AuthService.verifyOtp(userid, otp).then(
             () => {
-                setMessage('User has been successfully registered.')
+                setMessage('User has been successfully registered. Please go to Login tab to Login.')
+                setSuccessful(true)
+                setLoading(false)
             },
             () => {
+                setSuccessful(false);
                 setMessage('OTP verification failed. Please try again.')
+                setLoading(false)
             }
         )
+    }
+
+    if (redirect) {
+        return <Navigate to={redirect} />
     }
 
     const initialValues = {
@@ -95,7 +112,7 @@ const Register = () => {
                     className="profile-img-card"
                 />
 
-                {!successful ? (
+                {register ? (
                     <Formik
                         initialValues={initialValues}
                         validationSchema={validationSchema}
@@ -176,7 +193,11 @@ const Register = () => {
                                 <button
                                     type="submit"
                                     className="btn btn-primary btn-block"
+                                    disabled={loading}
                                 >
+                                    {loading && (
+                                        <span className="spinner-border spinner-border-sm"></span>
+                                    )}
                                     Sign Up
                                 </button>
                             </div>
@@ -209,6 +230,9 @@ const Register = () => {
                                     type="submit"
                                     className="btn btn-primary btn-block"
                                 >
+                                    {loading && (
+                                        <span className="spinner-border spinner-border-sm"></span>
+                                    )}
                                     Submit OTP
                                 </button>
                             </div>
