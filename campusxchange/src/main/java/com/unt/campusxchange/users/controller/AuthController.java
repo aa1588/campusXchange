@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
-
+   private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
 
     @GetMapping
@@ -22,16 +22,21 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest registerRequest) {
-        Integer i = authService.registerUser(registerRequest);
-        return new ResponseEntity<>(new RegisterResponse(i.toString()), HttpStatus.CREATED);
+        logger.info("Registering user with email: {}", registerRequest.email());
+        Integer id = authService.registerUser(registerRequest);
+        logger.info("User registered successfully with id: {}", id);
+        return new ResponseEntity<>(new RegisterResponse(id.toString()), HttpStatus.CREATED);
     }
 
     @PostMapping("/account/activate/{id}")
     public ResponseEntity<ActivateAccountResponse> activateAccount(
             @PathVariable Integer id, @RequestBody ActivateAccountRequest activateAccountRequest) {
+        logger.info("Activating account for user id: {}", id);
         if (authService.activateAccount(id, activateAccountRequest.otp())) {
+            logger.info("Account activated successfully for user id: {}", id);
             return ResponseEntity.ok(new ActivateAccountResponse("SUCCESS", "Account Activated."));
         } else {
+            logger.warn("Account activation failed for user id: {}", id);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ActivateAccountResponse("FAILED", "Account Activation Failed."));
         }
@@ -39,7 +44,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+        logger.info("Login attempt for email: {}", loginRequest.email());
         var loginResponse = authService.login(loginRequest);
+        logger.info("User logged in successfully: {}", loginRequest.email());
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 }
+

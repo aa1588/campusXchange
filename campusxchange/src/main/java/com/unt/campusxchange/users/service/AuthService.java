@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class AuthService {
-
+  private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -38,6 +38,7 @@ public class AuthService {
     private static String generateOTP() {
         // Generate a random 4-digit number between 1000 and 9999
         int otp = random.nextInt(9000) + 1000;
+        logger.info("Generated OTP: {}", otp);
         return String.valueOf(otp);
     }
 
