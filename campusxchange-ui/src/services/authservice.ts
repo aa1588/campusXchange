@@ -40,7 +40,7 @@ class AuthService {
                 password: "password123",
                 phone: "4694691271"
             }
-            const user = localStorage.setItem("user", JSON.stringify(dummyUser));
+            localStorage.setItem("user", JSON.stringify(dummyUser));
             Cookies.set('authToken', token, { expires: 7});
         });
     }

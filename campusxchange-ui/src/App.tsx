@@ -26,6 +26,7 @@ const App: React.FC = () => {
     const handleLogout = () => {
         AuthService.logout();
         setRedirect("/login");
+        setCurrentUser(undefined);
     }
 
     if (redirect) {
