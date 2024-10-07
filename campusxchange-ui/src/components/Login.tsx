@@ -5,9 +5,11 @@ import * as Yup from 'yup'
 
 import AuthService from "../services/authservice";
 
-type Props = {}
+type Props = {
+    updateUser : () => void;
+}
 
-const Login: React.FC<Props> = () => {
+const Login: React.FC<Props> = ({updateUser}) => {
     const [redirect, setRedirect] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<string>('')
@@ -24,6 +26,7 @@ const Login: React.FC<Props> = () => {
 
         AuthService.login(email, password).then(() => {
             setRedirect("/home");
+            updateUser();
           },
           (error) => {
 
