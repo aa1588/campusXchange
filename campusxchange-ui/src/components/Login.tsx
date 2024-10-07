@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-import Cookies from 'js-cookie'
 
 import AuthService from "../services/authservice";
 
@@ -10,8 +9,6 @@ type Props = {}
 
 const Login: React.FC<Props> = () => {
     const [redirect, setRedirect] = useState<string | null>(null)
-    const [email, setEmail] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<string>('')
 
@@ -22,24 +19,13 @@ const Login: React.FC<Props> = () => {
 
     const handleLogin = (formValue: { email: string; password: string }) => {
         const { email, password } = formValue
-        
-
         setMessage('')
         setLoading(true)
 
-        AuthService.login(email, password).then(
-          (response) => {
-            const token = response.data.token;
-            Cookies.set('authToken', token, { expires: 7});
+        AuthService.login(email, password).then(() => {
             setRedirect("/home");
           },
           (error) => {
-            const resMessage =
-              (error.response &&
-                error.response.data &&
-                error.response.data.message) ||
-              error.message ||
-              error.toString();
 
             setLoading(false);
             setMessage('Login failed with provided email and password.');

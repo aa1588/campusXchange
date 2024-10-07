@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 const API_URL = 'http://localhost:8080/api/auth/'
 
@@ -29,7 +30,32 @@ class AuthService {
         return axios.post(API_URL + 'login', {
             email,
             password
+        }).then(response => {
+            const token = response.data.token;
+            const dummyUser = {
+                id: 1,
+                firstname: "Sudin",
+                lastname: "Joshi",
+                email: "sudinjoshi@my.unt.edu",
+                password: "password123",
+                phone: "4694691271"
+            }
+            const user = localStorage.setItem("user", JSON.stringify(dummyUser));
+            Cookies.set('authToken', token, { expires: 7});
         });
+    }
+
+    logout(){
+        localStorage.removeItem("user");
+        Cookies.remove('authToken');
+    }
+
+    getCurrentUser(){
+        const userStr = localStorage.getItem("user");
+        if(userStr){
+            return JSON.parse(userStr);
+        }
+        return null;
     }
 }
 
