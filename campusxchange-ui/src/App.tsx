@@ -14,14 +14,10 @@ import AuthService from "./services/authservice";
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
-    const [redirect, setRedirect] = useState<string | null>(null)
-    const [message, setMessage] = useState<string | null>(null);
+    const [redirect, setRedirect] = useState<string | null>(null);
 
     useEffect(() => {
-        const user = AuthService.getCurrentUser();
-        if(user){
-            setCurrentUser(user);
-        }
+        updateUser();
     }, []);
 
     const handleLogout = () => {
