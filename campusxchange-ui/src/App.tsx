@@ -14,22 +14,27 @@ import AuthService from "./services/authservice";
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
-    const [redirect, setRedirect] = useState<string | null>(null)
+    const [redirect, setRedirect] = useState<string | null>(null);
 
     useEffect(() => {
-        const user = AuthService.getCurrentUser();
-        if(user){
-            setCurrentUser(user);
-        }
+        updateUser();
     }, []);
 
     const handleLogout = () => {
         AuthService.logout();
         setRedirect("/login");
+        setCurrentUser(undefined);
     }
 
     if (redirect) {
         return <Navigate to={redirect} />
+    }
+
+    const updateUser = () => {
+        const user = AuthService.getCurrentUser();
+        if(user){
+            setCurrentUser(user);
+        }
     }
 
 
@@ -67,9 +72,9 @@ const App: React.FC = () => {
 
             <div className="container mt-3">
                 <Routes>
-                    <Route path="/" element={<Login />} />
+                    <Route path="/" element={<Login updateUser={updateUser} />} />
                     <Route path="/home" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/login" element={<Login updateUser={updateUser} />} />
                     <Route path="/register" element={<Register />} />
                 </Routes>
             </div>
