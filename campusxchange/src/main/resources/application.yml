@@ -23,7 +23,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: campusxchange24@gmail.com
-    password: lnsp qawp llmm jbzn
+    password:  ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
