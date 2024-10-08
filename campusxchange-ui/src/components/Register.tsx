@@ -8,7 +8,7 @@ import { redirect } from 'react-router-dom'
 const Register = () => {
     const [redirect, setRedirect] = useState<string | null>(null)
     const [successful, setSuccessful] = useState(false)
-    const [register, setRegister] = useState(true);
+    const [register, setRegister] = useState(true)
     const [message, setMessage] = useState('')
     const [userid, setUserid] = useState('')
     const [loading, setLoading] = useState<boolean>(false)
@@ -48,7 +48,7 @@ const Register = () => {
         const { firstname, lastname, email, phone, password } = formValue
 
         setMessage('')
-        setLoading(true);
+        setLoading(true)
 
         AuthService.register(firstname, lastname, email, phone, password).then(
             (response) => {
@@ -75,16 +75,18 @@ const Register = () => {
 
     const handleOtpSubmission = (formValue: { otp: string }) => {
         const { otp } = formValue
-        setLoading(true);
+        setLoading(true)
 
         AuthService.verifyOtp(userid, otp).then(
             () => {
-                setMessage('User has been successfully registered. Please go to Login tab to Login.')
+                setMessage(
+                    'User has been successfully registered. Please go to Login tab to Login.'
+                )
                 setSuccessful(true)
                 setLoading(false)
             },
             () => {
-                setSuccessful(false);
+                setSuccessful(false)
                 setMessage('OTP verification failed. Please try again.')
                 setLoading(false)
             }

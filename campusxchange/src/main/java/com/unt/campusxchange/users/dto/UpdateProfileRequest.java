@@ -1,7 +1,6 @@
 package com.unt.campusxchange.users.dto;
 
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 public record UpdateProfileRequest(
         String firstname,
