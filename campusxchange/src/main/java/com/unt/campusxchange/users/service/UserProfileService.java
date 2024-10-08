@@ -5,13 +5,11 @@ import com.unt.campusxchange.users.dto.UserProfileResponse;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +47,4 @@ public class UserProfileService {
         user.setUpdatedAt(LocalDateTime.now());
         return userRepository.save(user).getId();
     }
-
 }

@@ -4,9 +4,8 @@ import com.unt.campusxchange.users.dto.ResetPasswordRequest;
 import com.unt.campusxchange.users.dto.UpdateProfileRequest;
 import com.unt.campusxchange.users.dto.UserProfileResponse;
 import com.unt.campusxchange.users.service.UserProfileService;
-import java.security.Principal;
-
 import jakarta.validation.Valid;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +34,8 @@ public class UserProfileController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<Integer> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest, Principal principal){
+    public ResponseEntity<Integer> resetPassword(
+            @RequestBody @Valid ResetPasswordRequest resetPasswordRequest, Principal principal) {
         String currentUsername = principal.getName();
         Integer i = userProfileService.resetPassword(currentUsername, resetPasswordRequest.newPassword());
         return new ResponseEntity<>(i, HttpStatus.OK);

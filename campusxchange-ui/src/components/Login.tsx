@@ -3,13 +3,14 @@ import { Navigate } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 
-import AuthService from "../services/authservice";
+import AuthService from '../services/authservice'
+import { ToastUtil } from '../utils/ToastUtils'
 
 type Props = {
-    updateUser : () => void;
+    updateUser: () => void
 }
 
-const Login: React.FC<Props> = ({updateUser}) => {
+const Login: React.FC<Props> = ({ updateUser }) => {
     const [redirect, setRedirect] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<string>('')
@@ -24,16 +25,16 @@ const Login: React.FC<Props> = ({updateUser}) => {
         setMessage('')
         setLoading(true)
 
-        AuthService.login(email, password).then(() => {
-            setRedirect("/home");
-            updateUser();
-          },
-          (error) => {
-
-            setLoading(false);
-            setMessage('Login failed with provided email and password.');
-          }
-        );
+        AuthService.login(email, password).then(
+            () => {
+                setRedirect('/home')
+                updateUser()
+            },
+            (error) => {
+                setLoading(false)
+                setMessage('Login failed with provided email and password.')
+            }
+        )
     }
 
     if (redirect) {
