@@ -4,6 +4,7 @@ import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.repo.UserRepository;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,5 +32,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
     private Collection<? extends GrantedAuthority> getAuthorities(User user) {
         return Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_" + user.getRole().toString()));
+    }
+
+    // New method to get items for sale
+    public List<String> getItemsForSale() {
+        return List.of("Item 1", "Item 2", "Item 3"); // Sample items
     }
 }

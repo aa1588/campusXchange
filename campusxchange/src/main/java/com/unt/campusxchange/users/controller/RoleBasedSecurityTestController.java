@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/access")
 public class RoleBasedSecurityTestController {
@@ -19,5 +21,11 @@ public class RoleBasedSecurityTestController {
     @GetMapping("/test")
     public String test() {
         return "test";
+    }
+
+    @PreAuthorize("hasAuthority('SCOPE_[ROLE_USER]')")
+    @GetMapping("/items-for-sale")
+    public List<String> getItemsForSale() {
+        return List.of("Item 1", "Item 2", "Item 3"); // Sample items
     }
 }
