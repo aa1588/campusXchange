@@ -1,0 +1,100 @@
+[
+    { 
+      "ProductId": 1,
+      "ProductDetails": "Samsung Galaxy Watch 6 Bluetooth Smartwatch, 40mm, Graphite, featuring Fitness, Health, Sleep Tracking, and Wellness Monitoring",
+      "ProductPrice": 269.99,
+      "ProductQuantity": 1,
+      "ProductCondition": "New",
+      "ProductDescription": "The Samsung Galaxy Watch 6 is a 40mm Bluetooth smartwatch that offers comprehensive fitness, health, and sleep tracking features. It includes wellness monitoring, a heart rate monitor, and a sleep coach to help improve your overall health. With its sleek design and durable build, it supports your active lifestyle while keeping you connected to calls, notifications, and apps.",
+      "ProductName": "Samsung Galaxy Watch 6 Bluetooth Smartwatch",
+      "ProductImages": ["https://m.media-amazon.com/images/I/711f6KLsMaL._AC_SL1500_.jpg","https://m.media-amazon.com/images/I/61sRAxs4KzL._AC_SL1500_.jpg"]
+    },
+    {
+      "ProductId": 2,
+      "ProductDetails": "Samsung Galaxy Z Flip5 Cell Phone, Factory Unlocked Android Smartphone, 512GB, Flex Mode, Hands-Free Camera, Compact, Water Resistant, US Version, Graphite",
+      "ProductPrice": 999.99,
+      "ProductQuantity": 1,
+      "ProductCondition": "Refurbished",
+      "ProductDescription": "The Samsung Galaxy Z Flip5 is a compact and stylish smartphone featuring a 512GB storage, Flex Mode for hands-free camera shots, and water resistance. With its foldable design, it offers a unique user experience for multitasking and content creation.",
+      "ProductName": "Samsung Galaxy Z Flip5",
+      "ProductImages": ["https://m.media-amazon.com/images/I/71+01fcfumL._AC_SL1500_.jpg","https://m.media-amazon.com/images/I/61mSUSY4xWL._AC_SL1500_.jpg"]
+    },
+    {
+      "ProductId": 3,
+      "ProductDetails": "Apple Watch Series 9 [GPS 45mm] Smart Watch with Midnight Aluminum Case with Midnight Sport Band, Fitness Tracker, Blood Oxygen & ECG Apps, Always-On Retina Display, Water Resistant",
+      "ProductPrice": 429.00,
+      "ProductQuantity": 1,
+      "ProductCondition": "Refurbished",
+      "ProductDescription": "The Apple Watch Series 9 is a premium smartwatch designed for fitness tracking, blood oxygen monitoring, and ECG. It features a 45mm case, Always-On Retina display, water resistance, and comprehensive health apps to help monitor your wellbeing.",
+      "ProductName": "Apple Watch Series 9",
+      "ProductImages": ["https://m.media-amazon.com/images/I/616diPRG1AL._AC_SL1500_.jpg","https://m.media-amazon.com/images/I/61--lOqCS1L._AC_SL1500_.jpg"]
+    },
+    {
+      "ProductId": 4,
+      "ProductDetails": "Apple iPhone 15 Pro, 256GB, Black Titanium, Unlocked",
+      "ProductPrice": 1199.00,
+      "ProductQuantity": 1,
+      "ProductCondition": "Used",
+      "ProductDescription": "The Apple iPhone 15 Pro features a 256GB storage capacity, Black Titanium design, and powerful performance with A17 Bionic chip. It offers advanced camera technology, improved battery life, and seamless connectivity with iOS for a premium smartphone experience.",
+      "ProductName": "Apple iPhone 15 Pro",
+      "ProductImages": ["https://m.media-amazon.com/images/I/31+hYY59fPL._AC_.jpg","https://m.media-amazon.com/images/I/21vchVH+-0L._AC_.jpg"]
+    },
+    {
+      "ProductId": 5,
+      "ProductDetails": "Samsung Galaxy S23 Ultra Cell Phone, Factory Unlocked Android Smartphone, 512GB, 200MP Camera, Night Mode, US Version, Cream",
+      "ProductPrice": 1199.99,
+      "ProductQuantity": 1,
+      "ProductCondition": "Used",
+      "ProductDescription": "The Samsung Galaxy S23 Ultra is a high-end smartphone with a 200MP camera, night mode, and 512GB storage. Its powerful performance and premium design are tailored for those who demand superior photography and multitasking capabilities.",
+      "ProductName": "Samsung Galaxy S23 Ultra",
+      "ProductImages": ["https://m.media-amazon.com/images/I/41dn1+HH+wL._AC_SL1000_.jpg","https://m.media-amazon.com/images/I/51mXHdm9jHL._AC_SL1000_.jpg"]
+    },
+    {
+      "ProductId": 6,
+      "ProductDetails": "Dell Inspiron 16 2-in-1 Touchscreen Laptop, 11th Gen Intel Core i5-1155G7 Processor, 16GB DDR4 RAM, 512GB SSD, Windows 11 Home, Silver",
+      "ProductPrice": 849.99,
+      "ProductQuantity": 1,
+      "ProductCondition": "Used",
+      "ProductDescription": "The Dell Inspiron 16 2-in-1 Laptop features a 16-inch touchscreen, 11th Gen Intel Core i5 processor, 16GB RAM, and 512GB SSD. With its flexible 2-in-1 design, it’s perfect for both productivity and entertainment, running on Windows 11 Home.",
+      "ProductName": "Dell Inspiron 16 2-in-1 Laptop",
+      "ProductImages": ["https://m.media-amazon.com/images/I/61Wc1fDGJuL._AC_SL1200_.jpg","https://m.media-amazon.com/images/I/514x0Kw6C2L._AC_SL1280_.jpg"]
+    },
+    {
+      "ProductId": 7,
+      "ProductDetails": "Logitech G Pro X Superlight Wireless Gaming Mouse, Ultra-Lightweight, HERO 25K Sensor, 70 Hour Battery Life, PowerPlay Compatible, Black",
+      "ProductPrice": 149.99,
+      "ProductQuantity": 1,
+      "ProductCondition": "New",
+      "ProductDescription": "The Logitech G Pro X Superlight is an ultra-lightweight wireless gaming mouse with the HERO 25K sensor and a 70-hour battery life. It's PowerPlay compatible, making it an excellent choice for competitive gamers who value precision and speed.",
+      "ProductName": "Logitech G Pro X Superlight Gaming Mouse",
+      "ProductImages": ["https://m.media-amazon.com/images/I/51VRu0zm1IL._AC_SL1500_.jpg","https://m.media-amazon.com/images/I/71EIHM1saZL._AC_SL1500_.jpg"]
+    },
+    {
+      "ProductId": 8,
+      "ProductDetails": "Lenovo Legion Pro 7i Gen 8, Intel Core i9-13900HX, 32GB DDR5, 1TB SSD, NVIDIA GeForce RTX 4080, 16 inch QHD 240Hz, Black",
+      "ProductPrice": 2999.99,
+      "ProductQuantity": 1,
+      "ProductCondition": "Refurbished",
+      "ProductDescription": "The Lenovo Legion Pro 7i Gen 8 is a powerhouse gaming laptop with Intel Core i9-13900HX, 32GB DDR5 RAM, 1TB SSD, and NVIDIA RTX 4080 graphics. It offers a 16-inch QHD 240Hz display for ultra-smooth gaming experiences and top-tier performance.",
+      "ProductName": "Lenovo Legion Pro 7i Gen 8 Gaming Laptop",
+      "ProductImages": ["https://m.media-amazon.com/images/I/51idAKh1B8L._AC_.jpg","https://m.media-amazon.com/images/I/61QIuCnOWeL._AC_.jpg"]
+    },
+    {
+      "ProductId": 9,
+      "ProductDetails": "PayLessHere 32-inch Computer Desk, Modern Simple Style with Metal Frame, Home Office Writing Desk for Small Spaces, Black",
+      "ProductPrice": 49.99,
+      "ProductQuantity": 1,
+      "ProductCondition": "Used",
+      "ProductDescription": "The PayLessHere 32-inch Computer Desk is a modern, simple style desk designed for small spaces. With a sturdy metal frame, it's perfect for home offices or study spaces, offering a functional surface for writing or working on a computer.",
+      "ProductName": "PayLessHere 32-inch Computer Desk",
+      "ProductImages": ["https://m.media-amazon.com/images/I/71P8Fte-LtL._AC_SL1500_.jpg","https://m.media-amazon.com/images/I/61+H4EM2BwL._AC_SL1500_.jpg"]
+    },
+    {
+      "ProductId": 10,
+      "ProductDetails": "BOHON Desk Lamp with Wireless Charging, USB Charging Port, Intelligent Induction, Adjustable Gooseneck LED Lamp for Home Office, White",
+      "ProductPrice": 29.99,
+      "ProductQuantity": 1,
+      "ProductCondition": "Used",
+      "ProductDescription": "The BOHON Desk Lamp offers a wireless charging pad and USB port for charging devices. Its adjustable gooseneck design makes it ideal for home offices, while the intelligent induction feature"
+    }
+]
