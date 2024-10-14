@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,6 +65,18 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Inactive Account");
         problemDetail.setType(URI.create("https://example.com/problems/inactive-account"));
         problemDetail.setTitle("Inactive Account");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ProblemDetail> handleAccessDeniedException(AccessDeniedException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Access Denied");
+        problemDetail.setType(URI.create("https://example.com/problems/access-denied"));
+        problemDetail.setTitle("Access Denied");
         problemDetail.setDetail(ex.getMessage());
         problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
         Map<String, String> fieldErrors = new HashMap<>();
