@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, Form, Spinner, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, Spinner, Alert, Carousel } from "react-bootstrap";
+import axios from "axios";
+
+
+import ItemService from "../services/itemservice";
+import Cookies from "js-cookie";
 
 // Define the type for each item
 interface Item {
-  id: number;
-  name: string;
-  price: string;
-  image: string;
-}
+    id: number;
+    title: string;
+    price: string;
+    imageUrls: string[];
+  }
+  
 
 // Define the type for the props in ItemCard
 interface ItemCardProps {
@@ -17,19 +23,30 @@ interface ItemCardProps {
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, onLike, liked }) => {
-  return (
-    <Card style={{ width: '18rem', height: '30rem' }}>
-      <Card.Img variant="top" src={item.image} alt={item.name} />
-      <Card.Body>
-        <Card.Title>{item.name}</Card.Title>
-        <Card.Text>{item.price}</Card.Text>
-        <Button onClick={() => onLike(item.id)} variant={liked ? "success" : "dark"}>
-          {liked ? "💚" : "🖤"}
-        </Button>
-      </Card.Body>
-    </Card>
-  );
-};
+    return (
+      <Card style={{ width: '18rem', height: '30rem' }}>
+        <Carousel>
+          {item.imageUrls.map((image, index) => (
+            <Carousel.Item key={index}>
+              <img
+                className="d-block w-100"
+                src={image}
+                alt={`${item.title} image ${index + 1}`}
+                style={{ height: '200px', objectFit: 'cover' }} // Adjust the height as needed
+              />
+            </Carousel.Item>
+          ))}
+        </Carousel>
+        <Card.Body>
+          <Card.Title>{item.title}</Card.Title>
+          <Card.Text>{item.price}</Card.Text>
+          <Button onClick={() => onLike(item.id)} variant={liked ? "success" : "dark"}>
+            {liked ? "💚" : "🖤"}
+          </Button>
+        </Card.Body>
+      </Card>
+    );
+  };
 
 const CategoryFilter: React.FC = () => {
     return (
@@ -67,26 +84,27 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchItems = async () => {
-      try {
-        const response = await fetch("https://mp9efe0341464588de1e.free.beeceptor.com/data");
-        if (!response.ok) {
-          throw new Error("Failed to fetch items");
+        setLoading(true); // Set loading to true at the start
+        try {
+            const token = Cookies.get('authToken');
+            const response = await ItemService.getAllItems(0, null, token);
+            setItems(response.data.data); // Access data directly from the response
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                // Handle Axios-specific errors
+                setError(err.response?.data?.message || "Failed to fetch items");
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("An unknown error occurred");
+            }
+        } finally {
+            setLoading(false);
         }
-        const data: Item[] = await response.json();
-        setItems(data);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      } finally {
-        setLoading(false);
-      }
     };
-  
+
     fetchItems();
-  }, []);
+}, []);
 
   const handleLike = (id: number) => {
     setLikedItems((prevLiked) =>
@@ -95,7 +113,7 @@ const Home: React.FC = () => {
   };
 
   const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
