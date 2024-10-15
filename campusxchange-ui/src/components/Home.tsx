@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Form, Spinner, Alert, Carousel } from "react-bootstrap";
+import { FaBook, FaChair, FaTv, FaCar, FaDumbbell } from "react-icons/fa";
+
+import './Home.css';
+
 import axios from "axios";
 import ItemService from "../services/itemservice";
 import Cookies from "js-cookie";
@@ -46,26 +50,41 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onLike, liked }) => {
 };
 
 const CategoryFilter: React.FC<{ selectedCategories: string[]; onCategoryChange: (category: string) => void }> = ({ selectedCategories, onCategoryChange }) => {
-  const categories = ["TEXTBOOKS", "FURNITURE", "ELECTRONICS", "CARS", "FITNESS"]; // Categories in uppercase
-
-  return (
-    <Card style={{ backgroundColor: '#F6F0F0', padding: '20px' }}>
-      <Card.Body>
-        <h3>Category</h3>
-        {categories.map((category) => (
-          <Form.Check
-            key={category}
-            type="checkbox"
-            id={category.toLowerCase()}
-            label={category}
-            checked={selectedCategories.includes(category)}
-            onChange={() => onCategoryChange(category)}
-          />
-        ))}
-      </Card.Body>
-    </Card>
-  );
-};
+    const categories = [
+      { name: "TEXTBOOKS", icon: <FaBook /> },
+      { name: "FURNITURE", icon: <FaChair /> },
+      { name: "ELECTRONICS", icon: <FaTv /> },
+      { name: "CARS", icon: <FaCar /> },
+      { name: "FITNESS", icon: <FaDumbbell /> },
+    ];
+  
+    return (
+      <Card style={{ backgroundColor: '#F6F0F0', padding: '20px', borderRadius: '10px' }}>
+        <Card.Body>
+          <h3 className="text-center">Category</h3>
+          <Row>
+            {categories.map((category) => (
+              <Col xs={12} key={category.name} className="mb-3"> {/* Each category takes the full row */}
+                <Form.Check
+                  type="checkbox"
+                  id={category.name.toLowerCase()}
+                  label={
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                      {category.icon}
+                      <span style={{ marginLeft: '8px' }}>{category.name}</span>
+                    </span>
+                  }
+                  checked={selectedCategories.includes(category.name)}
+                  onChange={() => onCategoryChange(category.name)}
+                  style={{ cursor: 'pointer' }} // Change cursor to pointer for better UX
+                />
+              </Col>
+            ))}
+          </Row>
+        </Card.Body>
+      </Card>
+    );
+  };
 
 const Pagination: React.FC<{ currentPage: number; onPageChange: (newPage: number) => void }> = ({ currentPage, onPageChange }) => {
   return (
