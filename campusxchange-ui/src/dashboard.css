@@ -1,0 +1,225 @@
+/* General Styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.dashboard-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #e5e5e5;
+}
+
+/* Header section */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2b7a2b;
+    padding: 10px;
+    color: white;
+}
+
+.logo h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+}
+
+.nav-links .active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.header-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.settings-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.reset-password-btn,
+.logout-btn {
+    background-color: white;
+    color: #2b7a2b;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.reset-password-btn:hover,
+.logout-btn:hover {
+    background-color: #ddd;
+}
+
+.content h2 {
+    margin-top: 20px;
+    color: #2b7a2b;
+}
+
+.add-item-btn {
+    background-color: #2b7a2b;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* Item listing */
+.item-listing {
+    display: flex;
+    gap: 20px;
+    border: 1px solid #e5e5e5;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+.item-details {
+    display: flex;
+    gap: 20px;
+}
+
+.item-image {
+    width: 100px;
+    height: auto;
+}
+
+.item-info h4 {
+    margin: 0;
+    font-weight: normal;
+}
+
+.mark-sold-btn {
+    margin-top: 10px;
+    background-color: white;
+    color: #2b7a2b;
+    border: 1px solid #2b7a2b;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.mark-sold-btn:hover {
+    background-color: #2b7a2b;
+    color: white;
+}
+
+/* Offer table */
+.offer-details {
+    flex-grow: 1;
+}
+
+.offer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.offer-table th,
+.offer-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.offer-table th {
+    background-color: #2b7a2b;
+    color: white;
+}
+
+.accept-btn,
+.decline-btn {
+    padding: 5px 15px;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.accept-btn {
+    background-color: #2b7a2b;
+    color: white;
+}
+
+.decline-btn {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Form Modal */
+.form-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container {
+    background-color: white;
+    padding: 20px;
+    width: 400px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.form-container h3 {
+    margin-top: 0;
+    color: #2b7a2b;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input[type='text'],
+input[type='file'] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel-btn {
+    background-color: #000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.submit-btn {
+    background-color: #2b7a2b;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
