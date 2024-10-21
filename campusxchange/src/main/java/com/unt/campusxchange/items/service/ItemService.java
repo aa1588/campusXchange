@@ -12,6 +12,7 @@ import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -84,7 +85,7 @@ public class ItemService {
                         item.getUpdatedAt()))
                 .toList();
 
-        return new PaginationResponse<CreateItemResponse>(
+        return new PaginationResponse<>(
                 itemResponses,
                 itemPage.getTotalElements(),
                 itemPage.getTotalPages(),
@@ -125,5 +126,45 @@ public class ItemService {
                 updatedItem.getImageUrls(),
                 updatedItem.getCreatedAt(),
                 updatedItem.getUpdatedAt());
+    }
+
+    public List<CreateItemResponse> getItemsByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+        List<Item> items = itemRepository.findByUser(user);
+
+        return items.stream()
+                .map(item -> new CreateItemResponse(
+                        item.getId(),
+                        item.getTitle(),
+                        item.getQuantity(),
+                        item.getDescription(),
+                        item.getPrice(),
+                        item.getCategory().toString(),
+                        item.getUser().getId(),
+                        item.getImageUrls(),
+                        item.getCreatedAt(),
+                        item.getUpdatedAt()))
+                .collect(Collectors.toList());
+    }
+
+    public CreateItemResponse getItemById(Integer id) {
+        Item item = itemRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found"));
+        return new CreateItemResponse(
+                item.getId(),
+                item.getTitle(),
+                item.getQuantity(),
+                item.getDescription(),
+                item.getPrice(),
+                item.getCategory().toString(),
+                item.getUser().getId(),
+                item.getImageUrls(),
+                item.getCreatedAt(),
+                item.getUpdatedAt());
+    }
+
+    public void deleteItem(String email, Integer itemId) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found"));
+        itemRepository.delete(item);
     }
 }

@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import ToastConfiguration from './config/ToastConfiguration'
-import Test from './components/Test'
-import IUser from './type/user'
+
+import IUser from './modules/auth/model/user'
 
 import { Navigate } from 'react-router-dom'
-import Login from './components/Login'
-import Register from './components/Register'
+import Login from './modules/auth/components/Login'
+import Register from './modules/auth/components/Register'
 import Home from './components/Home'
-
-import AuthService from './services/authservice'
+import CustomNavBar from './layout/CustomNavBar'
+import AuthService from './modules/auth/service/authservice'
+import Dashboard from './modules/dashboard/components/Dashboard'
+import ItemDetail from './modules/items/components/ItemDetail'
+import AddItemForm from './modules/items/components/AddItemForm'
+import EditItem from './modules/items/components/EditItem'
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
@@ -43,39 +47,8 @@ const App: React.FC = () => {
             <ToastConfiguration />
 
             <div>
-                <nav className="navbar navbar-expand navbar-dark bg-dark">
-                    <Link to={'/'} className="navbar-brand">
-                        CampusXchange
-                    </Link>
-
-                    {currentUser ? (
-                        <div className="navbar-nav ms-auto">
-                            <li className="nav-item">
-                                <a
-                                    href="/login"
-                                    className="nav-link"
-                                    onClick={handleLogout}
-                                >
-                                    LogOut
-                                </a>
-                            </li>
-                        </div>
-                    ) : (
-                        <div className="navbar-nav ms-auto">
-                            <li className="nav-item">
-                                <Link to={'/login'} className="nav-link">
-                                    Login
-                                </Link>
-                            </li>
-
-                            <li className="nav-item">
-                                <Link to={'/register'} className="nav-link">
-                                    Sign Up
-                                </Link>
-                            </li>
-                        </div>
-                    )}
-                </nav>
+                {/*<MainNavBar currentUser={currentUser} handleLogout={handleLogout} />*/}
+                <CustomNavBar />
 
                 <div className="container mt-3">
                     <Routes>
@@ -89,6 +62,13 @@ const App: React.FC = () => {
                             element={<Login updateUser={updateUser} />}
                         />
                         <Route path="/register" element={<Register />} />
+                        <Route path={'/dashboard'} element={<Dashboard />} />
+                        <Route path="/items/:id" element={<ItemDetail />} />
+                        <Route
+                            path="/add-item-for-sale"
+                            element={<AddItemForm />}
+                        />
+                        <Route path="/edit-item/:id" element={<EditItem />} />
                     </Routes>
                 </div>
             </div>

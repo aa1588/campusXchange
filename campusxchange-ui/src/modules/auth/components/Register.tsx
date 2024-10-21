@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-import AuthService from '../services/authservice'
-import { redirect } from 'react-router-dom'
-
+import AuthService from '../service/authservice'
+import { ToastUtil } from '../../../utils/ToastUtils'
+import { Link } from 'react-router-dom'
 const Register = () => {
     const [redirect, setRedirect] = useState<string | null>(null)
     const [successful, setSuccessful] = useState(false)
@@ -82,6 +82,9 @@ const Register = () => {
                 setMessage(
                     'User has been successfully registered. Please go to Login tab to Login.'
                 )
+                ToastUtil.displaySuccessToast(
+                    'Registration Successful! You can now log in.'
+                )
                 setSuccessful(true)
                 setLoading(false)
             },
@@ -115,96 +118,110 @@ const Register = () => {
                 />
 
                 {register ? (
-                    <Formik
-                        initialValues={initialValues}
-                        validationSchema={validationSchema}
-                        onSubmit={handleRegister}
-                    >
-                        <Form>
-                            <div className="form-group">
-                                <label htmlFor="firstname">First Name</label>
-                                <Field
-                                    name="firstname"
-                                    type="text"
-                                    className="form-control"
-                                />
-                                <ErrorMessage
-                                    name="firstname"
-                                    component="div"
-                                    className="alert alert-danger"
-                                />
-                            </div>
+                    <>
+                        <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={handleRegister}
+                        >
+                            <Form>
+                                <div className="form-group">
+                                    <label htmlFor="firstname">
+                                        First Name
+                                    </label>
+                                    <Field
+                                        name="firstname"
+                                        type="text"
+                                        className="form-control"
+                                    />
+                                    <ErrorMessage
+                                        name="firstname"
+                                        component="div"
+                                        className="alert alert-danger"
+                                    />
+                                </div>
 
-                            <div className="form-group">
-                                <label htmlFor="lastname">Last Name</label>
-                                <Field
-                                    name="lastname"
-                                    type="text"
-                                    className="form-control"
-                                />
-                                <ErrorMessage
-                                    name="lastname"
-                                    component="div"
-                                    className="alert alert-danger"
-                                />
-                            </div>
+                                <div className="form-group">
+                                    <label htmlFor="lastname">Last Name</label>
+                                    <Field
+                                        name="lastname"
+                                        type="text"
+                                        className="form-control"
+                                    />
+                                    <ErrorMessage
+                                        name="lastname"
+                                        component="div"
+                                        className="alert alert-danger"
+                                    />
+                                </div>
 
-                            <div className="form-group">
-                                <label htmlFor="email">Email</label>
-                                <Field
-                                    name="email"
-                                    type="email"
-                                    className="form-control"
-                                />
-                                <ErrorMessage
-                                    name="email"
-                                    component="div"
-                                    className="alert alert-danger"
-                                />
-                            </div>
+                                <div className="form-group">
+                                    <label htmlFor="email">Email</label>
+                                    <Field
+                                        name="email"
+                                        type="email"
+                                        className="form-control"
+                                    />
+                                    <ErrorMessage
+                                        name="email"
+                                        component="div"
+                                        className="alert alert-danger"
+                                    />
+                                </div>
 
-                            <div className="form-group">
-                                <label htmlFor="phone">Phone number</label>
-                                <Field
-                                    name="phone"
-                                    type="text"
-                                    className="form-control"
-                                />
-                                <ErrorMessage
-                                    name="phone"
-                                    component="div"
-                                    className="alert alert-danger"
-                                />
-                            </div>
+                                <div className="form-group">
+                                    <label htmlFor="phone">Phone number</label>
+                                    <Field
+                                        name="phone"
+                                        type="text"
+                                        className="form-control"
+                                    />
+                                    <ErrorMessage
+                                        name="phone"
+                                        component="div"
+                                        className="alert alert-danger"
+                                    />
+                                </div>
 
-                            <div className="form-group">
-                                <label htmlFor="password">Password</label>
-                                <Field
-                                    name="password"
-                                    type="password"
-                                    className="form-control"
-                                />
-                                <ErrorMessage
-                                    name="password"
-                                    component="div"
-                                    className="alert alert-danger"
-                                />
-                            </div>
+                                <div className="form-group">
+                                    <label htmlFor="password">Password</label>
+                                    <Field
+                                        name="password"
+                                        type="password"
+                                        className="form-control"
+                                    />
+                                    <ErrorMessage
+                                        name="password"
+                                        component="div"
+                                        className="alert alert-danger"
+                                    />
+                                </div>
 
-                            <div className="form-group">
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary btn-block"
-                                    disabled={loading}
-                                >
-                                    {loading && (
-                                        <span className="spinner-border spinner-border-sm"></span>
-                                    )}
-                                    Sign Up
-                                </button>
-                            </div>
-                        </Form>
-                    </Formik>
+                                <div className="form-group mt-2">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-success btn-block"
+                                        disabled={loading}
+                                    >
+                                        {loading && (
+                                            <span className="spinner-border spinner-border-sm"></span>
+                                        )}
+                                        Sign Up
+                                    </button>
+                                </div>
+                            </Form>
+                        </Formik>
+                        <small>
+                            Already have an account?
+                            <Link
+                                to={'/login'}
+                                className="text-decoration-none fw-bold  text-success"
+                            >
+                                {' '}
+                                Login
+                            </Link>
+                        </small>
+                    </>
                 ) : (
                     <Formik
                         initialValues={{ otp: '' }}
