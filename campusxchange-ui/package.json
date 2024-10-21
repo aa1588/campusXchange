@@ -16,8 +16,10 @@
         "axios": "^1.7.7",
         "bootstrap": "^5.3.3",
         "bootstrap-icons": "^1.11.3",
+        "cloudinary-react": "^1.8.1",
         "formik": "^2.4.6",
         "js-cookie": "^3.0.5",
+        "jwt-decode": "^4.0.0",
         "react": "^18.3.1",
         "react-bootstrap": "^2.10.5",
         "react-dom": "^18.3.1",
@@ -29,7 +31,7 @@
         "yup": "^1.4.0"
     },
     "scripts": {
-        "start": "react-scripts start",
+        "start": "GENERATE_SOURCEMAP=false react-scripts start",
         "pc": "npx prettier --write .",
         "build": "react-scripts build",
         "test": "react-scripts test",
@@ -48,6 +50,7 @@
         ]
     },
     "devDependencies": {
+        "@types/jwt-decode": "^3.1.0",
         "prettier": "3.3.3"
     }
 }

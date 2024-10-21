@@ -12,14 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/items")
@@ -66,6 +59,38 @@ public class ItemController {
         } catch (Exception e) {
             logger.error(
                     "Error updating item with id: {} for user: {}, error: {}", id, principal.getName(), e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<CreateItemResponse>> getItemsByUser(Principal principal) {
+        try {
+            String currentUsername = principal.getName(); // username == email
+            List<CreateItemResponse> items = itemService.getItemsByEmail(currentUsername);
+            return new ResponseEntity<>(items, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CreateItemResponse> getItemById(@PathVariable Integer id) {
+        try {
+            CreateItemResponse itemById = itemService.getItemById(id);
+            return new ResponseEntity<>(itemById, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteItem(@PathVariable Integer id, Principal principal) {
+        try {
+            String currentUsername = principal.getName();
+            itemService.deleteItem(currentUsername, id);
+            return new ResponseEntity<>("Item deleted for id-" + id, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

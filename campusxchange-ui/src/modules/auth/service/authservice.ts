@@ -1,5 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { jwtDecode } from 'jwt-decode'
+import { DecodedToken } from '../model/DecodedToken'
 
 const API_URL = 'http://localhost:8080/api/auth/'
 
@@ -34,15 +36,27 @@ class AuthService {
             })
             .then((response) => {
                 const token = response.data.token
-                const dummyUser = {
-                    id: 1,
-                    firstname: 'Sudin',
-                    lastname: 'Joshi',
-                    email: 'sudinjoshi@my.unt.edu',
-                    password: 'password123',
-                    phone: '4694691271',
+                console.log('Token:' + token)
+
+                let decodedToken: DecodedToken | null = null
+                try {
+                    decodedToken = jwtDecode<DecodedToken>(token)
+                } catch (error) {
+                    console.error('Invalid token', error)
                 }
-                localStorage.setItem('user', JSON.stringify(dummyUser))
+
+                const currentLoggedInUser = {
+                    issuer: decodedToken?.iss,
+                    subject: decodedToken?.sub,
+                    expiration: decodedToken?.exp,
+                    issuedAt: decodedToken?.iat,
+                    userId: decodedToken?.userId,
+                    roles: decodedToken?.scope,
+                }
+                localStorage.setItem(
+                    'user',
+                    JSON.stringify(currentLoggedInUser)
+                )
                 Cookies.set('authToken', token, { expires: 7 })
             })
     }
