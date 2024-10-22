@@ -4,53 +4,61 @@ import com.unt.campusxchange.users.entity.User;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "items")
+@Table(name = "offers")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class Item {
+public class offer {
+
+    private static final Logger logger = LoggerFactory.getLogger(Offer.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
-    private String title;
+    @ManyToOne
+    @JoinColumn(name = "item_id", nullable = false)
+    private Item item;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // Buyer
 
     @Column(nullable = false)
-    private Integer quantity;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    private BigDecimal offeredPrice;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private LocalDateTime offerTime = LocalDateTime.now();
 
+    // Optional status of the offer (pending, accepted, rejected)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private OfferStatus status = OfferStatus.PENDING;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "listed_by")
-    private User user;
+    public void makeOffer(Item item, User user, BigDecimal offeredPrice) {
+        this.item = item;
+        this.user = user;
+        this.offeredPrice = offeredPrice;
+        this.offerTime = LocalDateTime.now();
+        logger.info(
+                "New offer made by user: {} for item: {}, offered price: {}",
+                user.getEmail(),
+                item.getTitle(),
+                offeredPrice);
+    }
+}
 
-    @ElementCollection
-    @CollectionTable(name = "item_images", joinColumns = @JoinColumn(name = "item_id"))
-    @Column(name = "image_url")
-    private List<String> imageUrls;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+enum OfferStatus {
+    PENDING,
+    ACCEPTED,
+    REJECTED
 }

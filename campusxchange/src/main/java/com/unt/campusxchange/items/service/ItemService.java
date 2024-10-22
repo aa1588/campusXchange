@@ -2,17 +2,23 @@ package com.unt.campusxchange.items.service;
 
 import com.unt.campusxchange.items.dto.CreateItemRequest;
 import com.unt.campusxchange.items.dto.CreateItemResponse;
+import com.unt.campusxchange.items.dto.OfferRequest;
+import com.unt.campusxchange.items.dto.OfferResponse;
 import com.unt.campusxchange.items.dto.PaginationResponse;
 import com.unt.campusxchange.items.dto.UpdateItemRequest;
 import com.unt.campusxchange.items.entity.Category;
-import com.unt.campusxchange.items.entity.Item;
+import com.unt.campusxchange.items.entity.Offer;
+import com.unt.campusxchange.items.entity.item;
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
 import com.unt.campusxchange.items.repo.ItemRepository;
+import com.unt.campusxchange.items.repo.OfferRepository;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +33,9 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final OfferRepository offerRepository; // New repository for offers
+
+    private static final Logger logger = LoggerFactory.getLogger(ItemService.class); // Logger instance
 
     public CreateItemResponse createItem(CreateItemRequest request, String email) {
 
@@ -125,5 +134,24 @@ public class ItemService {
                 updatedItem.getImageUrls(),
                 updatedItem.getCreatedAt(),
                 updatedItem.getUpdatedAt());
+    }
+
+    public OfferResponse makeOffer(OfferRequest offerRequest, String email) {
+        logger.info("Received offer from user: {} for item ID: {}", email, offerRequest.getItemId());
+
+        Item item = itemRepository.findById(offerRequest.getItemId()).orElseThrow(() -> {
+            logger.error("Item not found with ID: {}", offerRequest.getItemId());
+            return new ItemNotFoundException("Item not found with ID: " + offerRequest.getItemId());
+        });
+
+        Offer offer = new Offer(); // Assuming you have an Offer entity
+        offer.setItem(item);
+        offer.setMadeBy(email);
+        offer.setOfferPrice(offerRequest.getOfferPrice()); // Assuming you have a method to get offer price
+
+        Offer savedOffer = offerRepository.save(offer); // Save the offer
+        logger.info("Offer made successfully for item ID: {} by user: {}", offerRequest.getItemId(), email);
+
+        return new OfferResponse(savedOffer.getId(), "Offer made successfully");
     }
 }

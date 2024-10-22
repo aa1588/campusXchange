@@ -2,6 +2,8 @@ package com.unt.campusxchange.items.controller;
 
 import com.unt.campusxchange.items.dto.CreateItemRequest;
 import com.unt.campusxchange.items.dto.CreateItemResponse;
+import com.unt.campusxchange.items.dto.MakeOfferRequest;
+import com.unt.campusxchange.items.dto.MakeOfferResponse;
 import com.unt.campusxchange.items.dto.PaginationResponse;
 import com.unt.campusxchange.items.dto.UpdateItemRequest;
 import com.unt.campusxchange.items.service.ItemService;
@@ -38,6 +40,25 @@ public class ItemController {
             return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
         } catch (Exception e) {
             logger.error("Error creating item for user: {}, error: {}", principal.getName(), e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/{id}/make-offer") // New endpoint for making an offer
+    public ResponseEntity<MakeOfferResponse> makeOffer(
+            @PathVariable Integer id, @RequestBody MakeOfferRequest request, Principal principal) {
+        try {
+            String currentUsername = principal.getName(); // username == email
+            logger.info("User: {} is making an offer on item with id: {}", currentUsername, id);
+            MakeOfferResponse offerResponse = itemService.makeOffer(id, request, currentUsername);
+            logger.info("Offer made successfully by user: {} for item id: {}", currentUsername, id);
+            return new ResponseEntity<>(offerResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(
+                    "Error making offer on item id: {} for user: {}, error: {}",
+                    id,
+                    principal.getName(),
+                    e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
