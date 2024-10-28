@@ -11,11 +11,14 @@ import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
     @Mock
@@ -28,7 +31,6 @@ class AuthServiceTest {
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
         user = new User();
         user.setId(1);
         user.setOtp("123456");
@@ -36,6 +38,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Activate account with valid OTP")
     public void shouldActivateAccountWithValidOTP() {
 
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
@@ -48,6 +51,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Throw exception for invalid OTP during account activation")
     public void shouldThrowExceptionForInvalidOTP() {
 
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
@@ -60,6 +64,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Generate 4-digit OTP")
     void testGenerateOTP() {
 
         String otp = AuthService.generateOTP();
@@ -72,6 +77,7 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Throw exception when user is not found during account activation")
     public void shouldThrowExceptionWhenUserNotFound() {
 
         when(userRepository.findById(2)).thenReturn(Optional.empty());
@@ -84,8 +90,10 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Test account activation")
     void activateAccount() {}
 
     @Test
+    @DisplayName("Test login functionality")
     void login() {}
 }
