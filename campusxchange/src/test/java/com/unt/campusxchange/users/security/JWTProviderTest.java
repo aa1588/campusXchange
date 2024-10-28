@@ -1,7 +1,14 @@
 package com.unt.campusxchange.users.security;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
+
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.repo.UserRepository;
+import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,14 +20,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-
-import java.util.Optional;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.openMocks;
 
 public class JWTProviderTest {
 
@@ -38,7 +37,7 @@ public class JWTProviderTest {
 
     @BeforeEach
     void setUp() {
-        openMocks(this);  // Initialize mocks
+        openMocks(this); // Initialize mocks
     }
 
     @Test
@@ -50,8 +49,7 @@ public class JWTProviderTest {
 
         // Mocking the Authentication object
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                username, "password", Set.of(new SimpleGrantedAuthority(role))
-        );
+                username, "password", Set.of(new SimpleGrantedAuthority(role)));
         when(authentication.getPrincipal()).thenReturn(userDetails);
 
         // Mocking the UserRepository to return a User with the given userID
