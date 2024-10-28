@@ -1,7 +1,9 @@
 package com.unt.campusxchange.users.entity;
 
+import com.unt.campusxchange.wishlist.entity.WishlistItem;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,4 +53,7 @@ public class User {
     // @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WishlistItem> wishlist;
 }

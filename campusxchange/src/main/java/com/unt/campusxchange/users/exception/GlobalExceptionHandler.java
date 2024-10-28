@@ -1,6 +1,7 @@
 package com.unt.campusxchange.users.exception;
 
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
+import com.unt.campusxchange.wishlist.exception.WishlistItemNotFoundException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,6 +91,19 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Item not found");
         problemDetail.setType(URI.create("https://example.com/problems/item-not-found"));
         problemDetail.setTitle("Item Not Found");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(WishlistItemNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleWishlistItemNotFoundException(WishlistItemNotFoundException ex) {
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Wishlist item not found");
+        problemDetail.setType(URI.create("https://example.com/problems/item-not-found"));
+        problemDetail.setTitle("Wishlist Item Not Found");
         problemDetail.setDetail(ex.getMessage());
         problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
         Map<String, String> fieldErrors = new HashMap<>();
