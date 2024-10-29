@@ -1,17 +1,16 @@
 /* Add this to your CSS file */
 .card {
     transition: transform 0.2s;
-  }
-  
-  .card:hover {
+}
+
+.card:hover {
     transform: scale(1.02);
-  }
-  
-  .form-check {
+}
+
+.form-check {
     transition: background-color 0.2s;
-  }
-  
-  .form-check:hover {
+}
+
+.form-check:hover {
     background-color: #eaeaea; /* Light gray background on hover */
-  }
-  
+}
