@@ -22,11 +22,8 @@ public class AnswerController {
             @RequestBody AddAnswerRequest addAnswerRequest,
             Principal principal) {
         String currentUsername = principal.getName(); // username == email
-        System.out.println("Current username: " + currentUsername);
         AddAnswerResponse addAnswerResponse =
                 answerService.saveAnswer(currentUsername, questionId, addAnswerRequest.answer());
-
-        System.out.println("Answer saved: " + addAnswerResponse);
 
         return new ResponseEntity<>(addAnswerResponse, HttpStatus.CREATED);
     }
