@@ -1,5 +1,6 @@
 package com.unt.campusxchange.users.exception;
 
+import com.unt.campusxchange.QA.exception.ItemOwnershipRequiredException;
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
 import com.unt.campusxchange.wishlist.exception.WishlistItemNotFoundException;
 import java.net.URI;
@@ -104,6 +105,19 @@ public class GlobalExceptionHandler {
                 ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Wishlist item not found");
         problemDetail.setType(URI.create("https://example.com/problems/item-not-found"));
         problemDetail.setTitle("Wishlist Item Not Found");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(ItemOwnershipRequiredException.class)
+    public ResponseEntity<ProblemDetail> handleItemOwnershipRequiredException(ItemOwnershipRequiredException ex) {
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Item ownership required.");
+        problemDetail.setType(URI.create("https://example.com/problems/item-ownership-required"));
+        problemDetail.setTitle("Item Ownership Required");
         problemDetail.setDetail(ex.getMessage());
         problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
         Map<String, String> fieldErrors = new HashMap<>();
