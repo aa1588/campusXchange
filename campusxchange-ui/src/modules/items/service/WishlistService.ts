@@ -46,6 +46,27 @@ class WishlistService{
             }
         }
     }
+
+    deleteFromMyWishlistItems = async (itemId: number) => {
+        const token = Cookies.get('authToken');
+
+        try {
+            await axios.delete(`${API_URL}/item/${itemId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            })
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw new Error(
+                    error.response?.data?.message || 'Error deleting item from wishlist'
+                )
+            } else {
+                throw new Error('An unknown error occurred')
+            }
+        }
+    }
 }
 
 export default new WishlistService()

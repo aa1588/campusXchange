@@ -208,7 +208,7 @@ const Home: React.FC = () => {
 
     const handleLike = async (id: number) => {
 
-        await WishlistService.addToWishList(id);
+        likedItems.includes(id) ? await WishlistService.deleteFromMyWishlistItems(id) : await WishlistService.addToWishList(id);
 
         setLikedItems((prevLiked) =>
             prevLiked.includes(id)
