@@ -16,6 +16,7 @@ import Dashboard from './modules/dashboard/components/Dashboard'
 import ItemDetail from './modules/items/components/ItemDetail'
 import AddItemForm from './modules/items/components/AddItemForm'
 import EditItem from './modules/items/components/EditItem'
+import Wishlist from './modules/wishlist/Wishlist'
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
@@ -61,6 +62,7 @@ const App: React.FC = () => {
                             path="/login"
                             element={<Login updateUser={updateUser} />}
                         />
+                        <Route path="/wishlist" element={<Wishlist />} />
                         <Route path="/register" element={<Register />} />
                         <Route path={'/dashboard'} element={<Dashboard />} />
                         <Route path="/items/:id" element={<ItemDetail />} />
