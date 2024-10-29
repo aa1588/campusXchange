@@ -16,7 +16,9 @@ import './Home.css'
 
 import axios from 'axios'
 import ItemService from '../modules/items/service/itemservice'
+import WishlistService from '../modules/items/service/WishlistService'
 import Cookies from 'js-cookie'
+import { number } from 'yup'
 
 interface Item {
     id: number
@@ -163,34 +165,51 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         const fetchItems = async () => {
-            setLoading(true) // Set loading to true at the start
-            try {
-                const token = Cookies.get('authToken')
-                const response = await ItemService.getAllItems(
-                    currentPage,
-                    selectedCategories,
-                    token
-                ) // Pass categories
-                setItems(response.data.data) // Access data directly from the response
-            } catch (err) {
-                if (axios.isAxiosError(err)) {
-                    setError(
-                        err.response?.data?.message || 'Failed to fetch items'
-                    )
-                } else if (err instanceof Error) {
-                    setError(err.message)
-                } else {
-                    setError('An unknown error occurred')
-                }
-            } finally {
-                setLoading(false)
-            }
+            setLoading(true);
+            fetchAllItems();
+            fetchWishlistItems();
+            setLoading(false);
+            
         }
 
         fetchItems()
     }, [currentPage, selectedCategories]) // Add selectedCategories to dependency array
 
-    const handleLike = (id: number) => {
+    const fetchAllItems = async () => {
+        try {
+            const token = Cookies.get('authToken');
+            const response = await ItemService.getAllItems(currentPage, selectedCategories, token);
+            setItems(response.data.data);
+        } catch (err) {
+            handleError(err, 'Failed to fetch items');
+        }
+    };
+
+    const fetchWishlistItems = async () => {
+        try {
+            const wishlistResponse = await WishlistService.getMyWishListItems();
+            const myWishListItems = wishlistResponse.data.map((item: { id: number }) => item.id);
+            setLikedItems(myWishListItems);
+        } catch (err) {
+            handleError(err, 'Failed to fetch wishlist items');
+        }
+    };
+
+    const handleError = (err: unknown, defaultMessage: string) => {
+        if (axios.isAxiosError(err)) {
+            setError(err.response?.data?.message || defaultMessage);
+        } else if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('An unknown error occurred');
+        }
+    };
+
+
+    const handleLike = async (id: number) => {
+
+        await WishlistService.addToWishList(id);
+
         setLikedItems((prevLiked) =>
             prevLiked.includes(id)
                 ? prevLiked.filter((itemId) => itemId !== id)
