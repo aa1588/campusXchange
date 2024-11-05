@@ -2,6 +2,7 @@ package com.unt.campusxchange.users.exception;
 
 import com.unt.campusxchange.QA.exception.ItemOwnershipRequiredException;
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
+import com.unt.campusxchange.offers.exception.OfferNotFoundException;
 import com.unt.campusxchange.wishlist.exception.WishlistItemNotFoundException;
 import java.net.URI;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -124,4 +126,18 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("fieldErrors", fieldErrors);
         return ResponseEntity.badRequest().body(problemDetail);
     }
+
+    @ExceptionHandler(OfferNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleOfferNotFoundException(OfferNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "OfferNotFound");
+        problemDetail.setType(URI.create("https://example.com/problems/offer-not-found"));
+        problemDetail.setTitle("OfferNotFound");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+
 }
