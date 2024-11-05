@@ -2,13 +2,12 @@ package com.unt.campusxchange.offers.controller;
 
 import com.unt.campusxchange.offers.dto.OfferDTO;
 import com.unt.campusxchange.offers.service.OfferService;
+import java.security.Principal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/offers")
@@ -19,23 +18,18 @@ public class OfferController {
 
     @PostMapping("/create/{itemId}")
     public ResponseEntity<OfferDTO> createOffer(
-            @PathVariable Integer itemId,
-            @RequestBody OfferDTO offerDTO,
-            Principal principal) {
-        try{
+            @PathVariable Integer itemId, @RequestBody OfferDTO offerDTO, Principal principal) {
+        try {
             String currentUsername = principal.getName(); // username == email
             OfferDTO offer = offerService.createOffer(currentUsername, itemId, offerDTO);
             return new ResponseEntity<>(offer, HttpStatus.CREATED);
-        }catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
     }
 
     @GetMapping("/item/{itemId}")
-    public ResponseEntity<List<OfferDTO>> getOffersForItem(
-            @PathVariable Integer itemId,
-            Principal principal) {
+    public ResponseEntity<List<OfferDTO>> getOffersForItem(@PathVariable Integer itemId, Principal principal) {
 
         String currentUsername = principal.getName(); // username == email
         List<OfferDTO> offers = offerService.listOffersForItem(currentUsername, itemId);

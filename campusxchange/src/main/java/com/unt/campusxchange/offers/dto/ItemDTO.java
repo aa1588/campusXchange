@@ -10,5 +10,4 @@ public record ItemDTO(
         String description,
         BigDecimal price,
         String category,
-        List<String> imageUrls) {
-}
+        List<String> imageUrls) {}

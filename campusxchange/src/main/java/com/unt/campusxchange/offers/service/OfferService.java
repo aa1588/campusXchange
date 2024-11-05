@@ -16,12 +16,11 @@ import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
@@ -46,15 +45,17 @@ public class OfferService {
         // Only map offerItems if they are provided in the request
         List<OfferItem> offerItems = offerDTO.offerItems() != null
                 ? offerDTO.offerItems().stream()
-                .map(offerItemDTO -> {
-                    Item item = itemRepository.findById(offerItemDTO.itemId())
-                            .orElseThrow(() -> new ItemNotFoundException("Item not found"));
-                    OfferItem offerItem = new OfferItem();
-                    offerItem.setOffer(offer);
-                    offerItem.setItem(item);
-                    offerItem.setQuantity(offerItemDTO.quantity());
-                    return offerItem;
-                }).collect(Collectors.toList())
+                        .map(offerItemDTO -> {
+                            Item item = itemRepository
+                                    .findById(offerItemDTO.itemId())
+                                    .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+                            OfferItem offerItem = new OfferItem();
+                            offerItem.setOffer(offer);
+                            offerItem.setItem(item);
+                            offerItem.setQuantity(offerItemDTO.quantity());
+                            return offerItem;
+                        })
+                        .collect(Collectors.toList())
                 : Collections.emptyList();
 
         offer.setOfferItems(offerItems);
@@ -66,8 +67,8 @@ public class OfferService {
     private OfferDTO toOfferDTO(Offer offer) {
         List<OfferItemDTO> offerItemDTOs = offer.getOfferItems() != null
                 ? offer.getOfferItems().stream()
-                .map(offerItem -> new OfferItemDTO(offerItem.getItem().getId(), offerItem.getQuantity()))
-                .collect(Collectors.toList())
+                        .map(offerItem -> new OfferItemDTO(offerItem.getItem().getId(), offerItem.getQuantity()))
+                        .collect(Collectors.toList())
                 : Collections.emptyList();
 
         UserDTO userDTO = new UserDTO(
@@ -75,8 +76,7 @@ public class OfferService {
                 offer.getOfferedBy().getFirstname(),
                 offer.getOfferedBy().getLastname(),
                 offer.getOfferedBy().getEmail(),
-                offer.getOfferedBy().getPhone()
-        );
+                offer.getOfferedBy().getPhone());
 
         ItemDTO itemDTO = new ItemDTO(
                 offer.getItem().getId(),
@@ -85,8 +85,7 @@ public class OfferService {
                 offer.getItem().getDescription(),
                 offer.getItem().getPrice(),
                 offer.getItem().getCategory().toString(),
-                offer.getItem().getImageUrls()
-        );
+                offer.getItem().getImageUrls());
 
         return new OfferDTO(
                 offer.getId(),
@@ -95,17 +94,14 @@ public class OfferService {
                 itemDTO,
                 offer.getStatus(),
                 offerItemDTOs,
-                offer.getCreatedAt()
-        );
+                offer.getCreatedAt());
     }
 
     public List<OfferDTO> listOffersForItem(String email, Integer itemId) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // Check if the item exists and if the user is the owner
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found"));
 
         if (!item.getUser().equals(user)) {
             throw new SecurityException("User is not the owner of this item.");
@@ -119,8 +115,8 @@ public class OfferService {
     }
 
     public OfferDTO acceptOffer(Integer offerId, String email) {
-        Offer offer = offerRepository.findById(offerId)
-                .orElseThrow(() -> new OfferNotFoundException("Offer not found"));
+        Offer offer =
+                offerRepository.findById(offerId).orElseThrow(() -> new OfferNotFoundException("Offer not found"));
 
         // Check if the user is the owner of the item
         User itemOwner = offer.getItem().getUser(); // Assuming you have a getOwner() method in Item entity
@@ -134,10 +130,9 @@ public class OfferService {
         return toOfferDTO(savedOffer);
     }
 
-
     public OfferDTO declineOffer(Integer offerId, String email) {
-        Offer offer = offerRepository.findById(offerId)
-                .orElseThrow(() -> new OfferNotFoundException("Offer not found"));
+        Offer offer =
+                offerRepository.findById(offerId).orElseThrow(() -> new OfferNotFoundException("Offer not found"));
 
         // Check if the user is the owner of the item
         User itemOwner = offer.getItem().getUser(); // Assuming you have a getOwner() method in Item entity
@@ -150,5 +145,4 @@ public class OfferService {
 
         return toOfferDTO(savedOffer);
     }
-
 }
