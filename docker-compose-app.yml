@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  campusxchange-api:
+    container_name: campusxchange-api
+    image: campusxchange/api-campusxchange:latest
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/campusxchange
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
+      ALLOWED_ORIGINS: http://localhost:3000
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - postgres-db
