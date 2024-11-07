@@ -1,6 +1,8 @@
 package com.unt.campusxchange.QA.service;
 
 import com.unt.campusxchange.QA.dto.AddQuestionResponse;
+import com.unt.campusxchange.QA.dto.AnswerResponse;
+import com.unt.campusxchange.QA.dto.QuestionAnswerResponse;
 import com.unt.campusxchange.QA.entitty.Question;
 import com.unt.campusxchange.QA.repo.QuestionRepository;
 import com.unt.campusxchange.items.entity.Item;
@@ -51,6 +53,25 @@ public class QuestionService {
                         question.getQuestionText(),
                         question.getAskedBy().getEmail(),
                         question.getCreatedAt()))
+                .collect(Collectors.toList());
+    }
+
+    public List<QuestionAnswerResponse> getQuestionsAndAnswersByItem(Integer itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found"));
+
+        return questionRepository.findByItemId(itemId).stream()
+                .map(question -> new QuestionAnswerResponse(
+                        question.getId(),
+                        question.getQuestionText(),
+                        question.getAskedBy().getEmail(),
+                        question.getCreatedAt(),
+                        question.getAnswers().stream()
+                                .map(answer -> new AnswerResponse(
+                                        answer.getId(),
+                                        answer.getAnswerText(),
+                                        answer.getAnsweredBy().getEmail(),
+                                        answer.getCreatedAt()))
+                                .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 }
