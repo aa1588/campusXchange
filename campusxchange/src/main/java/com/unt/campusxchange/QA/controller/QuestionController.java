@@ -2,7 +2,6 @@ package com.unt.campusxchange.QA.controller;
 
 import com.unt.campusxchange.QA.dto.AddQuestionRequest;
 import com.unt.campusxchange.QA.dto.AddQuestionResponse;
-import com.unt.campusxchange.QA.dto.QuestionAnswerResponse;
 import com.unt.campusxchange.QA.service.QuestionService;
 import java.security.Principal;
 import java.util.List;
@@ -35,6 +34,4 @@ public class QuestionController {
         List<AddQuestionResponse> q = questionService.getQuestionsByItem(currentUsername, itemId);
         return new ResponseEntity<>(q, HttpStatus.OK);
     }
-
-
 }
