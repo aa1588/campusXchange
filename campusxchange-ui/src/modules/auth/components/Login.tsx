@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-
-import AuthService from '../services/authservice'
-import { ToastUtil } from '../utils/ToastUtils'
+import { Link } from 'react-router-dom'
+import AuthService from '../service/authservice'
+import { ToastUtil } from '../../../utils/ToastUtils'
 
 type Props = {
     updateUser: () => void
@@ -28,6 +28,7 @@ const Login: React.FC<Props> = ({ updateUser }) => {
         AuthService.login(email, password).then(
             () => {
                 setRedirect('/home')
+                ToastUtil.displaySuccessToast('Login successful!')
                 updateUser()
             },
             (error) => {
@@ -89,15 +90,16 @@ const Login: React.FC<Props> = ({ updateUser }) => {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className="form-group mt-2">
                             <button
                                 type="submit"
-                                className="btn btn-primary btn-block"
+                                className="btn btn-success btn-block"
                                 disabled={loading}
                             >
                                 {loading && (
                                     <span className="spinner-border spinner-border-sm"></span>
                                 )}
+
                                 <span>Login</span>
                             </button>
                         </div>
@@ -114,6 +116,16 @@ const Login: React.FC<Props> = ({ updateUser }) => {
                         )}
                     </Form>
                 </Formik>
+                <small>
+                    Don't have an account?
+                    <Link
+                        to={'/register'}
+                        className="text-decoration-none fw-bold  text-success"
+                    >
+                        {' '}
+                        Register
+                    </Link>
+                </small>
             </div>
         </div>
     )
