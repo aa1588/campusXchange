@@ -36,9 +36,5 @@ public class QuestionController {
         return new ResponseEntity<>(q, HttpStatus.OK);
     }
 
-    @GetMapping("/{itemId}/questions-answers")
-    public ResponseEntity<List<QuestionAnswerResponse>> getQuestionsAndAnswersByItem(@PathVariable Integer itemId) {
-        List<QuestionAnswerResponse> response = questionService.getQuestionsAndAnswersByItem(itemId);
-        return ResponseEntity.ok(response);
-    }
+
 }
