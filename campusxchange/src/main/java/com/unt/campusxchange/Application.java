@@ -22,6 +22,6 @@ class TestClass {
     @GetMapping("/ping")
     public Map<String, String> pingMessage() {
 
-        return Map.of("msg", "pong!");
+        return Map.of("message", "pong!");
     }
 }
