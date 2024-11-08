@@ -30,6 +30,8 @@
 	<properties>
 		<java.version>21</java.version>
 		<spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
+		<jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
+		<dockerImageName>campusxchange/api-${project.artifactId}</dockerImageName>
 	</properties>
 
 	<dependencies>
@@ -97,6 +99,9 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<image>
+						<pullPolicy>IF_NOT_PRESENT</pullPolicy>
+					</image>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -128,9 +133,28 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
-
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib-maven-plugin.version}</version>
+				<configuration>
+					<from>
+						<image>eclipse-temurin:21-jre</image>
+					</from>
+					<to>
+						<image>registry.hub.docker.com/${dockerImageName}</image>
+						<tags>
+							<tag>latest</tag>
+							<tag>${project.version}</tag>
+						</tags>
+					</to>
+					<container>
+						<ports>
+							<port>8080</port>
+						</ports>
+					</container>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>

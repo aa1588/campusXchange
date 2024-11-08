@@ -84,10 +84,13 @@ public class SecurityConfiguration {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    //    @Bean
-    //    public GrantedAuthoritiesMapper authoritiesMapper() {
-    //        return authorities -> authorities.stream()
-    //                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
-    //                .collect(Collectors.toList());
-    //    }
+    /*
+       @Bean
+       public GrantedAuthoritiesMapper authoritiesMapper() {
+           return authorities -> authorities.stream()
+                   .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+                   .collect(Collectors.toList());
+       }
+
+    */
 }

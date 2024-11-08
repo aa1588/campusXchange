@@ -16,6 +16,7 @@ This project consists of two main parts:
 5. [Setup Guide](#setup-guide)
     - [Frontend Setup](#frontend-setup)
     - [Backend Setup](#backend-setup)
+    - [Docker Setup](#docker-setup)
 6. [Testing](#testing)
 7. [Deployment](#deployment)
 8. [Contributing Backend](#contributing-backend)
@@ -75,6 +76,29 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 1. Run `$ docker compose up`
 2. Run `$ cd campusxchange`
 3. Run `$ mvn spring-boot:run` and access the application at `http://localhost:8080`
+
+### Docker Setup (Local)
+
+> **NOTE:** Maven Setting- Add DockerHub configuration in `settings.xml`
+```bash
+   <server>
+      <id>registry.hub.docker.com</id>
+      <username>campusxchange</username>
+      <password>docker-hub-password</password>
+   </server>
+```
+1. Build and Push Docker Image to DockerHub from the local 
+
+```bash
+   $ mvn clean compile jib:build  
+```
+ > **NOTE:** Automatic Build Image and Push to Registry through github actions.
+
+2. Start Infra(Database) & App (backend , frontend) from root folder (Docker Compose) - for locally accessing the application
+```bash
+   $ docker compose -f docker-compose.yml -f docker-compose-app.yml up -d
+```
+
 
 ## Contributing Backend
 - Run `mvn spotless:apply` before every push for spotless code
