@@ -165,11 +165,10 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         const fetchItems = async () => {
-            setLoading(true);
-            fetchAllItems();
-            fetchWishlistItems();
-            setLoading(false);
-            
+            setLoading(true)
+            fetchAllItems()
+            fetchWishlistItems()
+            setLoading(false)
         }
 
         fetchItems()
@@ -177,38 +176,44 @@ const Home: React.FC = () => {
 
     const fetchAllItems = async () => {
         try {
-            const token = Cookies.get('authToken');
-            const response = await ItemService.getAllItems(currentPage, selectedCategories, token);
-            setItems(response.data.data);
+            const token = Cookies.get('authToken')
+            const response = await ItemService.getAllItems(
+                currentPage,
+                selectedCategories,
+                token
+            )
+            setItems(response.data.data)
         } catch (err) {
-            handleError(err, 'Failed to fetch items');
+            handleError(err, 'Failed to fetch items')
         }
-    };
+    }
 
     const fetchWishlistItems = async () => {
         try {
-            const wishlistResponse = await WishlistService.getMyWishListItems();
-            const myWishListItems = wishlistResponse.data.map((item: { id: number }) => item.id);
-            setLikedItems(myWishListItems);
+            const wishlistResponse = await WishlistService.getMyWishListItems()
+            const myWishListItems = wishlistResponse.data.map(
+                (item: { id: number }) => item.id
+            )
+            setLikedItems(myWishListItems)
         } catch (err) {
-            handleError(err, 'Failed to fetch wishlist items');
+            handleError(err, 'Failed to fetch wishlist items')
         }
-    };
+    }
 
     const handleError = (err: unknown, defaultMessage: string) => {
         if (axios.isAxiosError(err)) {
-            setError(err.response?.data?.message || defaultMessage);
+            setError(err.response?.data?.message || defaultMessage)
         } else if (err instanceof Error) {
-            setError(err.message);
+            setError(err.message)
         } else {
-            setError('An unknown error occurred');
+            setError('An unknown error occurred')
         }
-    };
-
+    }
 
     const handleLike = async (id: number) => {
-
-        likedItems.includes(id) ? await WishlistService.deleteFromMyWishlistItems(id) : await WishlistService.addToWishList(id);
+        likedItems.includes(id)
+            ? await WishlistService.deleteFromMyWishlistItems(id)
+            : await WishlistService.addToWishList(id)
 
         setLikedItems((prevLiked) =>
             prevLiked.includes(id)
