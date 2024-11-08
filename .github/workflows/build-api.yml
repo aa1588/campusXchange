@@ -44,4 +44,8 @@ jobs:
 
       - name: Build and Publish Docker Image
         run : |
+          echo "Building Docker Image with Jib..."
+          ./mvnw clean compile jib:build -Dimage=${{ secrets.DOCKERHUB_USERNAME }}/campusxchange-api:${{ github.sha }}
           echo "Pushing the image to Docker Hub..."
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/campusxchange-api:${{ github.sha }}
+          echo "Done!"
