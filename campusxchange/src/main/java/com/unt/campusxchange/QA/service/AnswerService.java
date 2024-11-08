@@ -26,10 +26,6 @@ public class AnswerService {
 
     public AddAnswerResponse saveAnswer(String email, Integer questionId, String answerText) {
 
-        System.out.println("Email : " + email);
-        System.out.println("QuestionId : " + questionId);
-        System.out.println("AnswerText : " + answerText);
-
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
         Question question = questionRepository
                 .findById(questionId)
@@ -37,10 +33,6 @@ public class AnswerService {
 
         // Verify if the logged-in user is the item owner
         if (!question.getItem().getUser().getEmail().equals(user.getEmail())) {
-            System.out.println("getItem.getUser().getEmail() : "
-                    + question.getItem().getUser().getEmail());
-            System.out.println("email : " + user.getEmail());
-            System.out.println(question.getItem().getUser().getEmail().equals(email));
             throw new ItemOwnershipRequiredException("Only the item owner can answer questions.");
         }
 
