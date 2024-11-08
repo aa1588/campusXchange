@@ -12,6 +12,7 @@ on:
       - opened
       - synchronize
       - reopened
+
 jobs:
   build-campusxchange-api:
     name: Build Campusxchange api
