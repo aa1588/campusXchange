@@ -1,0 +1,41 @@
+name: Build
+
+
+on:
+  push:
+    paths:
+      - "campusxchange-ui/**"
+    branches: ["develop"]
+  pull_request:
+    paths:
+      - "campusxchange-ui/**"
+    types:
+      - opened
+      - synchronize
+      - reopened
+jobs:
+  build-campusxchange-ui:
+    name: Build Campusxchange-ui
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./campusxchange-ui
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: campusxchange-ui/package-lock.json
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
