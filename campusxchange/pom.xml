@@ -155,6 +155,21 @@
 					</container>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>**/*Test.java</include> <!-- Include only unit tests -->
+					</includes>
+					<excludes>
+						<exclude>**/*IT.java</exclude> <!-- Exclude integration tests -->
+					</excludes>
+					<!-- Add the argLine to pass JVM options -->
+					<argLine>-XX:+EnableDynamicAgentLoading</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
