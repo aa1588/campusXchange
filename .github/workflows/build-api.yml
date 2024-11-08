@@ -1,4 +1,4 @@
-name: Build Backend App
+name: Build Campusxchange Backend
 on:
   push:
     paths:
