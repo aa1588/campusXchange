@@ -12,14 +12,21 @@ const ItemDetail: React.FC = () => {
     const [newQuestion, setNewQuestion] = useState<string>("");
     const [answerText, setAnswerText] = useState<{ [key: number]: string }>({});
     const navigate = useNavigate();
+    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchItemDetails = async () => {
             if (id) {
                 const item = await ItemService.getItemById(parseInt(id));
                 setItemDetails(item);
+                const userId = JSON.parse(localStorage.getItem("user") || '{}').userId;
+                if(item && item.listed_by === userId){
+                    setOwnerLoggedIn(true);
+                }
+
             }
         };
+        
         fetchItemDetails();
         fetchQuestions();
     }, [id]);
@@ -117,7 +124,7 @@ const ItemDetail: React.FC = () => {
                                                 <strong>A:</strong> {q.answers[0].answerText} <br />
                                                 <small>Answered by: {q.answers[0].answeredBy}</small>
                                             </div>
-                                        ) : (
+                                        ) : ownerLoggedIn ?  (
                                             // Display input to post an answer if none exists
                                             <Form.Group controlId={`answerInput-${q.questionId}`}>
                                                 <Form.Label>Post an Answer:</Form.Label>
@@ -140,7 +147,7 @@ const ItemDetail: React.FC = () => {
                                                     Submit Answer
                                                 </Button>
                                             </Form.Group>
-                                        )}
+                                        ) : (<div></div>)}
                                     </div>
                                     <hr /> {/* This line will separate each Q&A */}
                                 </div>
