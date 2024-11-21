@@ -1,7 +1,9 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import {BACKEND_BASE_URL} from "../../../config/config";
 
-const API_URL = 'http://localhost:8080/api/items'
+
+const API_URL = `${BACKEND_BASE_URL}/api/items`
 
 class ItemService {
     getAllItems(

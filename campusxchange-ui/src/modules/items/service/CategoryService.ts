@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { BACKEND_BASE_URL } from '../../../config/config';
 
-const API_URL = 'http://localhost:8080/api/categories'
+const API_URL = `${BACKEND_BASE_URL}/api/categories`
 
 const CategoryService = {
     fetchCategories: async (): Promise<string[]> => {
