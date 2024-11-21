@@ -31,7 +31,7 @@ jobs:
           cache-dependency-path: campusxchange-ui/package-lock.json
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build
@@ -45,4 +45,12 @@ jobs:
       - name: Build and Publish Docker Image
         run : |
           echo "Pushing the image to Docker Hub..."
+
+      - name: Build and Publish Docker Image
+        run: |
+          echo "Building Frontend Docker Image..."
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/campusxchange-ui:${{ github.sha }} .
+          echo "Pushing Docker Image to Docker Hub..."
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/campusxchange-ui:${{ github.sha }}
+          echo "Done!"
 

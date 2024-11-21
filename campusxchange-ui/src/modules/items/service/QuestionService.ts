@@ -1,9 +1,10 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import {BACKEND_BASE_URL} from "../../../config/config";
 
-const API_URL = 'http://localhost:8080/api/questions/item'
-const API_URL_ANSWER = 'http://localhost:8080/api/answers'
-const API_URL_QUESTION_ANSWER = 'http://localhost:8080/api/questions-answers'
+const API_URL = `${BACKEND_BASE_URL}/api/questions/item`
+const API_URL_ANSWER = `${BACKEND_BASE_URL}/api/answers`
+const API_URL_QUESTION_ANSWER = `${BACKEND_BASE_URL}/api/questions-answers`
 
 class QuestionService{
 
