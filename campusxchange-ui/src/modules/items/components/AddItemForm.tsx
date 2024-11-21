@@ -4,6 +4,7 @@ import CategoryService from '../service/CategoryService'
 import ItemService from '../service/itemservice'
 import { useNavigate } from 'react-router-dom'
 import { ToastUtil } from '../../../utils/ToastUtils'
+import { CLOUDINARY_CONFIG } from '../../../config/cloudinaryConfig'
 
 declare const window: Window &
     typeof globalThis & {
@@ -42,8 +43,8 @@ const AddItemForm: React.FC = () => {
         if (window.cloudinary) {
             widgetRef.current = window.cloudinary.createUploadWidget(
                 {
-                    cloudName: 'dpzhwx3xh',
-                    uploadPreset: 'campusxchange',
+                    cloudName: CLOUDINARY_CONFIG.cloudName,
+                    uploadPreset: CLOUDINARY_CONFIG.uploadPreset,
                 },
                 (
                     error: any,
