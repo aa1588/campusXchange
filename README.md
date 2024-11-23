@@ -16,21 +16,30 @@ This project consists of two main parts:
 5. [Setup Guide](#setup-guide)
     - [Frontend Setup](#frontend-setup)
     - [Backend Setup](#backend-setup)
-    - [Docker Setup](#docker-setup)
-6. [Testing](#testing)
-7. [Deployment](#deployment)
-8. [Contributing Backend](#contributing-backend)
-9. [Contributing Frontend](#contributing-frontend)
-10. [License](#license)
+6. [Modules](#modules)
+   - [Users Module](#users-module)
+   - [Items Module](#items-module)
+   - [Wishlist Module](#wishlist-module)
+   - [Offers Module](#offers-module)
+   - [Recommendations Module](#recommendations-module)
+   - [Admin Module](#admin-module)
+7. [Testing](#testing)
+8. [Deployment](#deployment)
+9. [Contributing Backend](#contributing-backend)
+10. [Contributing Frontend](#contributing-frontend)
+11. [License](#license)
 
+---
 ## Product Vision
 
 FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or get rid of unused items which might come handy for other students (e.g., textbooks, laptop, desk, car, etc.) within the UNT campus community, THE CampusXchange, is a web-based second-hand marketplace THAT operates on web browsers and offers daily unique recommendation of used items via email based on the category and price of items on your wishlist. CampusXchange provides a small, localized, and student-friendly platform specifically designed for students considering their needs and financial challenges. UNLIKE other options such as Facebook Marketplace, Craigslist or OfferUp, which accommodates an exceptionally large audience while lacking student-specific features, OUR PRODUCT enables students to connect locally and purchase items safely and conveniently within their academic environment. CampusXchange allows students to find the items they need for an affordable price or sell the items that are no longer useful or get rid of the unused items by donating them to local fellow students, while saving their money and time.
 
+---
 ## Development Platform
 - Standard PCs or laptops (Windows/macOS)
 - RAM >= 8 GB, SSD >=512 GB (recommended)
 
+---
 ## Technologies Used
 ### Frontend
 - React
@@ -47,10 +56,11 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 - Maven (for build management)
 - Docker (for containerization)
 
+---
 ## Testing
 - Junit, TestContainers, Mockito, AssertJ, Jest
 
-
+---
 ### Deployment
 - AWS
 
@@ -63,6 +73,8 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 - Maven 3.x or higher (3.9.2 used)
 - Postgresql 13.x
 - Docker Desktop Installation
+
+---
 
 ## Setup Guide
 - Clone the repository 
@@ -79,7 +91,7 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 
 ### Docker Setup (Local)
 
-> **NOTE:** Maven Setting- Add DockerHub configuration in `settings.xml`
+> **NOTE:** Maven Setting - Add DockerHub configuration in `settings.xml`
 ```bash
    <server>
       <id>registry.hub.docker.com</id>
@@ -92,7 +104,7 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 ```bash
    $ mvn clean compile jib:build  
 ```
- > **NOTE:** Automatic Build Image and Push to Registry through github actions.
+ > **NOTE:** Automatic Build Image and Push to Registry through gitHub actions.
 
 2. Start Infra(Database) & App (backend , frontend) from root folder (Docker Compose) - for locally accessing the application
 ```bash
@@ -105,6 +117,47 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 
 ## Contributing Frontend
 - Run `npm run pc` before every commit for Pre-Commit Prettier Formatting
+
+---
+## Modules
+
+### users-module
+Manages user-related functionality, including user registration, login, authentication, profile management, and user roles (e.g., admin, user(seller/buyer)). It ensures that users can securely access the marketplace, make transactions, and manage their personal information.
+### items-module
+Handles all operations related to items listed in the marketplace. This includes adding, editing, deleting, and viewing secondhand products. It manages item details like titles, descriptions, prices, categories, images, and availability.
+### wishlist-module
+Allows users to save items they are interested in for future reference. It enables users to add, remove, and view items in their wishlist, providing a convenient way to track desired products without having to revisit them constantly.
+### offers-module
+Manages the buying and selling process by handling offers made between buyers and sellers. It allows users to make offers on listed items, negotiate prices, and accept or decline offers, facilitating transactions between users in the marketplace.
+### recommendations-module
+The RecommendationService is designed to recommend items to a user based on the items they have in their wishlist. It analyzes the user's wishlist, compares the items there to other available items in the system, and generates a list of recommended items. These recommendations are intended to suggest items that are similar to the ones the user has shown interest in (by adding them to their wishlist).
+
+`Item Comparison:`
+The items in the user's wishlist are compared against all items in the database to find items that are similar to those in the wishlist.
+
+**Similarity Calculation**
+
+`Category Similarity:` If two items belong to the same category, they are considered more similar. This is weighted as 70% of the total similarity score.
+
+`Price Similarity:` The price difference between two items is calculated, and a similarity score is computed based on how close the prices are. The closer the prices, the higher the similarity. This is weighted as 30% of the total similarity score.
+
+`Weighted Similarity Formula:`
+- categorySimilarity is either 1 (if the categories match) or 0 (if they don't).
+- priceSimilarity is calculated using the formula 1 / (1 + priceDiff), where priceDiff is the absolute difference between the prices of two items. This ensures that the closer the prices are, the higher the similarity.
+
+The final similarity score for two items is a weighted combination of these two components:
+
+```angular2html
+similarityScore = 0.7 * categorySimilarity + 0.3 * priceSimilarity
+
+```
+
+`Recommendation Sorting:`
+The items are sorted by their aggregated similarity scores in descending order, meaning items that are more similar to the user's wishlist will be ranked higher.
+### admin-module
+Provides administrative control over the platform. It enables administrators to manage users, items, and transactions.
+
+---
 
 ## License
 
