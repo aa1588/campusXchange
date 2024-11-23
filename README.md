@@ -132,6 +132,8 @@ Manages the buying and selling process by handling offers made between buyers an
 ### recommendations-module
 The RecommendationService is designed to recommend items to a user based on the items they have in their wishlist. It analyzes the user's wishlist, compares the items there to other available items in the system, and generates a list of recommended items. These recommendations are intended to suggest items that are similar to the ones the user has shown interest in (by adding them to their wishlist).
 
+**Item Based Collaborative Filtering**
+
 `Item Comparison:`
 The items in the user's wishlist are compared against all items in the database to find items that are similar to those in the wishlist.
 
