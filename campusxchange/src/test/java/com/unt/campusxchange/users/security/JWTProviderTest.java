@@ -10,6 +10,7 @@ import com.unt.campusxchange.users.repo.UserRepository;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,6 +42,7 @@ public class JWTProviderTest {
     }
 
     @Test
+    @DisplayName("Should Create JWT token")
     void testCreateToken() {
         // Given
         String username = "testuser@example.com";
