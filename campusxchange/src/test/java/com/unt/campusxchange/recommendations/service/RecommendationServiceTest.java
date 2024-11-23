@@ -8,7 +8,5 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class RecommendationServiceTest {
 
     @Test
-    void shouldReturnRecommendations() {
-
-    }
+    void shouldReturnRecommendations() {}
 }
