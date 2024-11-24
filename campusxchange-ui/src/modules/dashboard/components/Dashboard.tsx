@@ -74,9 +74,8 @@ const Dashboard: React.FC = () => {
             if (action === 'accept') {
                 await OfferService.acceptOffer(offerId)
             } else if (action === 'decline') {
-                //await OfferService.declineOffer(offerId, token)
+                await OfferService.declineOffer(offerId)
             }
-            // After action, refetch offers
             const offersData = await OfferService.getAllMyListingsOffer()
             setOffers(offersData)
         } catch (err: any) {

@@ -73,6 +73,28 @@ class OfferService {
             }
         }
     }
+
+    declineOffer = async (offerid : number) => {
+        const token = Cookies.get('authToken');
+
+        try{
+            const response = await axios.put(`${API_OFFER}/${offerid}/decline`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            })
+            return response.data;
+        }catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw new Error(
+                    error.response?.data?.message || 'Error accepting offers'
+                )
+            } else {
+                throw new Error('An unknown error occurred')
+            }
+        }
+    }
 }
 
 export default new OfferService()
