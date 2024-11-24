@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OfferRepository extends JpaRepository<Offer, Integer> {
     List<Offer> findByItem(Item item);
+
+    List<Offer> findByItemIn(List<Item> items);
 }

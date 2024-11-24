@@ -1,9 +1,16 @@
 package com.unt.campusxchange.offers.controller;
 
+import com.unt.campusxchange.items.entity.Item;
+import com.unt.campusxchange.items.repo.ItemRepository;
 import com.unt.campusxchange.offers.dto.OfferDTO;
+import com.unt.campusxchange.offers.entity.Offer;
 import com.unt.campusxchange.offers.service.OfferService;
 import java.security.Principal;
 import java.util.List;
+
+import com.unt.campusxchange.users.entity.User;
+import com.unt.campusxchange.users.exception.UserNotFoundException;
+import com.unt.campusxchange.users.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 public class OfferController {
 
     private final OfferService offerService;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     @PostMapping("/create/{itemId}")
     public ResponseEntity<OfferDTO> createOffer(
@@ -49,5 +58,18 @@ public class OfferController {
         String email = principal.getName(); // Get the email from Principal
         OfferDTO updatedOffer = offerService.declineOffer(offerId, email);
         return ResponseEntity.ok(updatedOffer);
+    }
+
+    @GetMapping("/allitemsoffer")
+    public ResponseEntity<List<OfferDTO>> getAllMyItemsOffers(Principal principal){
+        String email = principal.getName();
+
+        System.out.println("The email is : " + email);
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+        List<Item> items = itemRepository.findByUser(user);
+
+        List<OfferDTO> offers = offerService.listOffersForListOfItems(items);
+
+        return ResponseEntity.ok(offers);
     }
 }
