@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ItemService from '../service/itemservice';
 import QuestionService from '../service/QuestionService';
-import { Carousel, Card, Row, Col, Button, Form } from 'react-bootstrap';
+import OfferService from '../service/OfferService';
+import { Carousel, Card, Row, Col, Button, Form, Modal } from 'react-bootstrap';
 import LayoutHeading from '../../../layout/LayoutHeading';
 
 const ItemDetail: React.FC = () => {
@@ -13,6 +14,9 @@ const ItemDetail: React.FC = () => {
     const [answerText, setAnswerText] = useState<{ [key: number]: string }>({});
     const navigate = useNavigate();
     const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
+    const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
+    const [offerAmount, setOfferAmount] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false); // State to manage loading spinner
 
     useEffect(() => {
         const fetchItemDetails = async () => {
@@ -20,13 +24,12 @@ const ItemDetail: React.FC = () => {
                 const item = await ItemService.getItemById(parseInt(id));
                 setItemDetails(item);
                 const userId = JSON.parse(localStorage.getItem("user") || '{}').userId;
-                if(item && item.listed_by === userId){
+                if (item && item.listed_by === userId) {
                     setOwnerLoggedIn(true);
                 }
-
             }
         };
-        
+
         fetchItemDetails();
         fetchQuestions();
     }, [id]);
@@ -50,6 +53,30 @@ const ItemDetail: React.FC = () => {
         await QuestionService.postAnswerForAQuestion(questionId, answer);
         setAnswerText((prev) => ({ ...prev, [questionId]: "" }));
         fetchQuestions(); // Refresh the list of questions and answers
+    };
+
+    const handleOfferSubmit = async () => {
+        if (!offerAmount.trim()) {
+            alert("Please enter an offer amount.");
+            return;
+        }
+
+        const parsedOfferAmount = parseFloat(offerAmount);
+        if (isNaN(parsedOfferAmount) || parsedOfferAmount <= 0) {
+            alert("Please enter a valid offer amount greater than 0.");
+            return;
+        }
+
+        setLoading(true); // Show spinner
+        try {
+            await OfferService.makeAnOffer(parseInt(id ?? "0"), parsedOfferAmount);
+            setShowOfferModal(false); // Close the modal
+            setOfferAmount(""); // Reset the input field
+        } catch (error) {
+            console.error("Error submitting offer:", error);
+        } finally {
+            setLoading(false); // Hide spinner
+        }
     };
 
     if (!itemDetails) {
@@ -88,6 +115,11 @@ const ItemDetail: React.FC = () => {
                                 <strong>Category:</strong> {itemDetails.category}<br />
                                 <strong>Created At:</strong> {new Date(itemDetails.createdAt).toLocaleString()}<br />
                             </Card.Text>
+                            {!ownerLoggedIn && (
+                                <Button variant="warning" onClick={() => setShowOfferModal(true)}>
+                                    Make an Offer
+                                </Button>
+                            )}
                         </Card.Body>
                     </Card>
                 </Col>
@@ -117,15 +149,12 @@ const ItemDetail: React.FC = () => {
                                     <strong>Q:</strong> {q.questionText} <br />
                                     <small>Asked by: {q.askedBy}</small>
                                     <div className="ml-4 mt-2">
-                                        {/* Check if answers exist and have a length > 0 */}
                                         {q.answers && q.answers.length > 0 ? (
-                                            // Display the answer if it exists
                                             <div>
                                                 <strong>A:</strong> {q.answers[0].answerText} <br />
                                                 <small>Answered by: {q.answers[0].answeredBy}</small>
                                             </div>
-                                        ) : ownerLoggedIn ?  (
-                                            // Display input to post an answer if none exists
+                                        ) : ownerLoggedIn ? (
                                             <Form.Group controlId={`answerInput-${q.questionId}`}>
                                                 <Form.Label>Post an Answer:</Form.Label>
                                                 <Form.Control
@@ -147,17 +176,17 @@ const ItemDetail: React.FC = () => {
                                                     Submit Answer
                                                 </Button>
                                             </Form.Group>
-                                        ) : (<div></div>)}
+                                        ) : (
+                                            <div></div>
+                                        )}
                                     </div>
-                                    <hr /> {/* This line will separate each Q&A */}
+                                    <hr />
                                 </div>
                             ))
                         ) : (
                             <p>No questions yet. Be the first to ask!</p>
                         )}
                     </div>
-
-
                 </Col>
             </Row>
 
@@ -168,6 +197,41 @@ const ItemDetail: React.FC = () => {
                     </Button>
                 </Col>
             </Row>
+
+            {/* Offer Modal */}
+            <Modal show={showOfferModal} onHide={() => setShowOfferModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Make an Offer</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group controlId="offerInput">
+                        <Form.Label>Enter your offer amount:</Form.Label>
+                        <Form.Control
+                            type="number"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            value={offerAmount}
+                            onChange={(e) => setOfferAmount(e.target.value)}
+                            disabled={loading} // Disable input while loading
+                        />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowOfferModal(false)} disabled={loading}>
+                        Cancel
+                    </Button>
+                    <Button variant="success" onClick={handleOfferSubmit} disabled={loading}>
+                        {loading ? (
+                            <>
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Submitting...
+                            </>
+                        ) : (
+                            "Submit Offer"
+                        )}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };
