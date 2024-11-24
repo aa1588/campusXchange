@@ -1,2 +1,6 @@
-package com.unt.campusxchange.notification.sse;public record Notification() {
+package com.unt.campusxchange.notification.sse;
+
+import java.time.Instant;
+
+public record Notification(String message, Instant timestamp) {
 }
