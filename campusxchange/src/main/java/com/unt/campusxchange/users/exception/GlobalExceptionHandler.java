@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -81,6 +82,18 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Access Denied");
         problemDetail.setType(URI.create("https://example.com/problems/access-denied"));
         problemDetail.setTitle("Access Denied");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(InvalidBearerTokenException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidBearerTokenException(InvalidBearerTokenException ex){
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid Bearer");
+        problemDetail.setType(URI.create("https://example.com/problems/invalid-bearer"));
+        problemDetail.setTitle("Invalid Bearer");
         problemDetail.setDetail(ex.getMessage());
         problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
         Map<String, String> fieldErrors = new HashMap<>();
