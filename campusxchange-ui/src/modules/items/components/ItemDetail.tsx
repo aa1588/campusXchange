@@ -1,59 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import ItemService from '../service/itemservice';
-import QuestionService from '../service/QuestionService';
-import { Carousel, Card, Row, Col, Button, Form } from 'react-bootstrap';
-import LayoutHeading from '../../../layout/LayoutHeading';
+import React, { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import ItemService from '../service/itemservice'
+import QuestionService from '../service/QuestionService'
+import { Carousel, Card, Row, Col, Button, Form } from 'react-bootstrap'
+import LayoutHeading from '../../../layout/LayoutHeading'
 
 const ItemDetail: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
-    const [itemDetails, setItemDetails] = useState<any>(null);
-    const [questions, setQuestions] = useState<any[]>([]);
-    const [newQuestion, setNewQuestion] = useState<string>("");
-    const [answerText, setAnswerText] = useState<{ [key: number]: string }>({});
-    const navigate = useNavigate();
-    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
+    const { id } = useParams<{ id: string }>()
+    const [itemDetails, setItemDetails] = useState<any>(null)
+    const [questions, setQuestions] = useState<any[]>([])
+    const [newQuestion, setNewQuestion] = useState<string>('')
+    const [answerText, setAnswerText] = useState<{ [key: number]: string }>({})
+    const navigate = useNavigate()
+    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false)
 
     useEffect(() => {
         const fetchItemDetails = async () => {
             if (id) {
-                const item = await ItemService.getItemById(parseInt(id));
-                setItemDetails(item);
-                const userId = JSON.parse(localStorage.getItem("user") || '{}').userId;
-                if(item && item.listed_by === userId){
-                    setOwnerLoggedIn(true);
+                const item = await ItemService.getItemById(parseInt(id))
+                setItemDetails(item)
+                const userId = JSON.parse(
+                    localStorage.getItem('user') || '{}'
+                ).userId
+                if (item && item.listed_by === userId) {
+                    setOwnerLoggedIn(true)
                 }
-
             }
-        };
-        
-        fetchItemDetails();
-        fetchQuestions();
-    }, [id]);
+        }
+
+        fetchItemDetails()
+        fetchQuestions()
+    }, [id])
 
     const fetchQuestions = async () => {
-        const fetchedQuestions = await QuestionService.getAllQuestionAnswerByItemId(parseInt(id ?? '0'));
-        setQuestions(fetchedQuestions.data);
-    };
+        const fetchedQuestions =
+            await QuestionService.getAllQuestionAnswerByItemId(
+                parseInt(id ?? '0')
+            )
+        setQuestions(fetchedQuestions.data)
+    }
 
     const handleQuestionSubmit = async () => {
-        if (!newQuestion.trim()) return;
-        await QuestionService.postQuestion(parseInt(id ?? '0'), newQuestion);
-        setNewQuestion("");
-        fetchQuestions(); // Refresh the list of questions and answers
-    };
+        if (!newQuestion.trim()) return
+        await QuestionService.postQuestion(parseInt(id ?? '0'), newQuestion)
+        setNewQuestion('')
+        fetchQuestions() // Refresh the list of questions and answers
+    }
 
     const handleAnswerSubmit = async (questionId: number) => {
-        const answer = answerText[questionId]?.trim();
-        if (!answer) return;
+        const answer = answerText[questionId]?.trim()
+        if (!answer) return
 
-        await QuestionService.postAnswerForAQuestion(questionId, answer);
-        setAnswerText((prev) => ({ ...prev, [questionId]: "" }));
-        fetchQuestions(); // Refresh the list of questions and answers
-    };
+        await QuestionService.postAnswerForAQuestion(questionId, answer)
+        setAnswerText((prev) => ({ ...prev, [questionId]: '' }))
+        fetchQuestions() // Refresh the list of questions and answers
+    }
 
     if (!itemDetails) {
-        return <div>Loading...</div>;
+        return <div>Loading...</div>
     }
 
     return (
@@ -68,11 +72,17 @@ const ItemDetail: React.FC = () => {
             <Row className="align-items-stretch">
                 <Col md={4} className="d-flex">
                     <Carousel className="flex-fill">
-                        {itemDetails.imageUrls.map((imageUrl: string, index: number) => (
-                            <Carousel.Item key={index}>
-                                <img className="d-block w-100" src={imageUrl} alt={`Slide ${index + 1}`} />
-                            </Carousel.Item>
-                        ))}
+                        {itemDetails.imageUrls.map(
+                            (imageUrl: string, index: number) => (
+                                <Carousel.Item key={index}>
+                                    <img
+                                        className="d-block w-100"
+                                        src={imageUrl}
+                                        alt={`Slide ${index + 1}`}
+                                    />
+                                </Carousel.Item>
+                            )
+                        )}
                     </Carousel>
                 </Col>
                 <Col md={8} className="d-flex">
@@ -82,11 +92,23 @@ const ItemDetail: React.FC = () => {
                                 {itemDetails.title}
                             </Card.Title>
                             <Card.Text>
-                                <strong>Quantity:</strong> {itemDetails.quantity}<br />
-                                <strong>Description:</strong> {itemDetails.description}<br />
-                                <strong>Price:</strong> ${itemDetails.price.toFixed(2)}<br />
-                                <strong>Category:</strong> {itemDetails.category}<br />
-                                <strong>Created At:</strong> {new Date(itemDetails.createdAt).toLocaleString()}<br />
+                                <strong>Quantity:</strong>{' '}
+                                {itemDetails.quantity}
+                                <br />
+                                <strong>Description:</strong>{' '}
+                                {itemDetails.description}
+                                <br />
+                                <strong>Price:</strong> $
+                                {itemDetails.price.toFixed(2)}
+                                <br />
+                                <strong>Category:</strong>{' '}
+                                {itemDetails.category}
+                                <br />
+                                <strong>Created At:</strong>{' '}
+                                {new Date(
+                                    itemDetails.createdAt
+                                ).toLocaleString()}
+                                <br />
                             </Card.Text>
                         </Card.Body>
                     </Card>
@@ -105,7 +127,11 @@ const ItemDetail: React.FC = () => {
                             value={newQuestion}
                             onChange={(e) => setNewQuestion(e.target.value)}
                         />
-                        <Button variant="primary" onClick={handleQuestionSubmit} className="mt-2">
+                        <Button
+                            variant="primary"
+                            onClick={handleQuestionSubmit}
+                            className="mt-2"
+                        >
                             Submit Question
                         </Button>
                     </Form.Group>
@@ -121,43 +147,64 @@ const ItemDetail: React.FC = () => {
                                         {q.answers && q.answers.length > 0 ? (
                                             // Display the answer if it exists
                                             <div>
-                                                <strong>A:</strong> {q.answers[0].answerText} <br />
-                                                <small>Answered by: {q.answers[0].answeredBy}</small>
+                                                <strong>A:</strong>{' '}
+                                                {q.answers[0].answerText} <br />
+                                                <small>
+                                                    Answered by:{' '}
+                                                    {q.answers[0].answeredBy}
+                                                </small>
                                             </div>
-                                        ) : ownerLoggedIn ?  (
+                                        ) : ownerLoggedIn ? (
                                             // Display input to post an answer if none exists
-                                            <Form.Group controlId={`answerInput-${q.questionId}`}>
-                                                <Form.Label>Post an Answer:</Form.Label>
+                                            <Form.Group
+                                                controlId={`answerInput-${q.questionId}`}
+                                            >
+                                                <Form.Label>
+                                                    Post an Answer:
+                                                </Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     placeholder="Type your answer here"
-                                                    value={answerText[q.questionId] || ""}
+                                                    value={
+                                                        answerText[
+                                                            q.questionId
+                                                        ] || ''
+                                                    }
                                                     onChange={(e) =>
-                                                        setAnswerText((prev) => ({
-                                                            ...prev,
-                                                            [q.questionId]: e.target.value,
-                                                        }))
+                                                        setAnswerText(
+                                                            (prev) => ({
+                                                                ...prev,
+                                                                [q.questionId]:
+                                                                    e.target
+                                                                        .value,
+                                                            })
+                                                        )
                                                     }
                                                 />
                                                 <Button
                                                     variant="success"
-                                                    onClick={() => handleAnswerSubmit(q.questionId)}
+                                                    onClick={() =>
+                                                        handleAnswerSubmit(
+                                                            q.questionId
+                                                        )
+                                                    }
                                                     className="mt-2"
                                                 >
                                                     Submit Answer
                                                 </Button>
                                             </Form.Group>
-                                        ) : (<div></div>)}
+                                        ) : (
+                                            <div></div>
+                                        )}
                                     </div>
-                                    <hr /> {/* This line will separate each Q&A */}
+                                    <hr />{' '}
+                                    {/* This line will separate each Q&A */}
                                 </div>
                             ))
                         ) : (
                             <p>No questions yet. Be the first to ask!</p>
                         )}
                     </div>
-
-
                 </Col>
             </Row>
 
@@ -169,7 +216,7 @@ const ItemDetail: React.FC = () => {
                 </Col>
             </Row>
         </div>
-    );
-};
+    )
+}
 
-export default ItemDetail;
+export default ItemDetail

@@ -2,7 +2,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import { DecodedToken } from '../model/DecodedToken'
-import { BACKEND_BASE_URL } from '../../../config/config';
+import { BACKEND_BASE_URL } from '../../../config/config'
 
 const API_URL = `${BACKEND_BASE_URL}/api/auth/`
 

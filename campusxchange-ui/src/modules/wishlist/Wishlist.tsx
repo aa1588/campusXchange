@@ -45,10 +45,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onDislike }) => {
             <Card.Body>
                 <Card.Title>{item.title}</Card.Title>
                 <Card.Text>{item.price}</Card.Text>
-                <Button
-                    onClick={() => onDislike(item.id)}
-                    variant='success'
-                >
+                <Button onClick={() => onDislike(item.id)} variant="success">
                     💚
                 </Button>
             </Card.Body>
@@ -57,17 +54,15 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onDislike }) => {
 }
 
 const Wishlist: React.FC = () => {
-
     const [likedItems, setLikedItems] = useState<Item[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
     useEffect(() => {
         const fetchItems = async () => {
-            setLoading(true);
-            fetchWishlistItems();
-            setLoading(false);
-            
+            setLoading(true)
+            fetchWishlistItems()
+            setLoading(false)
         }
 
         fetchItems()
@@ -75,34 +70,31 @@ const Wishlist: React.FC = () => {
 
     const fetchWishlistItems = async () => {
         try {
-            const wishlistResponse = await WishlistService.getMyWishListItems();
+            const wishlistResponse = await WishlistService.getMyWishListItems()
             const myWishListItems = wishlistResponse.data.map((item: any) => ({
                 id: item.id,
                 title: item.title,
                 price: item.price,
                 imageUrls: item.imageUrls || [], // Fallback to an empty array if imageUrls is missing
-            }));
-            setLikedItems(myWishListItems);
+            }))
+            setLikedItems(myWishListItems)
         } catch (err) {
-            handleError(err, 'Failed to fetch wishlist items');
+            handleError(err, 'Failed to fetch wishlist items')
         }
-    };
+    }
 
     const handleError = (err: unknown, defaultMessage: string) => {
         if (axios.isAxiosError(err)) {
-            setError(err.response?.data?.message || defaultMessage);
+            setError(err.response?.data?.message || defaultMessage)
         } else if (err instanceof Error) {
-            setError(err.message);
+            setError(err.message)
         } else {
-            setError('An unknown error occurred');
+            setError('An unknown error occurred')
         }
-    };
+    }
 
     const handleDislike = async (id: number) => {
-
-        await WishlistService.deleteFromMyWishlistItems(id);
-        
-    
+        await WishlistService.deleteFromMyWishlistItems(id)
     }
 
     return (
@@ -110,41 +102,48 @@ const Wishlist: React.FC = () => {
             <LayoutHeading
                 heading={'Wishlist'}
                 color={'text-success'}
-                content={'Add items to your wishlist to save them for later, get notified via email when price drop.'
+                content={
+                    'Add items to your wishlist to save them for later, get notified via email when price drop.'
                 }
             />
 
-        <Container>
-        <Row>
-                <Col md={12}>
-                    <Card
-                        style={{ backgroundColor: '#F6F0F0', padding: '20px' }}
-                    >
-                        {loading ? (
-                            <Spinner animation="border" />
-                        ) : error ? (
-                            <Alert variant="danger">Error: {error}</Alert>
-                        ) : likedItems.length > 0 ? (
-                            <Row>
-                                {likedItems.map((item) => (
-                                    <Col md={4} key={item.id} className="mb-4">
-                                        <ItemCard
-                                            item={item}
-                                            onDislike={handleDislike}
-                                        />
-                                    </Col>
-                                ))}
-                            </Row>
-                        ) : (
-                            <Alert variant="warning">No items found</Alert>
-                        )}
-                    </Card>
-                </Col>
-            </Row>
-        </Container>
+            <Container>
+                <Row>
+                    <Col md={12}>
+                        <Card
+                            style={{
+                                backgroundColor: '#F6F0F0',
+                                padding: '20px',
+                            }}
+                        >
+                            {loading ? (
+                                <Spinner animation="border" />
+                            ) : error ? (
+                                <Alert variant="danger">Error: {error}</Alert>
+                            ) : likedItems.length > 0 ? (
+                                <Row>
+                                    {likedItems.map((item) => (
+                                        <Col
+                                            md={4}
+                                            key={item.id}
+                                            className="mb-4"
+                                        >
+                                            <ItemCard
+                                                item={item}
+                                                onDislike={handleDislike}
+                                            />
+                                        </Col>
+                                    ))}
+                                </Row>
+                            ) : (
+                                <Alert variant="warning">No items found</Alert>
+                            )}
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
         </>
     )
-
 }
 
-export default Wishlist;
+export default Wishlist
