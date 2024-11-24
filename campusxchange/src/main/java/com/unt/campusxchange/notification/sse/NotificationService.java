@@ -1,12 +1,12 @@
 package com.unt.campusxchange.notification.sse;
 
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.concurrent.ConcurrentHashMap;
 /*
-*  Class For Tracking SSE Connections
-* */
+ *  Class For Tracking SSE Connections
+ * */
 
 @Component
 public class NotificationService {
@@ -16,7 +16,7 @@ public class NotificationService {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); // Keep the connection alive
         emitters.put(email, emitter);
         emitter.onCompletion(() -> emitters.remove(email)); // Remove on completion
-        emitter.onTimeout(() -> emitters.remove(email));    // Remove on timeout
+        emitter.onTimeout(() -> emitters.remove(email)); // Remove on timeout
         return emitter;
     }
 

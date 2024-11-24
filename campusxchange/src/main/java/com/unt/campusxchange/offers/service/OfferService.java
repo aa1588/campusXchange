@@ -18,7 +18,6 @@ import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import jakarta.transaction.Transactional;
-
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -71,9 +70,7 @@ public class OfferService {
         if (itemOwner != null) {
             String notificationMessage = String.format(
                     "You have received a new offer from %s for your item: %s",
-                    user.getFirstname(),
-                    mainItem.getTitle()
-            );
+                    user.getFirstname(), mainItem.getTitle());
 
             Notification notification = new Notification(notificationMessage, Instant.now());
 

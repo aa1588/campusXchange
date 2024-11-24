@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidBearerTokenException.class)
-    public ResponseEntity<ProblemDetail> handleInvalidBearerTokenException(InvalidBearerTokenException ex){
+    public ResponseEntity<ProblemDetail> handleInvalidBearerTokenException(InvalidBearerTokenException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid Bearer");
         problemDetail.setType(URI.create("https://example.com/problems/invalid-bearer"));
         problemDetail.setTitle("Invalid Bearer");

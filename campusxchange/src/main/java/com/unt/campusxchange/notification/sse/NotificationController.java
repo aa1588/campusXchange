@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
@@ -20,11 +19,11 @@ public class NotificationController {
 
     @GetMapping("/subscribe")
     public SseEmitter subscribe(@RequestParam("token") String token) {
-        if(!jwtProvider.validateToken(token)) {
+        if (!jwtProvider.validateToken(token)) {
             throw new InvalidBearerTokenException("Invalid or expired JWT token");
         }
 
-        String email = jwtProvider.getEmailFromToken(token);    // Get the email from Principal
+        String email = jwtProvider.getEmailFromToken(token); // Get the email from Principal
         return notificationService.register(email);
     }
 }

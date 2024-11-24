@@ -54,7 +54,7 @@ public class JWTProvider {
         try {
             Jwt jwt = jwtDecoder.decode(token);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new InvalidBearerTokenException("The token is invalid or expired. Please provide a valid token.");
         }
     }

@@ -13,7 +13,6 @@ import com.unt.campusxchange.notification.sse.NotificationService;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,7 +52,6 @@ public class ItemService {
 
         notificationService.sendNotification("amritadhikari@my.unt.edu", notification);
         /* Test for SSE-Notification System */
-
 
         return new CreateItemResponse(
                 savedItem.getId(),
