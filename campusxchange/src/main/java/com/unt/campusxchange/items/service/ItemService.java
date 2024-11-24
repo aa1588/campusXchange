@@ -8,9 +8,13 @@ import com.unt.campusxchange.items.entity.Category;
 import com.unt.campusxchange.items.entity.Item;
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
 import com.unt.campusxchange.items.repo.ItemRepository;
+import com.unt.campusxchange.notification.sse.Notification;
+import com.unt.campusxchange.notification.sse.NotificationService;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
+
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public CreateItemResponse createItem(CreateItemRequest request, String email) {
 
@@ -42,6 +47,13 @@ public class ItemService {
         item.setUser(user);
         item.setImageUrls(request.imageUrls());
         Item savedItem = itemRepository.save(item);
+
+        /* Test for SSE-Notification System */
+        Notification notification = new Notification("Product Added to the Marketplace", Instant.now());
+
+        notificationService.sendNotification("amritadhikari@my.unt.edu", notification);
+        /* Test for SSE-Notification System */
+
 
         return new CreateItemResponse(
                 savedItem.getId(),
