@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Form, Container } from 'react-bootstrap'
-import { BACKEND_BASE_URL } from '../config/config';
+import { BACKEND_BASE_URL } from '../config/config'
 
 // Define the type for the categories
 type Category = string

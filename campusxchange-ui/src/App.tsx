@@ -10,13 +10,13 @@ import { Navigate } from 'react-router-dom'
 import Login from './modules/auth/components/Login'
 import Register from './modules/auth/components/Register'
 import Home from './components/Home'
-import CustomNavBar from './layout/CustomNavBar'
 import AuthService from './modules/auth/service/authservice'
 import Dashboard from './modules/dashboard/components/Dashboard'
 import ItemDetail from './modules/items/components/ItemDetail'
 import AddItemForm from './modules/items/components/AddItemForm'
 import EditItem from './modules/items/components/EditItem'
 import Wishlist from './modules/wishlist/Wishlist'
+import MyTestNavBar from './layout/MyTestNavBar'
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
@@ -49,7 +49,8 @@ const App: React.FC = () => {
 
             <div>
                 {/*<MainNavBar currentUser={currentUser} handleLogout={handleLogout} />*/}
-                <CustomNavBar />
+                {/*<CustomNavBar />*/}
+                <MyTestNavBar />
 
                 <div className="container mt-3">
                     <Routes>
