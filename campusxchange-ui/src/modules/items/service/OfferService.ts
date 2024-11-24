@@ -8,11 +8,11 @@ const API_OFFER = `${BACKEND_BASE_URL}/api/offers`
 
 class OfferService {
 
-    makeAnOffer = async (itemId : number, amount : number) => {
+    makeAnOffer = async (itemId : number, formdata : string) => {
         const token = Cookies.get('authToken');
 
         try{
-            await axios.post(`${OFFER_CREATE_API_URL}/${itemId}`, {"amount" : amount}, {
+            await axios.post(`${OFFER_CREATE_API_URL}/${itemId}`, formdata, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'

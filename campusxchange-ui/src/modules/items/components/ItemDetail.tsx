@@ -3,8 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ItemService from '../service/itemservice';
 import QuestionService from '../service/QuestionService';
 import OfferService from '../service/OfferService';
-import { Carousel, Card, Row, Col, Button, Form, Modal } from 'react-bootstrap';
+import { Carousel, Card, Row, Col, Button, Form, Modal, Tabs, Tab, Table } from 'react-bootstrap';
 import LayoutHeading from '../../../layout/LayoutHeading';
+import itemservice from '../service/itemservice';
+import Cookies from 'js-cookie';
 
 const ItemDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -17,6 +19,9 @@ const ItemDetail: React.FC = () => {
     const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
     const [offerAmount, setOfferAmount] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false); // State to manage loading spinner
+    const [myitems, setMyitems] = useState<any[]>([]);
+    const [selectedItems, setSelectedItems] = useState<{ [key: number]: number }>({}); // Stores selected item IDs and their quantities
+    const [activeTab, setActiveTab] = useState<string>('offer');
 
     useEffect(() => {
         const fetchItemDetails = async () => {
@@ -30,9 +35,16 @@ const ItemDetail: React.FC = () => {
             }
         };
 
+        fetchMyItems();
         fetchItemDetails();
         fetchQuestions();
     }, [id]);
+
+    const fetchMyItems = async () => {
+        const token = Cookies.get('authToken');
+        const myItems = await itemservice.fetchItemsByUser(token);
+        setMyitems(myItems);
+    };
 
     const fetchQuestions = async () => {
         const fetchedQuestions = await QuestionService.getAllQuestionAnswerByItemId(parseInt(id ?? '0'));
@@ -55,25 +67,49 @@ const ItemDetail: React.FC = () => {
         fetchQuestions(); // Refresh the list of questions and answers
     };
 
+    const toggleTradeItemSelection = async (itemid : number) => {
+        debugger;
+    }
+
+    const updateItemQuantity = (itemId: number, quantity: number) => {
+        setSelectedItems((prev) => ({
+            ...prev,
+            [itemId]: quantity,
+        }));
+    };
+
     const handleOfferSubmit = async () => {
+
         if (!offerAmount.trim()) {
-            alert("Please enter an offer amount.");
+            alert('Please enter an amount.');
             return;
         }
 
-        const parsedOfferAmount = parseFloat(offerAmount);
-        if (isNaN(parsedOfferAmount) || parsedOfferAmount <= 0) {
-            alert("Please enter a valid offer amount greater than 0.");
+        const parsedAmount = parseFloat(offerAmount);
+        if (isNaN(parsedAmount) || parsedAmount <= 0) {
+            alert('Please enter a valid amount greater than 0.');
             return;
         }
 
         setLoading(true); // Show spinner
+
         try {
-            await OfferService.makeAnOffer(parseInt(id ?? "0"), parsedOfferAmount);
+            const formData: any = { amount: parsedAmount };
+
+            if (activeTab === 'trade') {
+                const offerItems = Object.entries(selectedItems).map(([itemId, quantity]) => ({
+                    itemId: parseInt(itemId),
+                    quantity,
+                }));
+                formData.offerItems = offerItems;
+            }
+
+            await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
             setShowOfferModal(false); // Close the modal
-            setOfferAmount(""); // Reset the input field
+            setOfferAmount('');
+            setSelectedItems({});
         } catch (error) {
-            console.error("Error submitting offer:", error);
+            console.error('Error submitting offer:', error);
         } finally {
             setLoading(false); // Hide spinner
         }
@@ -82,6 +118,18 @@ const ItemDetail: React.FC = () => {
     if (!itemDetails) {
         return <div>Loading...</div>;
     }
+
+    const toggleItemSelection = (itemId: number, checked: boolean) => {
+        setSelectedItems((prev) => {
+            const updated = { ...prev };
+            if (checked) {
+                updated[itemId] = 1; // Default quantity to 1 if checked
+            } else {
+                delete updated[itemId];
+            }
+            return updated;
+        });
+    };
 
     return (
         <div className="container mt-4">
@@ -204,17 +252,65 @@ const ItemDetail: React.FC = () => {
                     <Modal.Title>Make an Offer</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Group controlId="offerInput">
-                        <Form.Label>Enter your offer amount:</Form.Label>
-                        <Form.Control
-                            type="number"
-                            step="0.01"
-                            placeholder="Enter amount"
-                            value={offerAmount}
-                            onChange={(e) => setOfferAmount(e.target.value)}
-                            disabled={loading} // Disable input while loading
-                        />
-                    </Form.Group>
+                    <Tabs
+                        activeKey={activeTab}
+                        onSelect={(key) => setActiveTab(key ?? 'offer')}
+                        id="offer-tabs"
+                        className="mb-3"
+                    >
+                        {/* Offer Tab */}
+                        <Tab eventKey="offer" title="Offer">
+                            <Form.Group controlId="offerInput">
+                                <Form.Label>Enter your offer amount:</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="Enter amount"
+                                    value={offerAmount}
+                                    onChange={(e) => setOfferAmount(e.target.value)}
+                                    disabled={loading}
+                                />
+                            </Form.Group>
+                        </Tab>
+
+                        {/* Trade Tab */}
+                        <Tab eventKey="trade" title="Trade">
+                            <Form.Group controlId="tradeAmountInput">
+                                <Form.Label>Enter your trade amount:</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="Enter amount"
+                                    value={offerAmount}
+                                    onChange={(e) => setOfferAmount(e.target.value)}
+                                    disabled={loading}
+                                />
+                            </Form.Group>
+                            <p>Select items for trade:</p>
+                            {myitems.map((item) => (
+                                <div key={item.id} className="mb-2">
+                                    <Form.Check
+                                        type="checkbox"
+                                        label={`${item.title} (Available: ${item.quantity})`}
+                                        onChange={(e) => toggleItemSelection(item.id, e.target.checked)}
+                                    />
+                                    {selectedItems[item.id] !== undefined && (
+                                        <Form.Control
+                                            type="number"
+                                            placeholder="Quantity"
+                                            min="1"
+                                            max={item.quantity}
+                                            value={selectedItems[item.id]}
+                                            onChange={(e) =>
+                                                updateItemQuantity(item.id, parseInt(e.target.value) || 1)
+                                            }
+                                            className="mt-2"
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </Tab>
+                    </Tabs>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowOfferModal(false)} disabled={loading}>
@@ -227,7 +323,7 @@ const ItemDetail: React.FC = () => {
                                 Submitting...
                             </>
                         ) : (
-                            "Submit Offer"
+                            'Submit Offer'
                         )}
                     </Button>
                 </Modal.Footer>
