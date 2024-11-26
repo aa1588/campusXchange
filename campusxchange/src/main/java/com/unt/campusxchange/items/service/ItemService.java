@@ -73,10 +73,16 @@ public class ItemService {
 
         if (selectedCategories == null || selectedCategories.isEmpty()) {
             // If no categories are selected, fetch all items
-            itemPage = itemRepository.findAll(pageable);
+            // itemPage = itemRepository.findAll(pageable);
+
+            // If no categories are selected, fetch all items where quantity > 0
+            itemPage = itemRepository.findByQuantityGreaterThan(0, pageable);
         } else {
             // Fetch items based on selected categories
-            itemPage = itemRepository.findByCategoryIn(selectedCategories, pageable);
+            // itemPage = itemRepository.findByCategoryIn(selectedCategories, pageable);
+
+            // Fetch items by category where quantity > 0
+            itemPage = itemRepository.findByCategoryInAndQuantityGreaterThan(selectedCategories, 0, pageable);
         }
 
         List<Item> items = itemPage.getContent(); // Fetch the list of Item objects
