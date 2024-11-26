@@ -17,6 +17,7 @@ interface Offer {
     };
     item: {
         title: string;
+        id: string;
     };
     status: string;
 }
@@ -127,10 +128,10 @@ const Dashboard: React.FC = () => {
                                 <thead>
                                     <tr>
                                         <th>Offer ID</th>
+                                        <th>Item Title</th>
                                         <th>Amount</th>
                                         <th>Offered By (Email)</th>
                                         <th>Offered By (Phone)</th>
-                                        <th>Item Title</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -139,14 +140,19 @@ const Dashboard: React.FC = () => {
                                     {offers.map((offer) => (
                                         <tr key={offer.id}>
                                             <td>{offer.id}</td>
+                                            <td>
+                                                {/* Make Item Title a link */}
+                                                <Link to={`/items/${offer.item.id}`} className="text-decoration-none">
+                                                    {offer.item.title}
+                                                </Link>
+                                            </td>
                                             <td>${offer.amount.toFixed(2)}</td>
                                             <td>{offer.offeredBy.email}</td>
                                             <td>{offer.offeredBy.phone}</td>
-                                            <td>{offer.item.title}</td>
                                             <td>{offer.status}</td>
                                             <td>
                                                 {/* Conditionally render buttons based on the offer's status */}
-                                                {offer.status !== 'ACCEPTED' && offer.status !== 'DECLINED' && (
+                                                {offer.status !== 'accepted' && offer.status !== 'declined' && (
                                                     <>
                                                         <Button
                                                             variant="success"
