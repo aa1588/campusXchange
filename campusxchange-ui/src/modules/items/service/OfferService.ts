@@ -56,7 +56,7 @@ class OfferService {
         const token = Cookies.get('authToken');
 
         try{
-            const response = await axios.put(`${API_OFFER}/${offerid}/accept`, {
+            const response = await axios.put(`${API_OFFER}/${offerid}/accept`, null, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
