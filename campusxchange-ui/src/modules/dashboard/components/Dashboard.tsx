@@ -145,21 +145,26 @@ const Dashboard: React.FC = () => {
                                             <td>{offer.item.title}</td>
                                             <td>{offer.status}</td>
                                             <td>
-                                                <Button
-                                                    variant="success"
-                                                    size="sm"
-                                                    className="me-2"
-                                                    onClick={() => handleOfferAction(offer.id, 'accept')}
-                                                >
-                                                    Accept
-                                                </Button>
-                                                <Button
-                                                    variant="danger"
-                                                    size="sm"
-                                                    onClick={() => handleOfferAction(offer.id, 'decline')}
-                                                >
-                                                    Decline
-                                                </Button>
+                                                {/* Conditionally render buttons based on the offer's status */}
+                                                {offer.status !== 'ACCEPTED' && offer.status !== 'DECLINED' && (
+                                                    <>
+                                                        <Button
+                                                            variant="success"
+                                                            size="sm"
+                                                            className="me-2"
+                                                            onClick={() => handleOfferAction(offer.id, 'accept')}
+                                                        >
+                                                            Accept
+                                                        </Button>
+                                                        <Button
+                                                            variant="danger"
+                                                            size="sm"
+                                                            onClick={() => handleOfferAction(offer.id, 'decline')}
+                                                        >
+                                                            Decline
+                                                        </Button>
+                                                    </>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
@@ -168,6 +173,7 @@ const Dashboard: React.FC = () => {
                         </Col>
                     )}
                 </Row>
+
                 
 
                 {/*<Row className="mt-4">*/}
