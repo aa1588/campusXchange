@@ -17,6 +17,11 @@ import AddItemForm from './modules/items/components/AddItemForm'
 import EditItem from './modules/items/components/EditItem'
 import Wishlist from './modules/wishlist/Wishlist'
 import MyTestNavBar from './layout/MyTestNavBar'
+import AdminDashboard from './modules/admin/components/AdminDashboard'
+
+function Users() {
+    return null
+}
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
@@ -72,6 +77,11 @@ const App: React.FC = () => {
                             element={<AddItemForm />}
                         />
                         <Route path="/edit-item/:id" element={<EditItem />} />
+
+                        <Route
+                            path="/admin/dashboard/*"
+                            element={<AdminDashboard />}
+                        />
                     </Routes>
                 </div>
             </div>

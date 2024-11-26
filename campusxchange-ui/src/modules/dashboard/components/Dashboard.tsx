@@ -9,17 +9,17 @@ import AddItemForSale from '../../items/components/AddItemForm'
 import OfferService from '../../items/service/OfferService'
 
 interface Offer {
-    id: number;
-    amount: number;
+    id: number
+    amount: number
     offeredBy: {
-        email: string;
-        phone: string;
-    };
+        email: string
+        phone: string
+    }
     item: {
-        title: string;
-        id: string;
-    };
-    status: string;
+        title: string
+        id: string
+    }
+    status: string
 }
 
 const Dashboard: React.FC = () => {
@@ -115,12 +115,16 @@ const Dashboard: React.FC = () => {
                     <LayoutHeading
                         heading={'My Offers'}
                         color={'text-success'}
-                        content={'Here you can review and manage offers for your listed items.'}
+                        content={
+                            'Here you can review and manage offers for your listed items.'
+                        }
                     />
                     {error && <p className="text-danger">{error}</p>}
                     {offers.length === 0 ? (
                         <Col md={12}>
-                            <p className="text-muted">You have no offers for your items.</p>
+                            <p className="text-muted">
+                                You have no offers for your items.
+                            </p>
                         </Col>
                     ) : (
                         <Col md={12}>
@@ -142,7 +146,10 @@ const Dashboard: React.FC = () => {
                                             <td>{offer.id}</td>
                                             <td>
                                                 {/* Make Item Title a link */}
-                                                <Link to={`/items/${offer.item.id}`} className="text-decoration-none">
+                                                <Link
+                                                    to={`/items/${offer.item.id}`}
+                                                    className="text-decoration-none"
+                                                >
                                                     {offer.item.title}
                                                 </Link>
                                             </td>
@@ -152,25 +159,37 @@ const Dashboard: React.FC = () => {
                                             <td>{offer.status}</td>
                                             <td>
                                                 {/* Conditionally render buttons based on the offer's status */}
-                                                {offer.status !== 'accepted' && offer.status !== 'declined' && (
-                                                    <>
-                                                        <Button
-                                                            variant="success"
-                                                            size="sm"
-                                                            className="me-2"
-                                                            onClick={() => handleOfferAction(offer.id, 'accept')}
-                                                        >
-                                                            Accept
-                                                        </Button>
-                                                        <Button
-                                                            variant="danger"
-                                                            size="sm"
-                                                            onClick={() => handleOfferAction(offer.id, 'decline')}
-                                                        >
-                                                            Decline
-                                                        </Button>
-                                                    </>
-                                                )}
+                                                {offer.status !== 'accepted' &&
+                                                    offer.status !==
+                                                        'declined' && (
+                                                        <>
+                                                            <Button
+                                                                variant="success"
+                                                                size="sm"
+                                                                className="me-2"
+                                                                onClick={() =>
+                                                                    handleOfferAction(
+                                                                        offer.id,
+                                                                        'accept'
+                                                                    )
+                                                                }
+                                                            >
+                                                                Accept
+                                                            </Button>
+                                                            <Button
+                                                                variant="danger"
+                                                                size="sm"
+                                                                onClick={() =>
+                                                                    handleOfferAction(
+                                                                        offer.id,
+                                                                        'decline'
+                                                                    )
+                                                                }
+                                                            >
+                                                                Decline
+                                                            </Button>
+                                                        </>
+                                                    )}
                                             </td>
                                         </tr>
                                     ))}
@@ -179,8 +198,6 @@ const Dashboard: React.FC = () => {
                         </Col>
                     )}
                 </Row>
-
-                
 
                 {/*<Row className="mt-4">*/}
                 {/*    <LayoutHeading heading={'My Listing'} color={'text-success'} content={'Here you can view, edit, and manage all the items you have listed for sale. Keep track of your items, update their details, or remove them from the marketplace when they are sold.'}/>*/}
