@@ -45,6 +45,7 @@ public class OfferService {
         offer.setOfferedBy(user);
         offer.setItem(mainItem);
         offer.setStatus(OfferStatus.PENDING);
+        offer.setOfferType(offerDTO.offerType());
 
         // Only map offerItems if they are provided in the request
         List<OfferItem> offerItems = offerDTO.offerItems() != null
@@ -109,6 +110,7 @@ public class OfferService {
                 userDTO,
                 itemDTO,
                 offer.getStatus(),
+                offer.getOfferType(),
                 offerItemDTOs,
                 offer.getCreatedAt());
     }
@@ -128,6 +130,43 @@ public class OfferService {
 
         // Map offers to DTOs
         return offers.stream().map(this::toOfferDTO).collect(Collectors.toList());
+    }
+
+    public OfferDTO updateOffer(Integer offerId, String email, OfferDTO offerDTO) {
+        Offer existingOffer =
+                offerRepository.findById(offerId).orElseThrow(() -> new OfferNotFoundException("Offer not found"));
+
+        // Check if the logged-in user is the one who created the offer
+        if (!existingOffer.getOfferedBy().getEmail().equals(email)) {
+            throw new SecurityException("You are not authorized to update this offer.");
+        }
+
+        // Update offer attributes
+        if (offerDTO.amount() != null) {
+            existingOffer.setAmount(offerDTO.amount());
+        }
+
+        if (offerDTO.offerItems() != null) {
+            // Map offerItems from DTO to entity
+            List<OfferItem> updatedOfferItems = offerDTO.offerItems().stream()
+                    .map(offerItemDTO -> {
+                        Item item = itemRepository
+                                .findById(offerItemDTO.itemId())
+                                .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+                        OfferItem offerItem = new OfferItem();
+                        offerItem.setOffer(existingOffer);
+                        offerItem.setItem(item);
+                        offerItem.setQuantity(offerItemDTO.quantity());
+                        return offerItem;
+                    })
+                    .collect(Collectors.toList());
+            existingOffer.setOfferItems(updatedOfferItems);
+        }
+
+        // Save the updated offer
+        Offer savedOffer = offerRepository.save(existingOffer);
+
+        return toOfferDTO(savedOffer);
     }
 
     public List<OfferDTO> listOffersForListOfItems(List<Item> items) {
