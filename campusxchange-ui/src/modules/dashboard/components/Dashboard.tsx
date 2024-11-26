@@ -6,40 +6,51 @@ import Cookies from 'js-cookie'
 import ItemService from '../../items/service/itemservice'
 import { Link } from 'react-router-dom'
 import AddItemForSale from '../../items/components/AddItemForm'
+import OfferService from '../../items/service/OfferService'
 
 interface Offer {
-    id: number
-    from: string
-    contact: string
-    offerPrice: number
+    id: number;
+    amount: number;
+    offeredBy: {
+        email: string;
+        phone: string;
+    };
+    item: {
+        title: string;
+        id: string;
+    };
+    status: string;
 }
 
 const Dashboard: React.FC = () => {
     const [items, setItems] = useState<Item[]>([])
+    const [offers, setOffers] = useState<Offer[]>([])
     const [error, setError] = useState<string | null>(null)
     const [showAddItemModal, setShowAddItemModal] = useState(false) // State for modal visibility
-
-    const offers: Offer[] = [
-        {
-            id: 1,
-            from: 'sam@my.unt.edu',
-            contact: 'Unavailable',
-            offerPrice: 325.0,
-        },
-    ]
 
     useEffect(() => {
         const fetchItems = async () => {
             try {
                 const token: string | undefined = Cookies.get('authToken')
-                const data = await ItemService.fetchItemsByUser(token) // Use the service
+                const data = await ItemService.fetchItemsByUser(token)
                 setItems(data)
             } catch (err: any) {
                 setError(err.message)
             }
         }
 
+        const fetchOffers = async () => {
+            try {
+                const token: string | undefined = Cookies.get('authToken')
+                const offersData = await OfferService.getAllMyListingsOffer() // Fetch offers
+                setOffers(offersData)
+            } catch (err: any) {
+                setError(err.message)
+            }
+        }
+
         fetchItems()
+        fetchOffers() // Call fetchOffers to load the offers
     }, [])
 
     const handleDeleteItem = async (itemId: number) => {
@@ -55,6 +66,21 @@ const Dashboard: React.FC = () => {
             } catch (err: any) {
                 setError(err.message)
             }
+        }
+    }
+
+    const handleOfferAction = async (offerId: number, action: string) => {
+        try {
+            const token: string | undefined = Cookies.get('authToken')
+            if (action === 'accept') {
+                await OfferService.acceptOffer(offerId)
+            } else if (action === 'decline') {
+                await OfferService.declineOffer(offerId)
+            }
+            const offersData = await OfferService.getAllMyListingsOffer()
+            setOffers(offersData)
+        } catch (err: any) {
+            setError(err.message)
         }
     }
 
@@ -85,58 +111,76 @@ const Dashboard: React.FC = () => {
                     </Col>
                 </Row>
 
-                <Row>
+                <Row className="mt-4">
                     <LayoutHeading
-                        heading={'Offers'}
+                        heading={'My Offers'}
                         color={'text-success'}
-                        content={'Check offers on your listing.'}
+                        content={'Here you can review and manage offers for your listed items.'}
                     />
-                    <Col md={12}>
-                        <Table bordered hover striped variant="light">
-                            <thead className="thead-light">
-                                <tr>
-                                    <th className="text-white bg-success">
-                                        Id
-                                    </th>
-                                    <th className="text-white bg-success">
-                                        FROM
-                                    </th>
-                                    <th className="text-white bg-success">
-                                        CONTACT
-                                    </th>
-                                    <th className="text-white bg-success">
-                                        OFFER PRICE
-                                    </th>
-                                    <th className="text-white bg-success">
-                                        ACTION
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {offers.map((offer) => (
-                                    <tr key={offer.id}>
-                                        <td>{offer.id}</td>
-                                        <td>{offer.from}</td>
-                                        <td>{offer.contact}</td>
-                                        <td>${offer.offerPrice.toFixed(2)}</td>
-                                        <td>
-                                            <Button
-                                                variant="success"
-                                                size="sm"
-                                                className="me-2"
-                                            >
-                                                Accept
-                                            </Button>
-                                            <Button variant="danger" size="sm">
-                                                Decline
-                                            </Button>
-                                        </td>
+                    {error && <p className="text-danger">{error}</p>}
+                    {offers.length === 0 ? (
+                        <Col md={12}>
+                            <p className="text-muted">You have no offers for your items.</p>
+                        </Col>
+                    ) : (
+                        <Col md={12}>
+                            <Table striped bordered hover responsive>
+                                <thead>
+                                    <tr>
+                                        <th>Offer ID</th>
+                                        <th>Item Title</th>
+                                        <th>Amount</th>
+                                        <th>Offered By (Email)</th>
+                                        <th>Offered By (Phone)</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    </Col>
+                                </thead>
+                                <tbody>
+                                    {offers.map((offer) => (
+                                        <tr key={offer.id}>
+                                            <td>{offer.id}</td>
+                                            <td>
+                                                {/* Make Item Title a link */}
+                                                <Link to={`/items/${offer.item.id}`} className="text-decoration-none">
+                                                    {offer.item.title}
+                                                </Link>
+                                            </td>
+                                            <td>${offer.amount.toFixed(2)}</td>
+                                            <td>{offer.offeredBy.email}</td>
+                                            <td>{offer.offeredBy.phone}</td>
+                                            <td>{offer.status}</td>
+                                            <td>
+                                                {/* Conditionally render buttons based on the offer's status */}
+                                                {offer.status !== 'accepted' && offer.status !== 'declined' && (
+                                                    <>
+                                                        <Button
+                                                            variant="success"
+                                                            size="sm"
+                                                            className="me-2"
+                                                            onClick={() => handleOfferAction(offer.id, 'accept')}
+                                                        >
+                                                            Accept
+                                                        </Button>
+                                                        <Button
+                                                            variant="danger"
+                                                            size="sm"
+                                                            onClick={() => handleOfferAction(offer.id, 'decline')}
+                                                        >
+                                                            Decline
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </Col>
+                    )}
                 </Row>
+
+                
 
                 {/*<Row className="mt-4">*/}
                 {/*    <LayoutHeading heading={'My Listing'} color={'text-success'} content={'Here you can view, edit, and manage all the items you have listed for sale. Keep track of your items, update their details, or remove them from the marketplace when they are sold.'}/>*/}

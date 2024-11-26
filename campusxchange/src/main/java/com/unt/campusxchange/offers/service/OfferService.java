@@ -130,6 +130,14 @@ public class OfferService {
         return offers.stream().map(this::toOfferDTO).collect(Collectors.toList());
     }
 
+    public List<OfferDTO> listOffersForListOfItems(List<Item> items) {
+
+        // Check if the item exists and if the user is the owner
+        List<Offer> offers = offerRepository.findByItemIn(items);
+
+        return offers.stream().map(this::toOfferDTO).collect(Collectors.toList());
+    }
+
     public OfferDTO acceptOffer(Integer offerId, String email) {
         Offer offer =
                 offerRepository.findById(offerId).orElseThrow(() -> new OfferNotFoundException("Offer not found"));
