@@ -3,14 +3,12 @@ package com.unt.campusxchange.offers.controller;
 import com.unt.campusxchange.items.entity.Item;
 import com.unt.campusxchange.items.repo.ItemRepository;
 import com.unt.campusxchange.offers.dto.OfferDTO;
-import com.unt.campusxchange.offers.entity.Offer;
 import com.unt.campusxchange.offers.service.OfferService;
-import java.security.Principal;
-import java.util.List;
-
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
+import java.security.Principal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +59,7 @@ public class OfferController {
     }
 
     @GetMapping("/allitemsoffer")
-    public ResponseEntity<List<OfferDTO>> getAllMyItemsOffers(Principal principal){
+    public ResponseEntity<List<OfferDTO>> getAllMyItemsOffers(Principal principal) {
         String email = principal.getName();
 
         System.out.println("The email is : " + email);
