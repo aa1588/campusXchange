@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
+import com.unt.campusxchange.security.JWTProvider;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.repo.UserRepository;
 import java.util.Optional;

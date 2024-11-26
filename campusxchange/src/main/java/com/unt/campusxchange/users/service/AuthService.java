@@ -1,6 +1,7 @@
 package com.unt.campusxchange.users.service;
 
 import com.unt.campusxchange.notification.EmailService;
+import com.unt.campusxchange.security.JWTProvider;
 import com.unt.campusxchange.users.dto.LoginRequest;
 import com.unt.campusxchange.users.dto.LoginResponse;
 import com.unt.campusxchange.users.dto.RegisterRequest;
@@ -11,7 +12,6 @@ import com.unt.campusxchange.users.exception.InactiveAccountException;
 import com.unt.campusxchange.users.exception.InvalidOTPException;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
-import com.unt.campusxchange.users.security.JWTProvider;
 import java.security.SecureRandom;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

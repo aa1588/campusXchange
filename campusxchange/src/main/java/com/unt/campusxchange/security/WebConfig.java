@@ -1,4 +1,4 @@
-package com.unt.campusxchange.users.config;
+package com.unt.campusxchange.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
