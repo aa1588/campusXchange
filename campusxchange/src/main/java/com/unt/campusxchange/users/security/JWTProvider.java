@@ -6,9 +6,8 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +17,7 @@ public class JWTProvider {
     private final JwtEncoder jwtEncoder;
     public static final Long EXPIRATION_TIME_IN_SECONDS = 86400L;
     private final UserRepository userRepository;
+    private final JwtDecoder jwtDecoder;
 
     public String createToken(Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
@@ -43,5 +43,19 @@ public class JWTProvider {
                 .build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    public String getEmailFromToken(String token) {
+        Jwt jwt = jwtDecoder.decode(token);
+        return jwt.getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwt jwt = jwtDecoder.decode(token);
+            return true;
+        } catch (Exception e) {
+            throw new InvalidBearerTokenException("The token is invalid or expired. Please provide a valid token.");
+        }
     }
 }

@@ -31,7 +31,7 @@
         "yup": "^1.4.0"
     },
     "scripts": {
-        "start": "GENERATE_SOURCEMAP=false react-scripts start",
+        "start": "react-scripts start",
         "pc": "npx prettier --write .",
         "build": "react-scripts build",
         "test": "react-scripts test",

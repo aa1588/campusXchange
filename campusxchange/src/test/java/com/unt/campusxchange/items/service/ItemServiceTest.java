@@ -11,6 +11,7 @@ import com.unt.campusxchange.items.entity.Category;
 import com.unt.campusxchange.items.entity.Item;
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
 import com.unt.campusxchange.items.repo.ItemRepository;
+import com.unt.campusxchange.notification.sse.NotificationService;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
@@ -18,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,6 +39,9 @@ public class ItemServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private NotificationService notificationService;
 
     private User user;
     private Item item;
@@ -61,6 +66,7 @@ public class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("Should Create Item for a user")
     void testCreateItem() {
         CreateItemRequest request = new CreateItemRequest(
                 "Test Item", 10, "Description", BigDecimal.valueOf(100.0), "ELECTRONICS", List.of("url1", "url2"));
@@ -77,6 +83,7 @@ public class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw UserNotFound Exception")
     void testCreateItem_UserNotFound() {
         CreateItemRequest request = new CreateItemRequest(
                 "Test Item", 10, "Description", BigDecimal.valueOf(100.0), "ELECTRONICS", List.of("url1", "url2"));
@@ -91,6 +98,7 @@ public class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("Should Return all items available")
     void testGetAllItems() {
         Page<Item> itemPage = new PageImpl<>(List.of(item));
 
@@ -105,6 +113,7 @@ public class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("Should Update Item and return updated item details")
     void testUpdateItem_NotFound() {
         UpdateItemRequest request = new UpdateItemRequest(
                 "Updated Title", 5, "Updated Description", BigDecimal.valueOf(200.0), "BOOKS", List.of("url3", "url4"));
@@ -119,6 +128,7 @@ public class ItemServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw access Denied exception for unauthorized user updating item")
     void testUpdateItem_AccessDenied() {
         UpdateItemRequest request = new UpdateItemRequest(
                 "Updated Title", 5, "Updated Description", BigDecimal.valueOf(200.0), "BOOKS", List.of("url3", "url4"));

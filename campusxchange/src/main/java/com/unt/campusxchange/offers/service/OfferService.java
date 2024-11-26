@@ -3,6 +3,8 @@ package com.unt.campusxchange.offers.service;
 import com.unt.campusxchange.items.entity.Item;
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
 import com.unt.campusxchange.items.repo.ItemRepository;
+import com.unt.campusxchange.notification.sse.Notification;
+import com.unt.campusxchange.notification.sse.NotificationService;
 import com.unt.campusxchange.offers.dto.ItemDTO;
 import com.unt.campusxchange.offers.dto.OfferDTO;
 import com.unt.campusxchange.offers.dto.OfferItemDTO;
@@ -16,6 +18,7 @@ import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import jakarta.transaction.Transactional;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +33,7 @@ public class OfferService {
     private final OfferRepository offerRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public OfferDTO createOffer(String email, Integer itemId, OfferDTO offerDTO) {
 
@@ -60,6 +64,18 @@ public class OfferService {
 
         offer.setOfferItems(offerItems);
         Offer savedOffer = offerRepository.save(offer);
+
+        // Notify the item owner
+        User itemOwner = mainItem.getUser();
+        if (itemOwner != null) {
+            String notificationMessage = String.format(
+                    "You have received a new offer from %s for your item: %s",
+                    user.getFirstname(), mainItem.getTitle());
+
+            Notification notification = new Notification(notificationMessage, Instant.now());
+
+            notificationService.sendNotification(itemOwner.getEmail(), notification);
+        }
 
         return toOfferDTO(savedOffer);
     }

@@ -47,6 +47,8 @@ public class SecurityConfiguration {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/items/{id}")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/notifications/subscribe")
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
                 .oauth2ResourceServer(
