@@ -15,21 +15,21 @@ const ItemDetail: React.FC = () => {
     const [newQuestion, setNewQuestion] = useState<string>("");
     const [answerText, setAnswerText] = useState<{ [key: number]: string }>({});
     const navigate = useNavigate();
-    const [existingOffer, setExistingOffer] = useState<any>(null);
     const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
     const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
     const [offerAmount, setOfferAmount] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(false); // State to manage loading spinner
+    const [loading, setLoading] = useState<boolean>(false);
     const [myitems, setMyitems] = useState<any[]>([]);
-    const [selectedItems, setSelectedItems] = useState<{ [key: number]: number }>({}); // Stores selected item IDs and their quantities
-    const [activeTab, setActiveTab] = useState<string>('offer');
+    const [selectedItems, setSelectedItems] = useState<{ [key: number]: number }>({});
+    const [activeTab, setActiveTab] = useState<string>("offer");
+    const [existingOffer, setExistingOffer] = useState<any | null>(null);
 
     useEffect(() => {
         const fetchItemDetails = async () => {
             if (id) {
                 const item = await ItemService.getItemById(parseInt(id));
                 setItemDetails(item);
-                const userId = JSON.parse(localStorage.getItem("user") || '{}').userId;
+                const userId = JSON.parse(localStorage.getItem("user") || "{}").userId;
                 if (item && item.listed_by === userId) {
                     setOwnerLoggedIn(true);
                 }
@@ -39,7 +39,7 @@ const ItemDetail: React.FC = () => {
         fetchMyItems();
         fetchItemDetails();
         fetchQuestions();
-        checkExistingOffer();
+        fetchExistingOffer();
     }, [id]);
 
     const fetchMyItems = async () => {
@@ -53,14 +53,11 @@ const ItemDetail: React.FC = () => {
         setQuestions(fetchedQuestions.data);
     };
 
-    const checkExistingOffer = async () => {
-        if (id) {
-            const offers = await OfferService.getOfferForItem(parseInt(id));
-            if (offers.length > 0) {
-                setExistingOffer(offers[0]); // Assume the user can only have one offer per item
-            }
-        }
+    const fetchExistingOffer = async () => {
+        const fetchedOffer = await OfferService.getOfferForItem(parseInt(id ?? "0"));
+        setExistingOffer(fetchedOffer.length > 0 ? fetchedOffer[0] : null);
     };
+
 
     const handleQuestionSubmit = async () => {
         if (!newQuestion.trim()) return;
@@ -89,43 +86,64 @@ const ItemDetail: React.FC = () => {
         }));
     };
 
+    const openOfferModal = (isEdit = false) => {
+        if (isEdit && existingOffer) {
+            // Prepopulate the modal fields for editing
+            setOfferAmount(existingOffer.amount.toString());
+            setActiveTab(existingOffer.offerType.toLowerCase());
+            if (existingOffer.offerType === "TRADE") {
+                const tradeItems = existingOffer.offerItems.reduce((acc: any, item: any) => {
+                    acc[item.itemId] = item.quantity;
+                    return acc;
+                }, {});
+                setSelectedItems(tradeItems);
+            }
+        } else {
+            // Reset the modal fields for new offer
+            setOfferAmount("");
+            setSelectedItems({});
+            setActiveTab("offer");
+        }
+        setShowOfferModal(true);
+    };
+
     const handleOfferSubmit = async () => {
         if (!offerAmount.trim()) {
-            alert('Please enter an amount.');
+            alert("Please enter an amount.");
             return;
         }
 
         const parsedAmount = parseFloat(offerAmount);
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
-            alert('Please enter a valid amount greater than 0.');
+            alert("Please enter a valid amount greater than 0.");
             return;
         }
 
-        setLoading(true); // Show spinner
+        setLoading(true);
 
         try {
             const formData: any = { amount: parsedAmount };
 
-            if (activeTab === 'trade') {
+            if (activeTab === "trade") {
                 const offerItems = Object.entries(selectedItems).map(([itemId, quantity]) => ({
                     itemId: parseInt(itemId),
                     quantity,
                 }));
                 formData.offerItems = offerItems;
-                formData.offerType = 'TRADE';
+                formData.offerType = "TRADE";
             } else {
-                formData.offerType = 'OFFER';
+                formData.offerType = "OFFER";
             }
 
-            await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
-            setShowOfferModal(false); // Close the modal
-            setOfferAmount('');
+            await OfferService.makeAnOffer(parseInt(id ?? "0"), formData);
+            setShowOfferModal(false);
+            setOfferAmount("");
             setSelectedItems({});
-            checkExistingOffer(); // Refresh offer state
+            fetchExistingOffer(); // Refresh the existing offer after submission
         } catch (error) {
-            console.error('Error submitting offer:', error);
+            console.error("Error submitting offer:", error);
         } finally {
-            setLoading(false); // Hide spinner
+            setLoading(false);
         }
     };
 
@@ -171,44 +189,60 @@ const ItemDetail: React.FC = () => {
                                 {itemDetails.title}
                             </Card.Title>
                             <Card.Text>
-                                <strong>Quantity:</strong> {itemDetails.quantity}<br />
-                                <strong>Description:</strong> {itemDetails.description}<br />
-                                <strong>Price:</strong> ${itemDetails.price.toFixed(2)}<br />
-                                <strong>Category:</strong> {itemDetails.category}<br />
-                                <strong>Created At:</strong> {new Date(itemDetails.createdAt).toLocaleString()}<br />
+                                <strong>Quantity:</strong> {itemDetails.quantity}
+                                <br />
+                                <strong>Description:</strong> {itemDetails.description}
+                                <br />
+                                <strong>Price:</strong> ${itemDetails.price.toFixed(2)}
+                                <br />
+                                <strong>Category:</strong> {itemDetails.category}
+                                <br />
+                                <strong>Created At:</strong> {new Date(itemDetails.createdAt).toLocaleString()}
+                                <br />
                             </Card.Text>
                             {!ownerLoggedIn && (
-                                existingOffer ? (
-                                    <div>
-                                        <h6 className="text-success">Offer Already Made</h6>
-                                        <Table striped bordered hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Amount</th>
-                                                    <th>Items</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>${existingOffer.amount.toFixed(2)}</td>
-                                                    <td>
-                                                        {existingOffer.offerItems.map((item: any) => (
-                                                            <div key={item.itemId}>
-                                                                Item ID: {item.itemId}, Quantity: {item.quantity}
-                                                            </div>
-                                                        ))}
-                                                    </td>
-                                                    <td>{existingOffer.status}</td>
-                                                </tr>
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                ) : (
-                                    <Button variant="warning" onClick={() => setShowOfferModal(true)}>
-                                        Make an Offer
-                                    </Button>
-                                )
+                                <div>
+                                    {existingOffer ? (
+                                        <div>
+                                            <h6 className="text-muted">Your Current Offer:</h6>
+                                            <Table striped bordered hover>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Amount</td>
+                                                        <td>${existingOffer.amount}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Type</td>
+                                                        <td>{existingOffer.offerType}</td>
+                                                    </tr>
+                                                    {existingOffer.offerType === "TRADE" && (
+                                                        <tr>
+                                                            <td>Trade Items</td>
+                                                            <td>
+                                                                {existingOffer.offerItems.map((item: any) => (
+                                                                    <div key={item.itemId}>
+                                                                        Item ID: {item.itemId}, Quantity: {item.quantity}
+                                                                    </div>
+                                                                ))}
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </Table>
+                                            <Button
+                                                variant="warning"
+                                                onClick={() => openOfferModal(true)}
+                                                className="mt-2"
+                                            >
+                                                Edit Offer
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <Button variant="warning" onClick={() => openOfferModal(false)}>
+                                            Make an Offer
+                                        </Button>
+                                    )}
+                                </div>
                             )}
                         </Card.Body>
                     </Card>
@@ -291,16 +325,15 @@ const ItemDetail: React.FC = () => {
             {/* Offer Modal */}
             <Modal show={showOfferModal} onHide={() => setShowOfferModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Make an Offer</Modal.Title>
+                    <Modal.Title>{existingOffer ? "Edit Offer" : "Make an Offer"}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Tabs
                         activeKey={activeTab}
-                        onSelect={(key) => setActiveTab(key ?? 'offer')}
+                        onSelect={(key) => setActiveTab(key ?? "offer")}
                         id="offer-tabs"
                         className="mb-3"
                     >
-                        {/* Offer Tab */}
                         <Tab eventKey="offer" title="Offer">
                             <Form.Group controlId="offerInput">
                                 <Form.Label>Enter your offer amount:</Form.Label>
@@ -314,8 +347,6 @@ const ItemDetail: React.FC = () => {
                                 />
                             </Form.Group>
                         </Tab>
-
-                        {/* Trade Tab */}
                         <Tab eventKey="trade" title="Trade">
                             <Form.Group controlId="tradeAmountInput">
                                 <Form.Label>Enter your trade amount:</Form.Label>
@@ -334,19 +365,33 @@ const ItemDetail: React.FC = () => {
                                     <Form.Check
                                         type="checkbox"
                                         label={`${item.title} (Available: ${item.quantity})`}
-                                        onChange={(e) => toggleItemSelection(item.id, e.target.checked)}
+                                        checked={selectedItems[item.id] !== undefined}
+                                        onChange={(e) => {
+                                            const isChecked = e.target.checked;
+                                            if (isChecked) {
+                                                setSelectedItems((prev) => ({ ...prev, [item.id]: 1 }));
+                                            } else {
+                                                setSelectedItems((prev) => {
+                                                    const newSelected = { ...prev };
+                                                    delete newSelected[item.id];
+                                                    return newSelected;
+                                                });
+                                            }
+                                        }}
                                     />
                                     {selectedItems[item.id] !== undefined && (
                                         <Form.Control
                                             type="number"
-                                            placeholder="Quantity"
                                             min="1"
                                             max={item.quantity}
                                             value={selectedItems[item.id]}
                                             onChange={(e) =>
-                                                updateItemQuantity(item.id, parseInt(e.target.value) || 1)
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item.id]: parseInt(e.target.value, 10),
+                                                }))
                                             }
-                                            className="mt-2"
+                                            className="mt-1"
                                         />
                                     )}
                                 </div>
@@ -356,17 +401,10 @@ const ItemDetail: React.FC = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowOfferModal(false)} disabled={loading}>
-                        Cancel
+                        Close
                     </Button>
-                    <Button variant="success" onClick={handleOfferSubmit} disabled={loading}>
-                        {loading ? (
-                            <>
-                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                Submitting...
-                            </>
-                        ) : (
-                            'Submit Offer'
-                        )}
+                    <Button variant="primary" onClick={handleOfferSubmit} disabled={loading}>
+                        {loading ? "Submitting..." : "Submit"}
                     </Button>
                 </Modal.Footer>
             </Modal>
