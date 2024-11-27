@@ -204,7 +204,7 @@ const MyTestNavBar: React.FC = () => {
                                         </NavDropdown.Item>
                                         <NavDropdown.Item
                                             as={Link}
-                                            to="/change-password"
+                                            to="/reset-password"
                                         >
                                             Change Password
                                         </NavDropdown.Item>
