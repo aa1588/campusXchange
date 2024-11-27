@@ -95,6 +95,28 @@ class OfferService {
             }
         }
     }
+
+    getOfferForItem = async (itemid : number) => {
+        const token = Cookies.get('authToken');
+
+        try{
+            const response  = await axios.get(`${API_OFFER}/item/${itemid}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            })
+            return response.data
+        }catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw new Error(
+                    error.response?.data?.message || 'Error getting offers'
+                )
+            } else {
+                throw new Error('An unknown error occurred')
+            }
+        }
+    }
 }
 
 export default new OfferService()

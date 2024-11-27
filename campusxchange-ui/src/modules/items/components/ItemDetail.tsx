@@ -15,6 +15,7 @@ const ItemDetail: React.FC = () => {
     const [newQuestion, setNewQuestion] = useState<string>("");
     const [answerText, setAnswerText] = useState<{ [key: number]: string }>({});
     const navigate = useNavigate();
+    const [existingOffer, setExistingOffer] = useState<any>(null);
     const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
     const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
     const [offerAmount, setOfferAmount] = useState<string>("");
@@ -38,6 +39,7 @@ const ItemDetail: React.FC = () => {
         fetchMyItems();
         fetchItemDetails();
         fetchQuestions();
+        checkExistingOffer();
     }, [id]);
 
     const fetchMyItems = async () => {
@@ -49,6 +51,15 @@ const ItemDetail: React.FC = () => {
     const fetchQuestions = async () => {
         const fetchedQuestions = await QuestionService.getAllQuestionAnswerByItemId(parseInt(id ?? '0'));
         setQuestions(fetchedQuestions.data);
+    };
+
+    const checkExistingOffer = async () => {
+        if (id) {
+            const offers = await OfferService.getOfferForItem(parseInt(id));
+            if (offers.length > 0) {
+                setExistingOffer(offers[0]); // Assume the user can only have one offer per item
+            }
+        }
     };
 
     const handleQuestionSubmit = async () => {
@@ -79,7 +90,6 @@ const ItemDetail: React.FC = () => {
     };
 
     const handleOfferSubmit = async () => {
-
         if (!offerAmount.trim()) {
             alert('Please enter an amount.');
             return;
@@ -103,8 +113,7 @@ const ItemDetail: React.FC = () => {
                 }));
                 formData.offerItems = offerItems;
                 formData.offerType = 'TRADE';
-            }
-            else{
+            } else {
                 formData.offerType = 'OFFER';
             }
 
@@ -112,6 +121,7 @@ const ItemDetail: React.FC = () => {
             setShowOfferModal(false); // Close the modal
             setOfferAmount('');
             setSelectedItems({});
+            checkExistingOffer(); // Refresh offer state
         } catch (error) {
             console.error('Error submitting offer:', error);
         } finally {
@@ -168,9 +178,37 @@ const ItemDetail: React.FC = () => {
                                 <strong>Created At:</strong> {new Date(itemDetails.createdAt).toLocaleString()}<br />
                             </Card.Text>
                             {!ownerLoggedIn && (
-                                <Button variant="warning" onClick={() => setShowOfferModal(true)}>
-                                    Make an Offer
-                                </Button>
+                                existingOffer ? (
+                                    <div>
+                                        <h6 className="text-success">Offer Already Made</h6>
+                                        <Table striped bordered hover>
+                                            <thead>
+                                                <tr>
+                                                    <th>Amount</th>
+                                                    <th>Items</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>${existingOffer.amount.toFixed(2)}</td>
+                                                    <td>
+                                                        {existingOffer.offerItems.map((item: any) => (
+                                                            <div key={item.itemId}>
+                                                                Item ID: {item.itemId}, Quantity: {item.quantity}
+                                                            </div>
+                                                        ))}
+                                                    </td>
+                                                    <td>{existingOffer.status}</td>
+                                                </tr>
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                ) : (
+                                    <Button variant="warning" onClick={() => setShowOfferModal(true)}>
+                                        Make an Offer
+                                    </Button>
+                                )
                             )}
                         </Card.Body>
                     </Card>

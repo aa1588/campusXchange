@@ -74,7 +74,6 @@ public class OfferController {
     public ResponseEntity<List<OfferDTO>> getAllMyItemsOffers(Principal principal) {
         String email = principal.getName();
 
-        System.out.println("The email is : " + email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
         List<Item> items = itemRepository.findByUser(user);
 
