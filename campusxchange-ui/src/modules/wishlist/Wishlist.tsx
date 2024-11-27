@@ -8,11 +8,14 @@ import {
     Col,
     Card,
     Button,
-    //Form,
     Spinner,
     Alert,
     Carousel,
 } from 'react-bootstrap'
+import { ToastUtil } from '../../utils/ToastUtils'
+import { BACKEND_BASE_URL } from '../../config/config'
+import Cookies from 'js-cookie'
+import { Link } from 'react-router-dom'
 
 interface Item {
     id: number
@@ -21,7 +24,6 @@ interface Item {
     imageUrls: string[]
 }
 
-// Define the type for the props in ItemCard
 interface ItemCardProps {
     item: Item
     onDislike: (id: number) => void
@@ -29,32 +31,57 @@ interface ItemCardProps {
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, onDislike }) => {
     return (
-        <Card style={{ width: '18rem', height: '30rem' }}>
-            <Carousel>
-                {item.imageUrls.map((image, index) => (
-                    <Carousel.Item key={index}>
-                        <img
-                            className="d-block w-100"
-                            src={image}
-                            alt={`${item.title} image ${index + 1}`}
-                            style={{ height: '200px', objectFit: 'cover' }} // Adjust the height as needed
-                        />
-                    </Carousel.Item>
-                ))}
-            </Carousel>
-            <Card.Body>
-                <Card.Title>{item.title}</Card.Title>
-                <Card.Text>{item.price}</Card.Text>
-                <Button onClick={() => onDislike(item.id)} variant="success">
-                    💚
-                </Button>
-            </Card.Body>
-        </Card>
+        <Link to={`/items/${item.id}`} style={{ textDecoration: 'none' }}>
+            <Card
+                style={{ width: '100%', maxWidth: '18rem', height: 'auto' }}
+                className="shadow-sm"
+            >
+                <Carousel>
+                    {item.imageUrls.map((image, index) => (
+                        <Carousel.Item key={index}>
+                            <img
+                                className="d-block w-100"
+                                src={image}
+                                alt={`${item.title} image ${index + 1}`}
+                                style={{ height: '120px', objectFit: 'cover' }} // Adjust the height for better fit
+                            />
+                        </Carousel.Item>
+                    ))}
+                </Carousel>
+                <Card.Body style={{ padding: '1rem' }}>
+                    <Card.Title
+                        style={{
+                            fontSize: '0.7rem',
+                            fontWeight: 'bold',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                        }}
+                    >
+                        {item.title}
+                    </Card.Title>
+                    <Card.Text
+                        style={{ fontSize: '1rem', color: '#666' }}
+                        className={'fw-bolder'}
+                    >
+                        ${item.price}.00
+                    </Card.Text>
+                    <Button
+                        onClick={() => onDislike(item.id)}
+                        variant="outline-success"
+                        size="sm"
+                    >
+                        💚
+                    </Button>
+                </Card.Body>
+            </Card>
+        </Link>
     )
 }
 
 const Wishlist: React.FC = () => {
     const [likedItems, setLikedItems] = useState<Item[]>([])
+    const [recommendations, setRecommendations] = useState<Item[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
@@ -62,11 +89,12 @@ const Wishlist: React.FC = () => {
         const fetchItems = async () => {
             setLoading(true)
             fetchWishlistItems()
+            fetchRecommendations()
             setLoading(false)
         }
 
         fetchItems()
-    }, [likedItems])
+    }, [])
 
     const fetchWishlistItems = async () => {
         try {
@@ -93,8 +121,41 @@ const Wishlist: React.FC = () => {
         }
     }
 
+    const fetchRecommendations = async () => {
+        try {
+            const token: string | undefined = Cookies.get('authToken')
+            const response = await axios.get(
+                `${BACKEND_BASE_URL}/api/recommendations`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+            const recommendationItems = response.data.map((item: any) => ({
+                id: item.id,
+                title: item.title,
+                price: item.price,
+                imageUrls: item.imageUrls || [], // Fallback to an empty array if imageUrls is missing
+            }))
+            setRecommendations(recommendationItems)
+        } catch (err) {
+            handleError(err, 'Failed to fetch recommendations')
+        }
+    }
+
     const handleDislike = async (id: number) => {
-        await WishlistService.deleteFromMyWishlistItems(id)
+        try {
+            await WishlistService.deleteFromMyWishlistItems(id)
+            setLikedItems((prevItems) =>
+                prevItems.filter((item) => item.id !== id)
+            )
+            ToastUtil.displayInfoToast('Wishlist Item removed.')
+        } catch (error) {
+            ToastUtil.displayErrorToast(
+                'Failed to remove item from wishlist or recommendations.'
+            )
+        }
     }
 
     return (
@@ -109,10 +170,10 @@ const Wishlist: React.FC = () => {
 
             <Container>
                 <Row>
-                    <Col md={12}>
+                    <Col md={8}>
                         <Card
                             style={{
-                                backgroundColor: '#F6F0F0',
+                                //backgroundColor: '#F6F0F0',
                                 padding: '20px',
                             }}
                         >
@@ -121,12 +182,13 @@ const Wishlist: React.FC = () => {
                             ) : error ? (
                                 <Alert variant="danger">Error: {error}</Alert>
                             ) : likedItems.length > 0 ? (
-                                <Row>
+                                <Row className={'column-gap-lg-0'}>
                                     {likedItems.map((item) => (
                                         <Col
                                             md={4}
+                                            sm={6} // Responsive grid (columns shrink on smaller screens)
                                             key={item.id}
-                                            className="mb-4"
+                                            className="mb-2"
                                         >
                                             <ItemCard
                                                 item={item}
@@ -139,6 +201,40 @@ const Wishlist: React.FC = () => {
                                 <Alert variant="warning">No items found</Alert>
                             )}
                         </Card>
+                    </Col>
+                    {/* Recommendations Section */}
+                    <Col md={4}>
+                        <h4 className={'text-success'}>
+                            CampusXchange Recommendations
+                        </h4>
+                        <p>
+                            Discover more items that might interest you based on
+                            your preferences and browsing history. These
+                            recommendations are handpicked to help you find what
+                            you're looking for quickly and easily. Explore and
+                            add new items to your wishlist today!
+                        </p>{' '}
+                        <Row>
+                            {recommendations.length > 0 ? (
+                                recommendations.map((item) => (
+                                    <Col
+                                        md={6}
+                                        sm={12}
+                                        key={item.id}
+                                        className="mb-3"
+                                    >
+                                        <ItemCard
+                                            item={item}
+                                            onDislike={handleDislike}
+                                        />
+                                    </Col>
+                                ))
+                            ) : (
+                                <Alert variant="warning">
+                                    No recommendations found
+                                </Alert>
+                            )}
+                        </Row>
                     </Col>
                 </Row>
             </Container>

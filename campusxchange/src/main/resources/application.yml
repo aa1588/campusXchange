@@ -43,3 +43,12 @@ logging:
 # frontend url
 cors:
   allowed-origin: ${ALLOWED_ORIGINS:http://localhost:3000}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      cors:
+        allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+        allowed-methods: GET,OPTIONS
+        allowed-headers: '*'

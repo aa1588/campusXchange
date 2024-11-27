@@ -11,6 +11,7 @@ import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import com.unt.campusxchange.wishlist.entity.WishlistItem;
+import com.unt.campusxchange.wishlist.exception.WishlistItemNotFoundException;
 import com.unt.campusxchange.wishlist.repo.WishlistRepository;
 import java.math.BigDecimal;
 import java.util.*;
@@ -94,7 +95,7 @@ public class RecommendationServiceTest {
         when(wishlistRepository.findByUserId(user.getId())).thenReturn(Collections.emptyList());
 
         assertThatThrownBy(() -> recommendationService.getRecommendedItemsForUser("test@example.com"))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(WishlistItemNotFoundException.class)
                 .hasMessage("No wishlist items found for user ID: 1");
     }
 

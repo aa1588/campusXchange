@@ -3,11 +3,14 @@ package com.unt.campusxchange.admin;
 import com.unt.campusxchange.items.entity.Category;
 import com.unt.campusxchange.items.entity.Item;
 import com.unt.campusxchange.items.repo.ItemRepository;
+import com.unt.campusxchange.users.dto.UserDTO;
 import com.unt.campusxchange.users.entity.AccountStatus;
+import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.repo.UserRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,5 +42,22 @@ public class AdminUserService {
         // Build and return the dashboard
         return new DashboardStats(
                 activeUsers, inactiveUsers, frozenUsers, totalUsers, totalCategories, totalItems, itemsCountByCategory);
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAllByOrderByIdAsc().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private UserDTO convertToDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getFirstname(),
+                user.getLastname(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getRole(),
+                user.getAccountStatus().name());
     }
 }

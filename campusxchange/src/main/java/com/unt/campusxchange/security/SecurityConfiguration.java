@@ -86,14 +86,4 @@ public class SecurityConfiguration {
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-    /*
-       @Bean
-       public GrantedAuthoritiesMapper authoritiesMapper() {
-           return authorities -> authorities.stream()
-                   .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
-                   .collect(Collectors.toList());
-       }
-
-    */
 }
