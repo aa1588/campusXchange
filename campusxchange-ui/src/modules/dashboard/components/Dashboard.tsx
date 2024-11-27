@@ -175,7 +175,7 @@ const Dashboard: React.FC = () => {
                                             </td>
                                             <td>{offer.status}</td>
                                             <td>
-                                                {offer.status !== 'accepted' && offer.status !== 'declined' && (
+                                                {offer.status !== 'ACCEPTED' && offer.status !== 'DECLINED' && (
                                                     <>
                                                         <Button
                                                             variant="success"
