@@ -11,4 +11,8 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     Page<Item> findByCategoryIn(List<String> categories, Pageable pageable);
 
     List<Item> findByUser(User user);
+
+    //    Page<Item> findByCategoryInAndQuantityGreaterThan(List<String> categories, int quantity, Pageable pageable);
+    //
+    //    Page<Item> findByQuantityGreaterThan(int quantity, Pageable pageable);
 }

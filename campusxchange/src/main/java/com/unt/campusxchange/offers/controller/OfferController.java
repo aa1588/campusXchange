@@ -35,6 +35,18 @@ public class OfferController {
         }
     }
 
+    @PutMapping("/{offerId}/update")
+    public ResponseEntity<OfferDTO> updateOffer(
+            @PathVariable Integer offerId, @RequestBody OfferDTO offerDTO, Principal principal) {
+        try {
+            String email = principal.getName(); // Get the email of the logged-in user
+            OfferDTO updatedOffer = offerService.updateOffer(offerId, email, offerDTO);
+            return ResponseEntity.ok(updatedOffer);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/item/{itemId}")
     public ResponseEntity<List<OfferDTO>> getOffersForItem(@PathVariable Integer itemId, Principal principal) {
 

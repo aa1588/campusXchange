@@ -41,6 +41,10 @@ public class Offer {
     @Enumerated(EnumType.STRING)
     private OfferStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "offer_type", nullable = false)
+    private OfferType offerType;
+
     @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OfferItem> offerItems; // List of items and their quantities in the offer
 
