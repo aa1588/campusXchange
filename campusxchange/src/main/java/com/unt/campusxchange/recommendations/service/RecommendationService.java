@@ -72,7 +72,7 @@ public class RecommendationService {
         return recommendedItems.stream().map(this::convertToCreateItemResponse).collect(Collectors.toList());
     }
 
-    private double calculateSimilarity(Item item1, Item item2) {
+    public double calculateSimilarity(Item item1, Item item2) {
         // Compare categories
         double categorySimilarity = item1.getCategory() == item2.getCategory() ? 1.0 : 0.0;
 
