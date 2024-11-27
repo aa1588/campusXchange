@@ -87,14 +87,20 @@ const Wishlist: React.FC = () => {
 
     useEffect(() => {
         const fetchItems = async () => {
-            setLoading(true)
-            fetchWishlistItems()
-            fetchRecommendations()
-            setLoading(false)
-        }
+            try {
+                setLoading(true);
+                await fetchWishlistItems();
+                await fetchRecommendations();
+            } catch (error) {
+                console.error("Error fetching items:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        fetchItems()
-    }, [])
+        fetchItems();
+    }, []);
+
 
     const fetchWishlistItems = async () => {
         try {
