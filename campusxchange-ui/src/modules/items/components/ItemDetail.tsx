@@ -102,6 +102,10 @@ const ItemDetail: React.FC = () => {
                     quantity,
                 }));
                 formData.offerItems = offerItems;
+                formData.offerType = 'TRADE';
+            }
+            else{
+                formData.offerType = 'OFFER';
             }
 
             await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
