@@ -164,7 +164,7 @@ const Wishlist: React.FC = () => {
                 heading={'Wishlist'}
                 color={'text-success'}
                 content={
-                    'Add items to your wishlist to save them for later, get notified via email when price drop.'
+                    'Add items to your wishlist to save them for later, get recommendations of similar choices.'
                 }
             />
 
@@ -209,7 +209,7 @@ const Wishlist: React.FC = () => {
                         </h4>
                         <p>
                             Discover more items that might interest you based on
-                            your preferences and browsing history. These
+                            your preferences. These
                             recommendations are handpicked to help you find what
                             you're looking for quickly and easily. Explore and
                             add new items to your wishlist today!
