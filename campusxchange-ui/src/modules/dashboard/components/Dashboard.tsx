@@ -20,6 +20,7 @@ interface Offer {
         id: string;
     };
     status: string;
+    offerType: string;
 }
 
 const Dashboard: React.FC = () => {
@@ -132,6 +133,7 @@ const Dashboard: React.FC = () => {
                                         <th>Amount</th>
                                         <th>Offered By (Email)</th>
                                         <th>Offered By (Phone)</th>
+                                        <th>Type</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -149,6 +151,7 @@ const Dashboard: React.FC = () => {
                                             <td>${offer.amount.toFixed(2)}</td>
                                             <td>{offer.offeredBy.email}</td>
                                             <td>{offer.offeredBy.phone}</td>
+                                            <td>{offer.offerType}</td>
                                             <td>{offer.status}</td>
                                             <td>
                                                 {/* Conditionally render buttons based on the offer's status */}
