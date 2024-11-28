@@ -1,0 +1,8 @@
+.custom-card {
+    margin-top: 5px; /* Decrease top margin */
+    padding-top: 5px; /* Decrease top padding if needed */
+}
+
+.custom-row-spacing {
+    margin-bottom: 10px; /* Adjust spacing between rows */
+}

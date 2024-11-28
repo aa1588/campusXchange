@@ -17,6 +17,13 @@ import AddItemForm from './modules/items/components/AddItemForm'
 import EditItem from './modules/items/components/EditItem'
 import Wishlist from './modules/wishlist/Wishlist'
 import MyTestNavBar from './layout/MyTestNavBar'
+import AdminDashboard from './modules/admin/components/AdminDashboard'
+import Profile from './modules/auth/components/Profile'
+import ResetPassword from './modules/auth/components/ResetPassword'
+
+function Users() {
+    return null
+}
 
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined)
@@ -66,12 +73,22 @@ const App: React.FC = () => {
                         <Route path="/wishlist" element={<Wishlist />} />
                         <Route path="/register" element={<Register />} />
                         <Route path={'/dashboard'} element={<Dashboard />} />
+                        <Route path={'/profile'} element={<Profile />} />
+                        <Route
+                            path={'/reset-password'}
+                            element={<ResetPassword />}
+                        />
                         <Route path="/items/:id" element={<ItemDetail />} />
                         <Route
                             path="/add-item-for-sale"
                             element={<AddItemForm />}
                         />
                         <Route path="/edit-item/:id" element={<EditItem />} />
+
+                        <Route
+                            path="/admin/dashboard/*"
+                            element={<AdminDashboard />}
+                        />
                     </Routes>
                 </div>
             </div>

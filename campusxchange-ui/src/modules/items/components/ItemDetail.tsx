@@ -1,135 +1,154 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import ItemService from '../service/itemservice';
-import QuestionService from '../service/QuestionService';
-import OfferService from '../service/OfferService';
-import { Carousel, Card, Row, Col, Button, Form, Modal, Tabs, Tab, Table } from 'react-bootstrap';
-import LayoutHeading from '../../../layout/LayoutHeading';
-import itemservice from '../service/itemservice';
-import Cookies from 'js-cookie';
+import React, { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import ItemService from '../service/itemservice'
+import QuestionService from '../service/QuestionService'
+import OfferService from '../service/OfferService'
+import {
+    Carousel,
+    Card,
+    Row,
+    Col,
+    Button,
+    Form,
+    Modal,
+    Tabs,
+    Tab,
+    Table,
+} from 'react-bootstrap'
+import LayoutHeading from '../../../layout/LayoutHeading'
+import itemservice from '../service/itemservice'
+import Cookies from 'js-cookie'
 
 const ItemDetail: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
-    const [itemDetails, setItemDetails] = useState<any>(null);
-    const [questions, setQuestions] = useState<any[]>([]);
-    const [newQuestion, setNewQuestion] = useState<string>("");
-    const [answerText, setAnswerText] = useState<{ [key: number]: string }>({});
-    const navigate = useNavigate();
-    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
-    const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
-    const [offerAmount, setOfferAmount] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(false); // State to manage loading spinner
-    const [myitems, setMyitems] = useState<any[]>([]);
-    const [selectedItems, setSelectedItems] = useState<{ [key: number]: number }>({}); // Stores selected item IDs and their quantities
-    const [activeTab, setActiveTab] = useState<string>('offer');
+    const { id } = useParams<{ id: string }>()
+    const [itemDetails, setItemDetails] = useState<any>(null)
+    const [questions, setQuestions] = useState<any[]>([])
+    const [newQuestion, setNewQuestion] = useState<string>('')
+    const [answerText, setAnswerText] = useState<{ [key: number]: string }>({})
+    const navigate = useNavigate()
+    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false)
+    const [showOfferModal, setShowOfferModal] = useState<boolean>(false)
+    const [offerAmount, setOfferAmount] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false) // State to manage loading spinner
+    const [myitems, setMyitems] = useState<any[]>([])
+    const [selectedItems, setSelectedItems] = useState<{
+        [key: number]: number
+    }>({}) // Stores selected item IDs and their quantities
+    const [activeTab, setActiveTab] = useState<string>('offer')
 
     useEffect(() => {
         const fetchItemDetails = async () => {
             if (id) {
-                const item = await ItemService.getItemById(parseInt(id));
-                setItemDetails(item);
-                const userId = JSON.parse(localStorage.getItem("user") || '{}').userId;
+                const item = await ItemService.getItemById(parseInt(id))
+                setItemDetails(item)
+                const userId = JSON.parse(
+                    localStorage.getItem('user') || '{}'
+                ).userId
                 if (item && item.listed_by === userId) {
-                    setOwnerLoggedIn(true);
+                    setOwnerLoggedIn(true)
                 }
             }
-        };
+        }
 
-        fetchMyItems();
-        fetchItemDetails();
-        fetchQuestions();
-    }, [id]);
+        fetchMyItems()
+        fetchItemDetails()
+        fetchQuestions()
+    }, [id])
 
     const fetchMyItems = async () => {
-        const token = Cookies.get('authToken');
-        const myItems = await itemservice.fetchItemsByUser(token);
-        setMyitems(myItems);
-    };
+        const token = Cookies.get('authToken')
+        const myItems = await itemservice.fetchItemsByUser(token)
+        setMyitems(myItems)
+    }
 
     const fetchQuestions = async () => {
-        const fetchedQuestions = await QuestionService.getAllQuestionAnswerByItemId(parseInt(id ?? '0'));
-        setQuestions(fetchedQuestions.data);
-    };
+        const fetchedQuestions =
+            await QuestionService.getAllQuestionAnswerByItemId(
+                parseInt(id ?? '0')
+            )
+        setQuestions(fetchedQuestions.data)
+    }
 
     const handleQuestionSubmit = async () => {
-        if (!newQuestion.trim()) return;
-        await QuestionService.postQuestion(parseInt(id ?? '0'), newQuestion);
-        setNewQuestion("");
-        fetchQuestions(); // Refresh the list of questions and answers
-    };
+        if (!newQuestion.trim()) return
+        await QuestionService.postQuestion(parseInt(id ?? '0'), newQuestion)
+        setNewQuestion('')
+        fetchQuestions() // Refresh the list of questions and answers
+    }
 
     const handleAnswerSubmit = async (questionId: number) => {
-        const answer = answerText[questionId]?.trim();
-        if (!answer) return;
+        const answer = answerText[questionId]?.trim()
+        if (!answer) return
 
-        await QuestionService.postAnswerForAQuestion(questionId, answer);
-        setAnswerText((prev) => ({ ...prev, [questionId]: "" }));
-        fetchQuestions(); // Refresh the list of questions and answers
-    };
+        await QuestionService.postAnswerForAQuestion(questionId, answer)
+        setAnswerText((prev) => ({ ...prev, [questionId]: '' }))
+        fetchQuestions() // Refresh the list of questions and answers
+    }
 
-    const toggleTradeItemSelection = async (itemid : number) => {
-        debugger;
+    const toggleTradeItemSelection = async (itemid: number) => {
+        debugger
     }
 
     const updateItemQuantity = (itemId: number, quantity: number) => {
         setSelectedItems((prev) => ({
             ...prev,
             [itemId]: quantity,
-        }));
-    };
+        }))
+    }
 
     const handleOfferSubmit = async () => {
-
         if (!offerAmount.trim()) {
-            alert('Please enter an amount.');
-            return;
+            alert('Please enter an amount.')
+            return
         }
 
-        const parsedAmount = parseFloat(offerAmount);
+        const parsedAmount = parseFloat(offerAmount)
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
-            alert('Please enter a valid amount greater than 0.');
-            return;
+            alert('Please enter a valid amount greater than 0.')
+            return
         }
 
-        setLoading(true); // Show spinner
+        setLoading(true) // Show spinner
 
         try {
-            const formData: any = { amount: parsedAmount };
+            const formData: any = { amount: parsedAmount }
 
             if (activeTab === 'trade') {
-                const offerItems = Object.entries(selectedItems).map(([itemId, quantity]) => ({
-                    itemId: parseInt(itemId),
-                    quantity,
-                }));
-                formData.offerItems = offerItems;
+                const offerItems = Object.entries(selectedItems).map(
+                    ([itemId, quantity]) => ({
+                        itemId: parseInt(itemId),
+                        quantity,
+                    })
+                )
+                formData.offerItems = offerItems
             }
 
-            await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
-            setShowOfferModal(false); // Close the modal
-            setOfferAmount('');
-            setSelectedItems({});
+            await OfferService.makeAnOffer(parseInt(id ?? '0'), formData)
+            setShowOfferModal(false) // Close the modal
+            setOfferAmount('')
+            setSelectedItems({})
         } catch (error) {
-            console.error('Error submitting offer:', error);
+            console.error('Error submitting offer:', error)
         } finally {
-            setLoading(false); // Hide spinner
+            setLoading(false) // Hide spinner
         }
-    };
+    }
 
     if (!itemDetails) {
-        return <div>Loading...</div>;
+        return <div>Loading...</div>
     }
 
     const toggleItemSelection = (itemId: number, checked: boolean) => {
         setSelectedItems((prev) => {
-            const updated = { ...prev };
+            const updated = { ...prev }
             if (checked) {
-                updated[itemId] = 1; // Default quantity to 1 if checked
+                updated[itemId] = 1 // Default quantity to 1 if checked
             } else {
-                delete updated[itemId];
+                delete updated[itemId]
             }
-            return updated;
-        });
-    };
+            return updated
+        })
+    }
 
     return (
         <div className="container mt-4">
@@ -143,11 +162,17 @@ const ItemDetail: React.FC = () => {
             <Row className="align-items-stretch">
                 <Col md={4} className="d-flex">
                     <Carousel className="flex-fill">
-                        {itemDetails.imageUrls.map((imageUrl: string, index: number) => (
-                            <Carousel.Item key={index}>
-                                <img className="d-block w-100" src={imageUrl} alt={`Slide ${index + 1}`} />
-                            </Carousel.Item>
-                        ))}
+                        {itemDetails.imageUrls.map(
+                            (imageUrl: string, index: number) => (
+                                <Carousel.Item key={index}>
+                                    <img
+                                        className="d-block w-100"
+                                        src={imageUrl}
+                                        alt={`Slide ${index + 1}`}
+                                    />
+                                </Carousel.Item>
+                            )
+                        )}
                     </Carousel>
                 </Col>
                 <Col md={8} className="d-flex">
@@ -157,14 +182,29 @@ const ItemDetail: React.FC = () => {
                                 {itemDetails.title}
                             </Card.Title>
                             <Card.Text>
-                                <strong>Quantity:</strong> {itemDetails.quantity}<br />
-                                <strong>Description:</strong> {itemDetails.description}<br />
-                                <strong>Price:</strong> ${itemDetails.price.toFixed(2)}<br />
-                                <strong>Category:</strong> {itemDetails.category}<br />
-                                <strong>Created At:</strong> {new Date(itemDetails.createdAt).toLocaleString()}<br />
+                                <strong>Quantity:</strong>{' '}
+                                {itemDetails.quantity}
+                                <br />
+                                <strong>Description:</strong>{' '}
+                                {itemDetails.description}
+                                <br />
+                                <strong>Price:</strong> $
+                                {itemDetails.price.toFixed(2)}
+                                <br />
+                                <strong>Category:</strong>{' '}
+                                {itemDetails.category}
+                                <br />
+                                <strong>Created At:</strong>{' '}
+                                {new Date(
+                                    itemDetails.createdAt
+                                ).toLocaleString()}
+                                <br />
                             </Card.Text>
                             {!ownerLoggedIn && (
-                                <Button variant="warning" onClick={() => setShowOfferModal(true)}>
+                                <Button
+                                    variant="warning"
+                                    onClick={() => setShowOfferModal(true)}
+                                >
                                     Make an Offer
                                 </Button>
                             )}
@@ -185,7 +225,11 @@ const ItemDetail: React.FC = () => {
                             value={newQuestion}
                             onChange={(e) => setNewQuestion(e.target.value)}
                         />
-                        <Button variant="primary" onClick={handleQuestionSubmit} className="mt-2">
+                        <Button
+                            variant="primary"
+                            onClick={handleQuestionSubmit}
+                            className="mt-2"
+                        >
                             Submit Question
                         </Button>
                     </Form.Group>
@@ -199,26 +243,46 @@ const ItemDetail: React.FC = () => {
                                     <div className="ml-4 mt-2">
                                         {q.answers && q.answers.length > 0 ? (
                                             <div>
-                                                <strong>A:</strong> {q.answers[0].answerText} <br />
-                                                <small>Answered by: {q.answers[0].answeredBy}</small>
+                                                <strong>A:</strong>{' '}
+                                                {q.answers[0].answerText} <br />
+                                                <small>
+                                                    Answered by:{' '}
+                                                    {q.answers[0].answeredBy}
+                                                </small>
                                             </div>
                                         ) : ownerLoggedIn ? (
-                                            <Form.Group controlId={`answerInput-${q.questionId}`}>
-                                                <Form.Label>Post an Answer:</Form.Label>
+                                            <Form.Group
+                                                controlId={`answerInput-${q.questionId}`}
+                                            >
+                                                <Form.Label>
+                                                    Post an Answer:
+                                                </Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     placeholder="Type your answer here"
-                                                    value={answerText[q.questionId] || ""}
+                                                    value={
+                                                        answerText[
+                                                            q.questionId
+                                                        ] || ''
+                                                    }
                                                     onChange={(e) =>
-                                                        setAnswerText((prev) => ({
-                                                            ...prev,
-                                                            [q.questionId]: e.target.value,
-                                                        }))
+                                                        setAnswerText(
+                                                            (prev) => ({
+                                                                ...prev,
+                                                                [q.questionId]:
+                                                                    e.target
+                                                                        .value,
+                                                            })
+                                                        )
                                                     }
                                                 />
                                                 <Button
                                                     variant="success"
-                                                    onClick={() => handleAnswerSubmit(q.questionId)}
+                                                    onClick={() =>
+                                                        handleAnswerSubmit(
+                                                            q.questionId
+                                                        )
+                                                    }
                                                     className="mt-2"
                                                 >
                                                     Submit Answer
@@ -247,7 +311,10 @@ const ItemDetail: React.FC = () => {
             </Row>
 
             {/* Offer Modal */}
-            <Modal show={showOfferModal} onHide={() => setShowOfferModal(false)}>
+            <Modal
+                show={showOfferModal}
+                onHide={() => setShowOfferModal(false)}
+            >
                 <Modal.Header closeButton>
                     <Modal.Title>Make an Offer</Modal.Title>
                 </Modal.Header>
@@ -261,13 +328,17 @@ const ItemDetail: React.FC = () => {
                         {/* Offer Tab */}
                         <Tab eventKey="offer" title="Offer">
                             <Form.Group controlId="offerInput">
-                                <Form.Label>Enter your offer amount:</Form.Label>
+                                <Form.Label>
+                                    Enter your offer amount:
+                                </Form.Label>
                                 <Form.Control
                                     type="number"
                                     step="0.01"
                                     placeholder="Enter amount"
                                     value={offerAmount}
-                                    onChange={(e) => setOfferAmount(e.target.value)}
+                                    onChange={(e) =>
+                                        setOfferAmount(e.target.value)
+                                    }
                                     disabled={loading}
                                 />
                             </Form.Group>
@@ -276,13 +347,17 @@ const ItemDetail: React.FC = () => {
                         {/* Trade Tab */}
                         <Tab eventKey="trade" title="Trade">
                             <Form.Group controlId="tradeAmountInput">
-                                <Form.Label>Enter your trade amount:</Form.Label>
+                                <Form.Label>
+                                    Enter your trade amount:
+                                </Form.Label>
                                 <Form.Control
                                     type="number"
                                     step="0.01"
                                     placeholder="Enter amount"
                                     value={offerAmount}
-                                    onChange={(e) => setOfferAmount(e.target.value)}
+                                    onChange={(e) =>
+                                        setOfferAmount(e.target.value)
+                                    }
                                     disabled={loading}
                                 />
                             </Form.Group>
@@ -292,7 +367,12 @@ const ItemDetail: React.FC = () => {
                                     <Form.Check
                                         type="checkbox"
                                         label={`${item.title} (Available: ${item.quantity})`}
-                                        onChange={(e) => toggleItemSelection(item.id, e.target.checked)}
+                                        onChange={(e) =>
+                                            toggleItemSelection(
+                                                item.id,
+                                                e.target.checked
+                                            )
+                                        }
                                     />
                                     {selectedItems[item.id] !== undefined && (
                                         <Form.Control
@@ -302,7 +382,11 @@ const ItemDetail: React.FC = () => {
                                             max={item.quantity}
                                             value={selectedItems[item.id]}
                                             onChange={(e) =>
-                                                updateItemQuantity(item.id, parseInt(e.target.value) || 1)
+                                                updateItemQuantity(
+                                                    item.id,
+                                                    parseInt(e.target.value) ||
+                                                        1
+                                                )
                                             }
                                             className="mt-2"
                                         />
@@ -313,13 +397,25 @@ const ItemDetail: React.FC = () => {
                     </Tabs>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowOfferModal(false)} disabled={loading}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => setShowOfferModal(false)}
+                        disabled={loading}
+                    >
                         Cancel
                     </Button>
-                    <Button variant="success" onClick={handleOfferSubmit} disabled={loading}>
+                    <Button
+                        variant="success"
+                        onClick={handleOfferSubmit}
+                        disabled={loading}
+                    >
                         {loading ? (
                             <>
-                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                <span
+                                    className="spinner-border spinner-border-sm me-2"
+                                    role="status"
+                                    aria-hidden="true"
+                                ></span>
                                 Submitting...
                             </>
                         ) : (
@@ -329,7 +425,7 @@ const ItemDetail: React.FC = () => {
                 </Modal.Footer>
             </Modal>
         </div>
-    );
-};
+    )
+}
 
-export default ItemDetail;
+export default ItemDetail

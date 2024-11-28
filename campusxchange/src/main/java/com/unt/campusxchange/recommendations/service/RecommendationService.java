@@ -7,6 +7,7 @@ import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
 import com.unt.campusxchange.wishlist.entity.WishlistItem;
+import com.unt.campusxchange.wishlist.exception.WishlistItemNotFoundException;
 import com.unt.campusxchange.wishlist.repo.WishlistRepository;
 import java.math.BigDecimal;
 import java.util.*;
@@ -35,7 +36,7 @@ public class RecommendationService {
         // Fetch wishlist items for the user
         List<WishlistItem> wishlistItems = wishlistRepository.findByUserId(user.getId());
         if (wishlistItems.isEmpty()) {
-            throw new IllegalArgumentException("No wishlist items found for user ID: " + user.getId());
+            throw new WishlistItemNotFoundException("No wishlist items found for user ID: " + user.getId());
         }
 
         // Extract items from wishlist
@@ -72,7 +73,7 @@ public class RecommendationService {
         return recommendedItems.stream().map(this::convertToCreateItemResponse).collect(Collectors.toList());
     }
 
-    private double calculateSimilarity(Item item1, Item item2) {
+    public double calculateSimilarity(Item item1, Item item2) {
         // Compare categories
         double categorySimilarity = item1.getCategory() == item2.getCategory() ? 1.0 : 0.0;
 
