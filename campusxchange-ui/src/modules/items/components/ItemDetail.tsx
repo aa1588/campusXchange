@@ -156,6 +156,22 @@ const ItemDetail: React.FC = () => {
         }
     };
     
+    const handleEditOffer = (offerDetails: any) => {
+        // Set the existing offer details in the state
+        setOfferAmount(offerDetails.amount.toString());
+        setSelectedItems(
+            offerDetails.offerItems.reduce((acc: any, item: any) => {
+                acc[item.itemId] = item.quantity;
+                return acc;
+            }, {})
+        );
+    
+        // Set the active tab based on the offerType
+        setActiveTab(offerDetails.offerType === "TRADE" ? "trade" : "offer");
+    
+        // Open the modal to edit the offer
+        setShowOfferModal(true);
+    };
     
     
 
@@ -237,6 +253,7 @@ const ItemDetail: React.FC = () => {
                                                             <th>Amount</th>
                                                             <th>Offer Type</th>
                                                             <th>Offer Items</th>
+                                                            <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -245,22 +262,27 @@ const ItemDetail: React.FC = () => {
                                                             <td>${userOfferDetails.amount.toFixed(2)}</td>
                                                             <td>{userOfferDetails.offerType}</td>
                                                             <td>
-                                                                {userOfferDetails.offerItems &&
-                                                                userOfferDetails.offerItems.length > 0 ? (
+                                                                {userOfferDetails.offerItems && userOfferDetails.offerItems.length > 0 ? (
                                                                     <ul>
-                                                                        {userOfferDetails.offerItems.map(
-                                                                            (item: any) => (
-                                                                                <li key={item.itemId}>
-                                                                                    <Link to={`/items/${item.itemId}`} target='_blank'>
-                                                                                        {item.itemId}
-                                                                                    </Link> - Quantity: {item.quantity}
-                                                                                </li>
-                                                                            )
-                                                                        )}
+                                                                        {userOfferDetails.offerItems.map((item: any) => (
+                                                                            <li key={item.itemId}>
+                                                                                <Link to={`/items/${item.itemId}`} target="_blank">
+                                                                                    {item.itemId}
+                                                                                </Link> - Quantity: {item.quantity}
+                                                                            </li>
+                                                                        ))}
                                                                     </ul>
                                                                 ) : (
                                                                     'N/A'
                                                                 )}
+                                                            </td>
+                                                            <td>
+                                                                <Button
+                                                                    variant="info"
+                                                                    onClick={() => handleEditOffer(userOfferDetails)}
+                                                                >
+                                                                    Edit
+                                                                </Button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -378,7 +400,7 @@ const ItemDetail: React.FC = () => {
                 onHide={() => setShowOfferModal(false)}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Make an Offer</Modal.Title>
+                    <Modal.Title>{userOfferDetails ? 'Edit Offer' : 'Make an Offer'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Tabs
@@ -390,17 +412,13 @@ const ItemDetail: React.FC = () => {
                         {/* Offer Tab */}
                         <Tab eventKey="offer" title="Offer">
                             <Form.Group controlId="offerInput">
-                                <Form.Label>
-                                    Enter your offer amount:
-                                </Form.Label>
+                                <Form.Label>Enter your offer amount:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     step="0.01"
                                     placeholder="Enter amount"
                                     value={offerAmount}
-                                    onChange={(e) =>
-                                        setOfferAmount(e.target.value)
-                                    }
+                                    onChange={(e) => setOfferAmount(e.target.value)}
                                     disabled={loading}
                                 />
                             </Form.Group>
@@ -409,17 +427,13 @@ const ItemDetail: React.FC = () => {
                         {/* Trade Tab */}
                         <Tab eventKey="trade" title="Trade">
                             <Form.Group controlId="tradeAmountInput">
-                                <Form.Label>
-                                    Enter your trade amount:
-                                </Form.Label>
+                                <Form.Label>Enter your trade amount:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     step="0.01"
                                     placeholder="Enter amount"
                                     value={offerAmount}
-                                    onChange={(e) =>
-                                        setOfferAmount(e.target.value)
-                                    }
+                                    onChange={(e) => setOfferAmount(e.target.value)}
                                     disabled={loading}
                                 />
                             </Form.Group>
@@ -430,10 +444,7 @@ const ItemDetail: React.FC = () => {
                                         type="checkbox"
                                         label={`${item.title} (Available: ${item.quantity})`}
                                         onChange={(e) =>
-                                            toggleItemSelection(
-                                                item.id,
-                                                e.target.checked
-                                            )
+                                            toggleItemSelection(item.id, e.target.checked)
                                         }
                                     />
                                     {selectedItems[item.id] !== undefined && (
@@ -444,11 +455,7 @@ const ItemDetail: React.FC = () => {
                                             max={item.quantity}
                                             value={selectedItems[item.id]}
                                             onChange={(e) =>
-                                                updateItemQuantity(
-                                                    item.id,
-                                                    parseInt(e.target.value) ||
-                                                        1
-                                                )
+                                                updateItemQuantity(item.id, parseInt(e.target.value) || 1)
                                             }
                                             className="mt-2"
                                         />
