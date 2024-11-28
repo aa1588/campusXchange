@@ -5,7 +5,6 @@ import { Item } from '../../items/model/Item'
 import Cookies from 'js-cookie'
 import ItemService from '../../items/service/itemservice'
 import { Link } from 'react-router-dom'
-import AddItemForSale from '../../items/components/AddItemForm'
 import OfferService from '../../items/service/OfferService'
 
 interface Offer {
@@ -92,7 +91,7 @@ const Dashboard: React.FC = () => {
                 color={'text-success'}
                 content={
                     '' +
-                    'Easily manage or add your items on CampusXchange. You can review, accept or decline offers for your items here.\n' +
+                    'You can review, accept or decline offers for your items here.\n' +
                     "                            Don't forget to mark your item as sold after the transaction is completed."
                 }
             />
@@ -102,7 +101,7 @@ const Dashboard: React.FC = () => {
                         <Link to="/add-item-for-sale">
                             <Button
                                 variant="warning"
-                                className="mb-4 p-2 text-white"
+                                className="mb-1 p-2 text-white"
                             >
                                 Add Item For Sale{' '}
                                 <i className="bi bi-plus-circle-fill text-white"></i>
@@ -257,7 +256,7 @@ const Dashboard: React.FC = () => {
                                 key={item.id}
                                 className="mb-4"
                             >
-                                <Card className="h-100">
+                                <Card className="h-80">
                                     <Card.Img
                                         variant="top"
                                         src={item.imageUrls[0]}
