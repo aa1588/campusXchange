@@ -139,8 +139,16 @@ const ItemDetail: React.FC = () => {
                 );
                 formData.offerItems = offerItems;
             }
+
+            let response;
     
-            const response = await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
+            if(userOfferDetails != null){
+                response =  await OfferService.updateOffer(parseInt(userOfferDetails.id ?? '0'), formData);
+            }
+            else{
+                response = await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
+
+            }
     
             // Update the UI immediately after a successful offer submission
             setUserHasMadeOffer(true);
