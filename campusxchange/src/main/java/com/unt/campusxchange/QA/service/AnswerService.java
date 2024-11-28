@@ -7,9 +7,13 @@ import com.unt.campusxchange.QA.exception.ItemOwnershipRequiredException;
 import com.unt.campusxchange.QA.exception.QuestionNotFoundException;
 import com.unt.campusxchange.QA.repo.AnswerRepository;
 import com.unt.campusxchange.QA.repo.QuestionRepository;
+import com.unt.campusxchange.notification.sse.Notification;
+import com.unt.campusxchange.notification.sse.NotificationService;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public AddAnswerResponse saveAnswer(String email, Integer questionId, String answerText) {
 
@@ -43,6 +48,12 @@ public class AnswerService {
         answer.setCreatedAt(LocalDateTime.now());
 
         answerRepository.save(answer);
+
+        /* Test for SSE-Notification System */
+        Notification notification = new Notification("You have a reply for your Item: " + question.getItem().getTitle(), Instant.now());
+
+        notificationService.sendNotification(question.getAskedBy().getEmail(), notification);
+        /* Test for SSE-Notification System */
 
         return new AddAnswerResponse(
                 answer.getId(),
