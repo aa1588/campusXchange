@@ -13,7 +13,6 @@ import com.unt.campusxchange.notification.sse.NotificationService;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,7 +44,8 @@ public class QuestionService {
         questionRepository.save(question);
 
         /* Test for SSE-Notification System */
-        Notification notification = new Notification("You have unanswered question for Item: " + item.getTitle(), Instant.now());
+        Notification notification =
+                new Notification("You have unanswered question for Item: " + item.getTitle(), Instant.now());
 
         notificationService.sendNotification(item.getUser().getEmail(), notification);
         /* Test for SSE-Notification System */

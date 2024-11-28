@@ -12,7 +12,6 @@ import com.unt.campusxchange.notification.sse.NotificationService;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +49,8 @@ public class AnswerService {
         answerRepository.save(answer);
 
         /* Test for SSE-Notification System */
-        Notification notification = new Notification("You have a reply for your Item: " + question.getItem().getTitle(), Instant.now());
+        Notification notification = new Notification(
+                "You have a reply for your Item: " + question.getItem().getTitle(), Instant.now());
 
         notificationService.sendNotification(question.getAskedBy().getEmail(), notification);
         /* Test for SSE-Notification System */
