@@ -172,6 +172,7 @@ const ItemDetail: React.FC = () => {
     const handleEditOffer = (offerDetails: any) => {
         // Set the existing offer details in the state
         setOfferAmount(offerDetails.amount.toString());
+        setOfferDescription(userOfferDetails.description || ''); 
         setSelectedItems(
             offerDetails.offerItems.reduce((acc: any, item: any) => {
                 acc[item.itemId] = item.quantity;
