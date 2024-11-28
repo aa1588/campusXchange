@@ -176,16 +176,6 @@ public class OfferService {
         Offer updatedOffer = offerRepository.save(existingOffer);
 
         // Notify the item owner if necessary
-        //        User itemOwner = existingOffer.getItem().getUser();
-        //        if (itemOwner != null) {
-        //            String notificationMessage = String.format(
-        //                    "The offer on your item '%s' by %s has been updated.",
-        //                    existingOffer.getItem().getTitle(), user.getFirstname());
-        //
-        //            Notification notification = new Notification(notificationMessage, Instant.now());
-        //
-        //            notificationService.sendNotification(itemOwner.getEmail(), notification);
-        //        }
 
         return toOfferDTO(updatedOffer);
     }
