@@ -317,22 +317,24 @@ const ItemDetail: React.FC = () => {
             <Row className="mt-4">
                 <Col>
                     <h5>Questions & Answers</h5>
-                    <Form.Group controlId="questionInput">
-                        <Form.Label>Ask a Question:</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Type your question here"
-                            value={newQuestion}
-                            onChange={(e) => setNewQuestion(e.target.value)}
-                        />
-                        <Button
-                            variant="primary"
-                            onClick={handleQuestionSubmit}
-                            className="mt-2"
-                        >
-                            Submit Question
-                        </Button>
-                    </Form.Group>
+                    {!ownerLoggedIn && (
+                        <Form.Group controlId="questionInput">
+                            <Form.Label>Ask a Question:</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Type your question here"
+                                value={newQuestion}
+                                onChange={(e) => setNewQuestion(e.target.value)}
+                            />
+                            <Button
+                                variant="primary"
+                                onClick={handleQuestionSubmit}
+                                className="mt-2"
+                            >
+                                Submit Question
+                            </Button>
+                        </Form.Group>
+                    )}
 
                     <div className="mt-4">
                         {questions.length > 0 ? (
