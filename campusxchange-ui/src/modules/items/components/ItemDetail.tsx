@@ -266,6 +266,7 @@ const ItemDetail: React.FC = () => {
                                                             <th>Offer ID</th>
                                                             <th>Amount</th>
                                                             <th>Offer Type</th>
+                                                            <th>Description</th>
                                                             <th>Offer Items</th>
                                                             <th>Action</th>
                                                         </tr>
@@ -275,6 +276,7 @@ const ItemDetail: React.FC = () => {
                                                             <td>{userOfferDetails.id}</td>
                                                             <td>${userOfferDetails.amount.toFixed(2)}</td>
                                                             <td>{userOfferDetails.offerType}</td>
+                                                            <td>{userOfferDetails.description}</td>
                                                             <td>
                                                                 {userOfferDetails.offerItems && userOfferDetails.offerItems.length > 0 ? (
                                                                     <ul>
