@@ -35,7 +35,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onDislike }) => {
                 style={{ width: '100%', maxWidth: '18rem', height: 'auto' }}
                 className="shadow-sm"
             >
-                <Link to={`/items/${item.id}`} style={{ textDecoration: 'none' }}>
                 <Carousel>
                     {item.imageUrls.map((image, index) => (
                         <Carousel.Item key={index}>
@@ -48,7 +47,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onDislike }) => {
                         </Carousel.Item>
                     ))}
                 </Carousel>
-                </Link>
                 <Card.Body style={{ padding: '1rem' }}>
                     <Link to={`/items/${item.id}`} style={{ textDecoration: 'none' }}>
                     <Card.Title
