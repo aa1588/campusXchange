@@ -20,21 +20,22 @@ import itemservice from '../service/itemservice'
 import Cookies from 'js-cookie'
 
 const ItemDetail: React.FC = () => {
-    const { id } = useParams<{ id: string }>()
-    const [itemDetails, setItemDetails] = useState<any>(null)
-    const [questions, setQuestions] = useState<any[]>([])
-    const [newQuestion, setNewQuestion] = useState<string>('')
-    const [answerText, setAnswerText] = useState<{ [key: number]: string }>({})
-    const navigate = useNavigate()
-    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false)
-    const [showOfferModal, setShowOfferModal] = useState<boolean>(false)
-    const [offerAmount, setOfferAmount] = useState<string>('')
-    const [loading, setLoading] = useState<boolean>(false) // State to manage loading spinner
-    const [myitems, setMyitems] = useState<any[]>([])
-    const [selectedItems, setSelectedItems] = useState<{
-        [key: number]: number
-    }>({}) // Stores selected item IDs and their quantities
-    const [activeTab, setActiveTab] = useState<string>('offer')
+    const { id } = useParams<{ id: string }>();
+    const [itemDetails, setItemDetails] = useState<any>(null);
+    const [questions, setQuestions] = useState<any[]>([]);
+    const [newQuestion, setNewQuestion] = useState<string>('');
+    const [answerText, setAnswerText] = useState<{ [key: number]: string }>({});
+    const navigate = useNavigate();
+    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
+    const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
+    const [offerAmount, setOfferAmount] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [myitems, setMyitems] = useState<any[]>([]);
+    const [userHasMadeOffer, setUserHasMadeOffer] = useState<boolean>(false);
+    const [userOfferDetails, setUserOfferDetails] = useState<any>(null);
+    const [selectedItems, setSelectedItems] = useState<{ [key: number]: number }>({});
+    const [activeTab, setActiveTab] = useState<string>('offer');
+
 
     useEffect(() => {
         const fetchItemDetails = async () => {
@@ -49,11 +50,27 @@ const ItemDetail: React.FC = () => {
                 }
             }
         }
-
+        checkUserOfferStatus()
         fetchMyItems()
         fetchItemDetails()
         fetchQuestions()
     }, [id])
+
+    const checkUserOfferStatus = async () => {
+        const offers = await OfferService.getOfferForItem(parseInt(id!));
+        const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
+
+        const userOffer = offers.find((offer: any) => offer.offeredBy.id === userId);
+
+        if (userOffer) {
+            setUserHasMadeOffer(true);
+            setUserOfferDetails(userOffer);
+        } else {
+            setUserHasMadeOffer(false);
+            setUserOfferDetails(null);
+        }
+    };
+    
 
     const fetchMyItems = async () => {
         const token = Cookies.get('authToken')
@@ -83,10 +100,6 @@ const ItemDetail: React.FC = () => {
         await QuestionService.postAnswerForAQuestion(questionId, answer)
         setAnswerText((prev) => ({ ...prev, [questionId]: '' }))
         fetchQuestions() // Refresh the list of questions and answers
-    }
-
-    const toggleTradeItemSelection = async (itemid: number) => {
-        debugger
     }
 
     const updateItemQuantity = (itemId: number, quantity: number) => {
@@ -127,6 +140,9 @@ const ItemDetail: React.FC = () => {
             }
     
             await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
+    
+            // Immediately update state to reflect that an offer has been made
+            setUserHasMadeOffer(true);
             setShowOfferModal(false); // Close the modal
             setOfferAmount('');
             setSelectedItems({});
@@ -136,6 +152,7 @@ const ItemDetail: React.FC = () => {
             setLoading(false); // Hide spinner
         }
     };
+    
     
 
     if (!itemDetails) {
@@ -166,17 +183,15 @@ const ItemDetail: React.FC = () => {
             <Row className="align-items-stretch">
                 <Col md={4} className="d-flex">
                     <Carousel className="flex-fill">
-                        {itemDetails.imageUrls.map(
-                            (imageUrl: string, index: number) => (
-                                <Carousel.Item key={index}>
-                                    <img
-                                        className="d-block w-100"
-                                        src={imageUrl}
-                                        alt={`Slide ${index + 1}`}
-                                    />
-                                </Carousel.Item>
-                            )
-                        )}
+                        {itemDetails.imageUrls.map((imageUrl: string, index: number) => (
+                            <Carousel.Item key={index}>
+                                <img
+                                    className="d-block w-100"
+                                    src={imageUrl}
+                                    alt={`Slide ${index + 1}`}
+                                />
+                            </Carousel.Item>
+                        ))}
                     </Carousel>
                 </Col>
                 <Col md={8} className="d-flex">
@@ -186,31 +201,68 @@ const ItemDetail: React.FC = () => {
                                 {itemDetails.title}
                             </Card.Title>
                             <Card.Text>
-                                <strong>Quantity:</strong>{' '}
-                                {itemDetails.quantity}
+                                <strong>Quantity:</strong> {itemDetails.quantity}
                                 <br />
-                                <strong>Description:</strong>{' '}
-                                {itemDetails.description}
+                                <strong>Description:</strong> {itemDetails.description}
                                 <br />
-                                <strong>Price:</strong> $
-                                {itemDetails.price.toFixed(2)}
+                                <strong>Price:</strong> ${itemDetails.price.toFixed(2)}
                                 <br />
-                                <strong>Category:</strong>{' '}
-                                {itemDetails.category}
+                                <strong>Category:</strong> {itemDetails.category}
                                 <br />
                                 <strong>Created At:</strong>{' '}
-                                {new Date(
-                                    itemDetails.createdAt
-                                ).toLocaleString()}
+                                {new Date(itemDetails.createdAt).toLocaleString()}
                                 <br />
                             </Card.Text>
                             {!ownerLoggedIn && (
-                                <Button
-                                    variant="warning"
-                                    onClick={() => setShowOfferModal(true)}
-                                >
-                                    Make an Offer
-                                </Button>
+                                <>
+                                    {!userHasMadeOffer ? (
+                                        <Button
+                                            variant="warning"
+                                            onClick={() => setShowOfferModal(true)}
+                                        >
+                                            Make an Offer
+                                        </Button>
+                                    ) : (
+                                        userOfferDetails && (
+                                            <div className="mt-4">
+                                                <h5>Your Offer Details</h5>
+                                                <Table striped bordered hover>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Offer ID</th>
+                                                            <th>Amount</th>
+                                                            <th>Offer Type</th>
+                                                            <th>Offer Items</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>{userOfferDetails.id}</td>
+                                                            <td>${userOfferDetails.amount.toFixed(2)}</td>
+                                                            <td>{userOfferDetails.offerType}</td>
+                                                            <td>
+                                                                {userOfferDetails.offerItems &&
+                                                                userOfferDetails.offerItems.length > 0 ? (
+                                                                    <ul>
+                                                                        {userOfferDetails.offerItems.map(
+                                                                            (item: any) => (
+                                                                                <li key={item.itemId}>
+                                                                                    {item.itemId} - Quantity: {item.quantity}
+                                                                                </li>
+                                                                            )
+                                                                        )}
+                                                                    </ul>
+                                                                ) : (
+                                                                    'N/A'
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </Table>
+                                            </div>
+                                        )
+                                    )}
+                                </>
                             )}
                         </Card.Body>
                     </Card>
