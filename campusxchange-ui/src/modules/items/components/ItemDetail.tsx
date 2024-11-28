@@ -30,6 +30,7 @@ const ItemDetail: React.FC = () => {
     const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
     const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
     const [offerAmount, setOfferAmount] = useState<string>('');
+    const [offerDescription, setOfferDescription] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [myitems, setMyitems] = useState<any[]>([]);
     const [userHasMadeOffer, setUserHasMadeOffer] = useState<boolean>(false);
@@ -138,6 +139,10 @@ const ItemDetail: React.FC = () => {
                     })
                 );
                 formData.offerItems = offerItems;
+            }
+
+            if (offerDescription) {
+                formData.description = offerDescription;
             }
 
             let response;
@@ -472,6 +477,19 @@ const ItemDetail: React.FC = () => {
                             ))}
                         </Tab>
                     </Tabs>
+
+                    {/* Description Field (common to both tabs) */}
+                    <Form.Group controlId="descriptionInput" className="mt-3">
+                        <Form.Label>Description (Optional):</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            placeholder="Enter a description for your offer"
+                            value={offerDescription}
+                            onChange={(e) => setOfferDescription(e.target.value)}
+                            disabled={loading}
+                        />
+                    </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -501,6 +519,8 @@ const ItemDetail: React.FC = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+
         </div>
     )
 }
