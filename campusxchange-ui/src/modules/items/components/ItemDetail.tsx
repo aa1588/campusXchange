@@ -112,18 +112,21 @@ const ItemDetail: React.FC = () => {
             alert("Please enter an amount.");
             return;
         }
-
+    
         const parsedAmount = parseFloat(offerAmount);
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
             alert("Please enter a valid amount greater than 0.");
             return;
         }
-
+    
         setLoading(true);
-
+    
         try {
-            const formData: any = { amount: parsedAmount };
-
+            const formData: any = { 
+                amount: parsedAmount 
+            };
+    
+            // Append offerType and items based on the active tab
             if (activeTab === "trade") {
                 const offerItems = Object.entries(selectedItems).map(([itemId, quantity]) => ({
                     itemId: parseInt(itemId),
@@ -134,8 +137,18 @@ const ItemDetail: React.FC = () => {
             } else {
                 formData.offerType = "OFFER";
             }
-
-            await OfferService.makeAnOffer(parseInt(id ?? "0"), formData);
+    
+            // Append offer id if editing an existing offer
+            if (existingOffer) {
+                let offerid = existingOffer.id;
+                await OfferService.updateOffer(parseInt(offerid ?? "0"), formData);
+            }
+            else{
+                // Call the API to make or edit the offer
+                await OfferService.makeAnOffer(parseInt(id ?? "0"), formData);
+            }
+    
+            // Reset and refresh after successful submission
             setShowOfferModal(false);
             setOfferAmount("");
             setSelectedItems({});
@@ -146,6 +159,7 @@ const ItemDetail: React.FC = () => {
             setLoading(false);
         }
     };
+    
 
     if (!itemDetails) {
         return <div>Loading...</div>;
