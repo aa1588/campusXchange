@@ -23,7 +23,8 @@ import {Link} from "react-router-dom";
 interface Item {
     id: number
     title: string
-    price: string
+    price: string,
+    quantity: number,
     imageUrls: string[]
 }
 
@@ -282,11 +283,11 @@ const Home: React.FC = () => {
                                 <Row>
                                     {filteredItems.map((item) => (
                                         <Col md={4} key={item.id} className="mb-4">
-                                            <ItemCard
+                                            {item.quantity > 0 && <ItemCard
                                                 item={item}
                                                 onLike={handleLike}
                                                 liked={likedItems.includes(item.id)}
-                                            />
+                                            />}
                                         </Col>
                                     ))}
                                 </Row>
