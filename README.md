@@ -21,6 +21,7 @@ This project consists of two main parts:
    - [Items Module](#items-module)
    - [Wishlist Module](#wishlist-module)
    - [Offers Module](#offers-module)
+   - [Notifications Module](#notifications-module)
    - [Recommendations Module](#recommendations-module)
    - [Admin Module](#admin-module)
 7. [Testing](#testing)
@@ -129,6 +130,10 @@ Handles all operations related to items listed in the marketplace. This includes
 Allows users to save items they are interested in for future reference. It enables users to add, remove, and view items in their wishlist, providing a convenient way to track desired products without having to revisit them constantly.
 ### offers-module
 Manages the buying and selling process by handling offers made between buyers and sellers. It allows users to make offers on listed items, negotiate prices, and accept or decline offers, facilitating transactions between users in the marketplace.
+### notifications-module
+The backend implements Server-Sent Events (SSE) as a mechanism to deliver real-time notifications to the client application.
+![SSE-Notifications-Architecture](./images/Notifications-Architecture(SSE).png)
+
 ### recommendations-module
 The RecommendationService is designed to recommend items to a user based on the items they have in their wishlist. It analyzes the user's wishlist, compares the items there to other available items in the system, and generates a list of recommended items. These recommendations are intended to suggest items that are similar to the ones the user has shown interest in (by adding them to their wishlist).
 
