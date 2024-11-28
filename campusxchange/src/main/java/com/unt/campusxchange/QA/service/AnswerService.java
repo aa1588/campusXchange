@@ -50,7 +50,7 @@ public class AnswerService {
 
         /* Test for SSE-Notification System */
         Notification notification = new Notification(
-                "You have a reply for your Item: " + question.getItem().getTitle(), Instant.now());
+                "You have a reply for your Q for Item: " + question.getItem().getTitle(), Instant.now());
 
         notificationService.sendNotification(question.getAskedBy().getEmail(), notification);
         /* Test for SSE-Notification System */
