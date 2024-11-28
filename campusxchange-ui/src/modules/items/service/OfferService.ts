@@ -11,7 +11,7 @@ class OfferService {
         const token = Cookies.get('authToken')
 
         try {
-            await axios.post(`${OFFER_CREATE_API_URL}/${itemId}`, formdata, {
+            return await axios.post(`${OFFER_CREATE_API_URL}/${itemId}`, formdata, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',

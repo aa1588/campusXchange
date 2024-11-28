@@ -121,12 +121,12 @@ const ItemDetail: React.FC = () => {
             return;
         }
     
-        setLoading(true); // Show spinner
+        setLoading(true);
     
         try {
-            const formData: any = { 
-                amount: parsedAmount, 
-                offerType: activeTab === 'offer' ? 'OFFER' : 'TRADE' // Set offerType based on activeTab
+            const formData: any = {
+                amount: parsedAmount,
+                offerType: activeTab === 'offer' ? 'OFFER' : 'TRADE',
             };
     
             if (activeTab === 'trade') {
@@ -139,19 +139,22 @@ const ItemDetail: React.FC = () => {
                 formData.offerItems = offerItems;
             }
     
-            await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
+            const response = await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
     
-            // Immediately update state to reflect that an offer has been made
+            // Update the UI immediately after a successful offer submission
             setUserHasMadeOffer(true);
-            setShowOfferModal(false); // Close the modal
+            setUserOfferDetails(response.data);
+    
+            setShowOfferModal(false);
             setOfferAmount('');
             setSelectedItems({});
         } catch (error) {
             console.error('Error submitting offer:', error);
         } finally {
-            setLoading(false); // Hide spinner
+            setLoading(false);
         }
     };
+    
     
     
 
