@@ -48,6 +48,9 @@ public class Offer {
     @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OfferItem> offerItems; // List of items and their quantities in the offer
 
+    @Column(length = 200)
+    private String description;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

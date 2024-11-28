@@ -39,8 +39,8 @@ public class OfferController {
     public ResponseEntity<OfferDTO> updateOffer(
             @PathVariable Integer offerId, @RequestBody OfferDTO offerDTO, Principal principal) {
         try {
-            String email = principal.getName(); // Get the email of the logged-in user
-            OfferDTO updatedOffer = offerService.updateOffer(offerId, email, offerDTO);
+            String currentUsername = principal.getName(); // Get the email of the logged-in user
+            OfferDTO updatedOffer = offerService.updateOffer(currentUsername, offerId, offerDTO);
             return ResponseEntity.ok(updatedOffer);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

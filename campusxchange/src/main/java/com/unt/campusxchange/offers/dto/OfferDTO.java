@@ -14,4 +14,5 @@ public record OfferDTO(
         OfferStatus status,
         OfferType offerType,
         List<OfferItemDTO> offerItems, // List of item quantities
+        String description,
         LocalDateTime createdAt) {}

@@ -1,5 +1,6 @@
 package com.unt.campusxchange.offers.service;
 
+import com.unt.campusxchange.QA.exception.ItemOwnershipRequiredException;
 import com.unt.campusxchange.items.entity.Item;
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
 import com.unt.campusxchange.items.repo.ItemRepository;
@@ -46,6 +47,7 @@ public class OfferService {
         offer.setItem(mainItem);
         offer.setStatus(OfferStatus.PENDING);
         offer.setOfferType(offerDTO.offerType());
+        offer.setDescription(offerDTO.description());
 
         // Only map offerItems if they are provided in the request
         List<OfferItem> offerItems = offerDTO.offerItems() != null
@@ -112,6 +114,7 @@ public class OfferService {
                 offer.getStatus(),
                 offer.getOfferType(),
                 offerItemDTOs,
+                offer.getDescription(),
                 offer.getCreatedAt());
     }
 
@@ -132,22 +135,26 @@ public class OfferService {
         return offers.stream().map(this::toOfferDTO).collect(Collectors.toList());
     }
 
-    public OfferDTO updateOffer(Integer offerId, String email, OfferDTO offerDTO) {
+    public OfferDTO updateOffer(String email, Integer offerId, OfferDTO offerDTO) {
+        // Validate the user
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        // Validate the existing offer
         Offer existingOffer =
                 offerRepository.findById(offerId).orElseThrow(() -> new OfferNotFoundException("Offer not found"));
 
-        // Check if the logged-in user is the one who created the offer
-        if (!existingOffer.getOfferedBy().getEmail().equals(email)) {
-            throw new SecurityException("You are not authorized to update this offer.");
+        // Ensure the user is the one who created the offer
+        if (!existingOffer.getOfferedBy().getId().equals(user.getId())) {
+            throw new ItemOwnershipRequiredException("You are not authorized to update this offer");
         }
 
-        // Update offer attributes
-        if (offerDTO.amount() != null) {
-            existingOffer.setAmount(offerDTO.amount());
-        }
+        // Update offer details
+        existingOffer.setAmount(offerDTO.amount());
+        existingOffer.setOfferType(offerDTO.offerType());
+        existingOffer.setDescription(offerDTO.description());
 
+        // Update offer items if provided
         if (offerDTO.offerItems() != null) {
-            // Map offerItems from DTO to entity
             List<OfferItem> updatedOfferItems = offerDTO.offerItems().stream()
                     .map(offerItemDTO -> {
                         Item item = itemRepository
@@ -159,14 +166,18 @@ public class OfferService {
                         offerItem.setQuantity(offerItemDTO.quantity());
                         return offerItem;
                     })
-                    .collect(Collectors.toList());
-            existingOffer.setOfferItems(updatedOfferItems);
+                    .toList();
+
+            existingOffer.getOfferItems().clear(); // Clear existing items
+            existingOffer.getOfferItems().addAll(updatedOfferItems); // Add updated items
         }
 
-        // Save the updated offer
-        Offer savedOffer = offerRepository.save(existingOffer);
+        // Save updated offer
+        Offer updatedOffer = offerRepository.save(existingOffer);
 
-        return toOfferDTO(savedOffer);
+        // Notify the item owner if necessary
+
+        return toOfferDTO(updatedOffer);
     }
 
     public List<OfferDTO> listOffersForListOfItems(List<Item> items) {
