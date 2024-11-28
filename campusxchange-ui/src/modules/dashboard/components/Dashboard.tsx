@@ -129,27 +129,6 @@ const Dashboard: React.FC = () => {
                         content={'Here you can review and manage offers for your listed items.'}
                     />
 
-                    <Col md={4}>
-                        <Card>
-                            <Card.Img
-                                variant="top"
-                                src="laptop-image-url"
-                                alt="Laptop Image"
-                            />
-                            <Card.Body>
-                                <Card.Title>Dell Chromebook 3180</Card.Title>
-                                <Card.Text>
-                                    16 GB RAM <br />
-                                    15" TouchScreen <br />
-                                    Webcam
-                                </Card.Text>
-                                <Button variant="primary" className="w-100">
-                                    Mark Sold
-                                </Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-
                     {error && <p className="text-danger">{error}</p>}
                     {offers.length === 0 ? (
                         <Col md={12}>
