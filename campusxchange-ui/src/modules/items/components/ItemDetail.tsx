@@ -18,6 +18,7 @@ import {
 import LayoutHeading from '../../../layout/LayoutHeading'
 import itemservice from '../service/itemservice'
 import Cookies from 'js-cookie'
+import {Link} from "react-router-dom";
 
 const ItemDetail: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -250,7 +251,9 @@ const ItemDetail: React.FC = () => {
                                                                         {userOfferDetails.offerItems.map(
                                                                             (item: any) => (
                                                                                 <li key={item.itemId}>
-                                                                                    {item.itemId} - Quantity: {item.quantity}
+                                                                                    <Link to={`/items/${item.itemId}`} target='_blank'>
+                                                                                        {item.itemId}
+                                                                                    </Link> - Quantity: {item.quantity}
                                                                                 </li>
                                                                             )
                                                                         )}
