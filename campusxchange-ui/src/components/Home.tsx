@@ -36,9 +36,8 @@ interface ItemCardProps {
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, onLike, liked }) => {
     return (
-
-        <Card style={{ width: '100%', maxWidth: '18rem', height: 'auto' }}
-              className="shadow-sm">
+        <Card style={{ width: '100%', maxWidth: '18rem', height: 'auto', padding: '1rem' }}
+              className="shadow-sm my-0">
             <Carousel>
                 {item.imageUrls.map((image, index) => (
                     <Carousel.Item key={index}>
@@ -46,7 +45,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onLike, liked }) => {
                             className="d-block w-100"
                             src={image}
                             alt={`${item.title} image ${index + 1}`}
-                            style={{ height: '120px', objectFit: 'cover' }} // Adjust the height as needed
+                            style={{ height: '150px', objectFit: 'cover' }} // Adjust the height as needed
                         />
                     </Carousel.Item>
                 ))}
@@ -100,7 +99,7 @@ const CategoryFilter: React.FC<{
             }}
         >
             <Card.Body>
-                <h3 className="text-center">Category</h3>
+                <h3 className="text-center text-success fw-bold">Category</h3>
                 <Row>
                     {categories.map((category) => (
                         <Col xs={12} key={category.name} className="mb-3">
@@ -253,7 +252,7 @@ const Home: React.FC = () => {
 
     return (
         <Container>
-            <div className="d-flex justify-content-center mt-4">
+            <div className="d-flex justify-content-center mt-4 mb-1">
                 <Form.Control
                     type="text"
                     placeholder="Search items..."
@@ -272,7 +271,8 @@ const Home: React.FC = () => {
                     </Col>
                     <Col md={9}>
                         <Card
-                            style={{padding: '20px'}}
+                            className="py-2"
+                            //style={{padding: '1px'}}
                         >
                             {loading ? (
                                 <Spinner animation="border"/>
