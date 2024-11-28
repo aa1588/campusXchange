@@ -20,7 +20,8 @@ import { Link } from 'react-router-dom'
 interface Item {
     id: number
     title: string
-    price: string
+    price: string,
+    quantity: number,
     imageUrls: string[]
 }
 
@@ -109,8 +110,9 @@ const Wishlist: React.FC = () => {
                 id: item.id,
                 title: item.title,
                 price: item.price,
+                quantity: item.quantity,
                 imageUrls: item.imageUrls || [], // Fallback to an empty array if imageUrls is missing
-            }))
+            })).filter((item:Item)=> item.quantity > 0)
             setLikedItems(myWishListItems)
         } catch (err) {
             handleError(err, 'Failed to fetch wishlist items')
@@ -196,7 +198,7 @@ const Wishlist: React.FC = () => {
                                             key={item.id}
                                             className="mb-2"
                                         >
-                                            <ItemCard
+                                             <ItemCard
                                                 item={item}
                                                 onDislike={handleDislike}
                                             />
