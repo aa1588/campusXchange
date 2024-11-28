@@ -98,41 +98,45 @@ const ItemDetail: React.FC = () => {
 
     const handleOfferSubmit = async () => {
         if (!offerAmount.trim()) {
-            alert('Please enter an amount.')
-            return
+            alert('Please enter an amount.');
+            return;
         }
-
-        const parsedAmount = parseFloat(offerAmount)
+    
+        const parsedAmount = parseFloat(offerAmount);
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
-            alert('Please enter a valid amount greater than 0.')
-            return
+            alert('Please enter a valid amount greater than 0.');
+            return;
         }
-
-        setLoading(true) // Show spinner
-
+    
+        setLoading(true); // Show spinner
+    
         try {
-            const formData: any = { amount: parsedAmount }
-
+            const formData: any = { 
+                amount: parsedAmount, 
+                offerType: activeTab === 'offer' ? 'OFFER' : 'TRADE' // Set offerType based on activeTab
+            };
+    
             if (activeTab === 'trade') {
                 const offerItems = Object.entries(selectedItems).map(
                     ([itemId, quantity]) => ({
                         itemId: parseInt(itemId),
                         quantity,
                     })
-                )
-                formData.offerItems = offerItems
+                );
+                formData.offerItems = offerItems;
             }
-
-            await OfferService.makeAnOffer(parseInt(id ?? '0'), formData)
-            setShowOfferModal(false) // Close the modal
-            setOfferAmount('')
-            setSelectedItems({})
+    
+            await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
+            setShowOfferModal(false); // Close the modal
+            setOfferAmount('');
+            setSelectedItems({});
         } catch (error) {
-            console.error('Error submitting offer:', error)
+            console.error('Error submitting offer:', error);
         } finally {
-            setLoading(false) // Hide spinner
+            setLoading(false); // Hide spinner
         }
-    }
+    };
+    
 
     if (!itemDetails) {
         return <div>Loading...</div>
