@@ -140,8 +140,8 @@ public class OfferService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // Validate the existing offer
-        Offer existingOffer = offerRepository.findById(offerId)
-                .orElseThrow(() -> new OfferNotFoundException("Offer not found"));
+        Offer existingOffer =
+                offerRepository.findById(offerId).orElseThrow(() -> new OfferNotFoundException("Offer not found"));
 
         // Ensure the user is the one who created the offer
         if (!existingOffer.getOfferedBy().getId().equals(user.getId())) {
@@ -157,7 +157,8 @@ public class OfferService {
         if (offerDTO.offerItems() != null) {
             List<OfferItem> updatedOfferItems = offerDTO.offerItems().stream()
                     .map(offerItemDTO -> {
-                        Item item = itemRepository.findById(offerItemDTO.itemId())
+                        Item item = itemRepository
+                                .findById(offerItemDTO.itemId())
                                 .orElseThrow(() -> new ItemNotFoundException("Item not found"));
                         OfferItem offerItem = new OfferItem();
                         offerItem.setOffer(existingOffer);
@@ -175,21 +176,19 @@ public class OfferService {
         Offer updatedOffer = offerRepository.save(existingOffer);
 
         // Notify the item owner if necessary
-//        User itemOwner = existingOffer.getItem().getUser();
-//        if (itemOwner != null) {
-//            String notificationMessage = String.format(
-//                    "The offer on your item '%s' by %s has been updated.",
-//                    existingOffer.getItem().getTitle(), user.getFirstname());
-//
-//            Notification notification = new Notification(notificationMessage, Instant.now());
-//
-//            notificationService.sendNotification(itemOwner.getEmail(), notification);
-//        }
+        //        User itemOwner = existingOffer.getItem().getUser();
+        //        if (itemOwner != null) {
+        //            String notificationMessage = String.format(
+        //                    "The offer on your item '%s' by %s has been updated.",
+        //                    existingOffer.getItem().getTitle(), user.getFirstname());
+        //
+        //            Notification notification = new Notification(notificationMessage, Instant.now());
+        //
+        //            notificationService.sendNotification(itemOwner.getEmail(), notification);
+        //        }
 
         return toOfferDTO(updatedOffer);
     }
-
-
 
     public List<OfferDTO> listOffersForListOfItems(List<Item> items) {
 
