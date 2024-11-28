@@ -18,7 +18,7 @@ import axios from 'axios'
 import ItemService from '../modules/items/service/itemservice'
 import WishlistService from '../modules/items/service/WishlistService'
 import Cookies from 'js-cookie'
-import { number } from 'yup'
+import {Link} from "react-router-dom";
 
 interface Item {
     id: number
@@ -36,7 +36,10 @@ interface ItemCardProps {
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, onLike, liked }) => {
     return (
-        <Card style={{ width: '18rem', height: '30rem' }}>
+
+        <Card style={{ width: '100%', maxWidth: '18rem', height: 'auto' }}
+              className="shadow-sm">
+            <Link to={`/items/${item.id}`} style={{ textDecoration: 'none' }}>
             <Carousel>
                 {item.imageUrls.map((image, index) => (
                     <Carousel.Item key={index}>
@@ -44,17 +47,32 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onLike, liked }) => {
                             className="d-block w-100"
                             src={image}
                             alt={`${item.title} image ${index + 1}`}
-                            style={{ height: '200px', objectFit: 'cover' }} // Adjust the height as needed
+                            style={{ height: '120px', objectFit: 'cover' }} // Adjust the height as needed
                         />
                     </Carousel.Item>
                 ))}
             </Carousel>
+        </Link>
             <Card.Body>
-                <Card.Title>{item.title}</Card.Title>
-                <Card.Text>{item.price}</Card.Text>
+                <Link to={`/items/${item.id}`} style={{ textDecoration: 'none' }}>
+                <Card.Title
+                    style={{
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                    }}
+                >{item.title}</Card.Title>
+                <Card.Text
+                    style={{ fontSize: '1rem', color: '#666' }}
+                    className={'fw-bolder'}
+                >${item.price}.00</Card.Text>
+                </Link>
                 <Button
                     onClick={() => onLike(item.id)}
-                    variant={liked ? 'success' : 'dark'}
+                    variant={liked ? 'success' : 'light'}
+                    size="sm"
                 >
                     {liked ? '💚' : '🖤'}
                 </Button>
@@ -237,53 +255,56 @@ const Home: React.FC = () => {
 
     return (
         <Container>
-            <Form.Control
-                type="text"
-                placeholder="Search items..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="mb-4"
-            />
+            <div className="d-flex justify-content-center mt-4">
+                <Form.Control
+                    type="text"
+                    placeholder="Search items..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="mt-4 form-control form-control-lg"
+                    style={{ maxWidth: '400px', border: '1px solid green' }}
+                />
+            </div>
+                <Row>
+                    <Col md={3}>
+                        <CategoryFilter
+                            selectedCategories={selectedCategories}
+                            onCategoryChange={handleCategoryChange}
+                        />
+                    </Col>
+                    <Col md={9}>
+                        <Card
+                            style={{padding: '20px'}}
+                        >
+                            {loading ? (
+                                <Spinner animation="border"/>
+                            ) : error ? (
+                                <Alert variant="danger">Error: {error}</Alert>
+                            ) : filteredItems.length > 0 ? (
+                                <Row>
+                                    {filteredItems.map((item) => (
+                                        <Col md={4} key={item.id} className="mb-4">
+                                            <ItemCard
+                                                item={item}
+                                                onLike={handleLike}
+                                                liked={likedItems.includes(item.id)}
+                                            />
+                                        </Col>
+                                    ))}
+                                </Row>
+                            ) : (
+                                <Alert variant="warning">No items found</Alert>
+                            )}
+                        </Card>
+                    </Col>
+                </Row>
+                <Pagination
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                />
 
-            <Row>
-                <Col md={3}>
-                    <CategoryFilter
-                        selectedCategories={selectedCategories}
-                        onCategoryChange={handleCategoryChange}
-                    />
-                </Col>
-                <Col md={9}>
-                    <Card
-                        style={{ backgroundColor: '#F6F0F0', padding: '20px' }}
-                    >
-                        {loading ? (
-                            <Spinner animation="border" />
-                        ) : error ? (
-                            <Alert variant="danger">Error: {error}</Alert>
-                        ) : filteredItems.length > 0 ? (
-                            <Row>
-                                {filteredItems.map((item) => (
-                                    <Col md={4} key={item.id} className="mb-4">
-                                        <ItemCard
-                                            item={item}
-                                            onLike={handleLike}
-                                            liked={likedItems.includes(item.id)}
-                                        />
-                                    </Col>
-                                ))}
-                            </Row>
-                        ) : (
-                            <Alert variant="warning">No items found</Alert>
-                        )}
-                    </Card>
-                </Col>
-            </Row>
-            <Pagination
-                currentPage={currentPage}
-                onPageChange={setCurrentPage}
-            />
         </Container>
-    )
+)
 }
 
 export default Home
