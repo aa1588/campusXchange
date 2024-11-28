@@ -134,7 +134,7 @@ class OfferService {
                     'Content-Type': 'application/json'
                 },
             })
-            return response.data
+            return response;
         }catch (error) {
             if (axios.isAxiosError(error)) {
                 throw new Error(
