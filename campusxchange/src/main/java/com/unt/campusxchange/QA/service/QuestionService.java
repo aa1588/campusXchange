@@ -8,9 +8,12 @@ import com.unt.campusxchange.QA.repo.QuestionRepository;
 import com.unt.campusxchange.items.entity.Item;
 import com.unt.campusxchange.items.exception.ItemNotFoundException;
 import com.unt.campusxchange.items.repo.ItemRepository;
+import com.unt.campusxchange.notification.sse.Notification;
+import com.unt.campusxchange.notification.sse.NotificationService;
 import com.unt.campusxchange.users.entity.User;
 import com.unt.campusxchange.users.exception.UserNotFoundException;
 import com.unt.campusxchange.users.repo.UserRepository;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +29,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final NotificationService notificationService;
 
     public AddQuestionResponse addQuestion(String email, Integer itemId, String questionText) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -38,6 +42,13 @@ public class QuestionService {
         question.setCreatedAt(LocalDateTime.now());
 
         questionRepository.save(question);
+
+        /* Test for SSE-Notification System */
+        Notification notification =
+                new Notification("You have unanswered question for Item: " + item.getTitle(), Instant.now());
+
+        notificationService.sendNotification(item.getUser().getEmail(), notification);
+        /* Test for SSE-Notification System */
 
         return new AddQuestionResponse(question.getId(), question.getQuestionText(), email, question.getCreatedAt());
     }

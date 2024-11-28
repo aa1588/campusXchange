@@ -1,4 +1,4 @@
-package com.unt.campusxchange.users.security;
+package com.unt.campusxchange.security;
 
 import com.unt.campusxchange.users.repo.UserRepository;
 import java.time.Instant;

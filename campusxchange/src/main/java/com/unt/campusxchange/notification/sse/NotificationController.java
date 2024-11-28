@@ -1,6 +1,6 @@
 package com.unt.campusxchange.notification.sse;
 
-import com.unt.campusxchange.users.security.JWTProvider;
+import com.unt.campusxchange.security.JWTProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.annotation.GetMapping;

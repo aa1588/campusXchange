@@ -1,4 +1,4 @@
-package com.unt.campusxchange.users.config;
+package com.unt.campusxchange.security;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.unt.campusxchange.users.config.JWTConfigProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -85,14 +86,4 @@ public class SecurityConfiguration {
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-    /*
-       @Bean
-       public GrantedAuthoritiesMapper authoritiesMapper() {
-           return authorities -> authorities.stream()
-                   .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
-                   .collect(Collectors.toList());
-       }
-
-    */
 }

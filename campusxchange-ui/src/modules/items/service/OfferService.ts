@@ -1,24 +1,23 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import {BACKEND_BASE_URL} from "../../../config/config";
+import { BACKEND_BASE_URL } from '../../../config/config'
 
 const OFFER_CREATE_API_URL = `${BACKEND_BASE_URL}/api/offers/create`
 const OFFER_ALL_MY_ITEMS_API_URL = `${BACKEND_BASE_URL}/api/offers/allitemsoffer`
 const API_OFFER = `${BACKEND_BASE_URL}/api/offers`
 
 class OfferService {
+    makeAnOffer = async (itemId: number, formdata: string) => {
+        const token = Cookies.get('authToken')
 
-    makeAnOffer = async (itemId : number, formdata : string) => {
-        const token = Cookies.get('authToken');
-
-        try{
+        try {
             await axios.post(`${OFFER_CREATE_API_URL}/${itemId}`, formdata, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
             })
-        }catch (error) {
+        } catch (error) {
             if (axios.isAxiosError(error)) {
                 throw new Error(
                     error.response?.data?.message || 'Error offering item'
@@ -27,21 +26,20 @@ class OfferService {
                 throw new Error('An unknown error occurred')
             }
         }
-
     }
 
     getAllMyListingsOffer = async () => {
-        const token = Cookies.get('authToken');
+        const token = Cookies.get('authToken')
 
-        try{
+        try {
             const response = await axios.get(`${OFFER_ALL_MY_ITEMS_API_URL}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
             })
-            return response.data;
-        }catch (error) {
+            return response.data
+        } catch (error) {
             if (axios.isAxiosError(error)) {
                 throw new Error(
                     error.response?.data?.message || 'Error getting offers'
@@ -52,18 +50,22 @@ class OfferService {
         }
     }
 
-    acceptOffer = async (offerid : number) => {
-        const token = Cookies.get('authToken');
+    acceptOffer = async (offerid: number) => {
+        const token = Cookies.get('authToken')
 
-        try{
-            const response = await axios.put(`${API_OFFER}/${offerid}/accept`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-            })
-            return response.data;
-        }catch (error) {
+        try {
+            const response = await axios.put(
+                `${API_OFFER}/${offerid}/accept`,
+                null,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            )
+            return response.data
+        } catch (error) {
             if (axios.isAxiosError(error)) {
                 throw new Error(
                     error.response?.data?.message || 'Error accepting offers'
@@ -74,18 +76,22 @@ class OfferService {
         }
     }
 
-    declineOffer = async (offerid : number) => {
-        const token = Cookies.get('authToken');
+    declineOffer = async (offerid: number) => {
+        const token = Cookies.get('authToken')
 
-        try{
-            const response = await axios.put(`${API_OFFER}/${offerid}/decline`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-            })
-            return response.data;
-        }catch (error) {
+        try {
+            const response = await axios.put(
+                `${API_OFFER}/${offerid}/decline`,
+                null,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            )
+            return response.data
+        } catch (error) {
             if (axios.isAxiosError(error)) {
                 throw new Error(
                     error.response?.data?.message || 'Error accepting offers'
