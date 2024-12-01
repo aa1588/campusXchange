@@ -1,31 +1,35 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Card, Table, Container, Row, Col } from 'react-bootstrap'
+import { Button, Card, Table, Container, Row, Col, Modal } from 'react-bootstrap'
 import LayoutHeading from '../../../layout/LayoutHeading'
 import { Item } from '../../items/model/Item'
 import Cookies from 'js-cookie'
 import ItemService from '../../items/service/itemservice'
 import { Link } from 'react-router-dom'
+import AddItemForSale from '../../items/components/AddItemForm'
 import OfferService from '../../items/service/OfferService'
 
 interface Offer {
-    id: number
-    amount: number
+    id: number;
+    amount: number;
     offeredBy: {
-        email: string
-        phone: string
-    }
+        email: string;
+        phone: string;
+    };
     item: {
-        title: string
-        id: string
-    }
-    status: string
+        title: string;
+        id: string;
+    };
+    status: string;
+    offerType: string;
+    offerItems: { itemId: number; quantity: number }[];
 }
 
 const Dashboard: React.FC = () => {
     const [items, setItems] = useState<Item[]>([])
     const [offers, setOffers] = useState<Offer[]>([])
     const [error, setError] = useState<string | null>(null)
-    const [showAddItemModal, setShowAddItemModal] = useState(false) // State for modal visibility
+    const [showAddItemModal, setShowAddItemModal] = useState(false) 
+    const [selectedTrade, setSelectedTrade] = useState<Offer | null>(null)
 
     useEffect(() => {
         const fetchItems = async () => {
@@ -83,6 +87,14 @@ const Dashboard: React.FC = () => {
         }
     }
 
+    const handleTradeClick = (offer: Offer) => {
+        setSelectedTrade(offer)
+    }
+
+    const closeTradeModal = () => {
+        setSelectedTrade(null)
+    }
+
     // @ts-ignore
     return (
         <>
@@ -91,7 +103,7 @@ const Dashboard: React.FC = () => {
                 color={'text-success'}
                 content={
                     '' +
-                    'You can review, accept or decline offers for your items here.\n' +
+                    'Easily manage or add your items on CampusXchange. You can review, accept or decline offers for your items here.\n' +
                     "                            Don't forget to mark your item as sold after the transaction is completed."
                 }
             />
@@ -101,7 +113,7 @@ const Dashboard: React.FC = () => {
                         <Link to="/add-item-for-sale">
                             <Button
                                 variant="warning"
-                                className="mb-1 p-2 text-white"
+                                className="mb-4 p-2 text-white"
                             >
                                 Add Item For Sale{' '}
                                 <i className="bi bi-plus-circle-fill text-white"></i>
@@ -114,16 +126,13 @@ const Dashboard: React.FC = () => {
                     <LayoutHeading
                         heading={'My Offers'}
                         color={'text-success'}
-                        content={
-                            'Here you can review and manage offers for your listed items.'
-                        }
+                        content={'Here you can review and manage offers for your listed items.'}
                     />
+
                     {error && <p className="text-danger">{error}</p>}
                     {offers.length === 0 ? (
                         <Col md={12}>
-                            <p className="text-muted">
-                                You have no offers for your items.
-                            </p>
+                            <p className="text-muted">You have no offers for your items.</p>
                         </Col>
                     ) : (
                         <Col md={12}>
@@ -135,6 +144,7 @@ const Dashboard: React.FC = () => {
                                         <th>Amount</th>
                                         <th>Offered By (Email)</th>
                                         <th>Offered By (Phone)</th>
+                                        <th>Type</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -144,51 +154,47 @@ const Dashboard: React.FC = () => {
                                         <tr key={offer.id}>
                                             <td>{offer.id}</td>
                                             <td>
-                                                {/* Make Item Title a link */}
-                                                <Link
-                                                    to={`/items/${offer.item.id}`}
-                                                    className="text-decoration-none"
-                                                >
+                                                <Link to={`/items/${offer.item.id}`} className="text-decoration-none">
                                                     {offer.item.title}
                                                 </Link>
                                             </td>
                                             <td>${offer.amount.toFixed(2)}</td>
                                             <td>{offer.offeredBy.email}</td>
                                             <td>{offer.offeredBy.phone}</td>
+                                            <td>
+                                                {offer.offerType === 'TRADE' ? (
+                                                    <Button
+                                                        variant="link"
+                                                        className="p-0"
+                                                        onClick={() => handleTradeClick(offer)}
+                                                    >
+                                                        {offer.offerType}
+                                                    </Button>
+                                                ) : (
+                                                    offer.offerType
+                                                )}
+                                            </td>
                                             <td>{offer.status}</td>
                                             <td>
-                                                {/* Conditionally render buttons based on the offer's status */}
-                                                {offer.status !== 'accepted' &&
-                                                    offer.status !==
-                                                        'declined' && (
-                                                        <>
-                                                            <Button
-                                                                variant="success"
-                                                                size="sm"
-                                                                className="me-2"
-                                                                onClick={() =>
-                                                                    handleOfferAction(
-                                                                        offer.id,
-                                                                        'accept'
-                                                                    )
-                                                                }
-                                                            >
-                                                                Accept
-                                                            </Button>
-                                                            <Button
-                                                                variant="danger"
-                                                                size="sm"
-                                                                onClick={() =>
-                                                                    handleOfferAction(
-                                                                        offer.id,
-                                                                        'decline'
-                                                                    )
-                                                                }
-                                                            >
-                                                                Decline
-                                                            </Button>
-                                                        </>
-                                                    )}
+                                                {offer.status !== 'ACCEPTED' && offer.status !== 'DECLINED' && (
+                                                    <>
+                                                        <Button
+                                                            variant="success"
+                                                            size="sm"
+                                                            className="me-2"
+                                                            onClick={() => handleOfferAction(offer.id, 'accept')}
+                                                        >
+                                                            Accept
+                                                        </Button>
+                                                        <Button
+                                                            variant="danger"
+                                                            size="sm"
+                                                            onClick={() => handleOfferAction(offer.id, 'decline')}
+                                                        >
+                                                            Decline
+                                                        </Button>
+                                                    </>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
@@ -198,38 +204,47 @@ const Dashboard: React.FC = () => {
                     )}
                 </Row>
 
-                {/*<Row className="mt-4">*/}
-                {/*    <LayoutHeading heading={'My Listing'} color={'text-success'} content={'Here you can view, edit, and manage all the items you have listed for sale. Keep track of your items, update their details, or remove them from the marketplace when they are sold.'}/>*/}
-                {/*    {error && <p className="text-danger">{error}</p>}*/}
-                {/*    {items.map((item) => (*/}
-                {/*        <Col xs={12} sm={6} md={3} key={item.id} className="mb-4">*/}
-                {/*            <Card className="h-100">*/}
-                {/*                <Card.Img variant="top" src={item.imageUrls[0]} style={{ height: '150px', objectFit: 'cover' }} />*/}
-                {/*                <Card.Body>*/}
-                {/*                    <Card.Title className="text-truncate text-success fw-bold">{item.title}</Card.Title>*/}
-                {/*                    <Card.Text className="small">*/}
-                {/*                        <strong>Quantity:</strong> {item.quantity}<br />*/}
-                {/*                        <strong>Description:</strong> {item.description.length > 50 ? `${item.description.slice(0, 50)}...` : item.description}<br />*/}
-                {/*                        <strong>Price:</strong> ${item.price.toFixed(2)}<br />*/}
-                {/*                        <strong>Category:</strong> {item.category}<br />*/}
-                {/*                        <strong>Listed By:</strong> User ID {item.listed_by}<br />*/}
-                {/*                        <strong>Created At:</strong> {new Date(item.createdAt).toLocaleString()}<br />*/}
-                {/*                    </Card.Text>*/}
-                {/*                    <div className="d-flex justify-content-between">*/}
-                {/*                        <Button variant="primary" size="sm" ><Link to={`/items/${item.id}`} style={{ color: 'white', textDecoration: 'none' }}><i*/}
-                {/*                            className="bi bi-eye me-1"></i></Link></Button>*/}
-                {/*                        <Button variant="warning" size="sm"><Link to={`/edit-item/${item.id}`} style={{ color: 'white', textDecoration: 'none' }}>*/}
-                {/*                            <i className="bi bi-pencil-square me-1"></i>*/}
-                {/*                        </Link></Button>*/}
-                {/*                        <Button variant="danger" size="sm" onClick={() => handleDeleteItem(item.id)}>*/}
-                {/*                            <i className="bi bi-trash"></i>*/}
-                {/*                        </Button>*/}
-                {/*                    </div>*/}
-                {/*                </Card.Body>*/}
-                {/*            </Card>*/}
-                {/*        </Col>*/}
-                {/*    ))}*/}
-                {/*</Row>*/}
+                {/* Modal for Trade Details */}
+                {selectedTrade && (
+                    <Modal show onHide={closeTradeModal}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Trade Details</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Table striped bordered hover>
+                                <thead>
+                                    <tr>
+                                        <th>Item ID</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedTrade.offerItems.map((item) => (
+                                        <tr key={item.itemId}>
+                                            <td>
+                                                <Link
+                                                    to={`/items/${item.itemId}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-decoration-none text-primary"
+                                                >
+                                                    {item.itemId}
+                                                </Link>
+                                            </td>
+                                            <td>{item.quantity}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </Modal.Body>
+
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={closeTradeModal}>
+                                Close
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                )}
 
                 <Row className="mt-1">
                     <LayoutHeading
@@ -256,7 +271,7 @@ const Dashboard: React.FC = () => {
                                 key={item.id}
                                 className="mb-4"
                             >
-                                <Card className="h-80">
+                                <Card className="h-100">
                                     <Card.Img
                                         variant="top"
                                         src={item.imageUrls[0]}

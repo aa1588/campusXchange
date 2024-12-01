@@ -11,7 +11,7 @@ class OfferService {
         const token = Cookies.get('authToken')
 
         try {
-            await axios.post(`${OFFER_CREATE_API_URL}/${itemId}`, formdata, {
+            return await axios.post(`${OFFER_CREATE_API_URL}/${itemId}`, formdata, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -95,6 +95,50 @@ class OfferService {
             if (axios.isAxiosError(error)) {
                 throw new Error(
                     error.response?.data?.message || 'Error accepting offers'
+                )
+            } else {
+                throw new Error('An unknown error occurred')
+            }
+        }
+    }
+
+    getOfferForItem = async (itemid : number) => {
+        const token = Cookies.get('authToken');
+
+        try{
+            const response  = await axios.get(`${API_OFFER}/item/${itemid}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            })
+            return response.data
+        }catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw new Error(
+                    error.response?.data?.message || 'Error getting offers'
+                )
+            } else {
+                throw new Error('An unknown error occurred')
+            }
+        }
+    }
+
+    updateOffer = async (offerid : number, formdata : string) => {
+        const token = Cookies.get('authToken');
+
+        try{
+            const response  = await axios.put(`${API_OFFER}/${offerid}/update`, formdata, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            })
+            return response;
+        }catch (error) {
+            if (axios.isAxiosError(error)) {
+                throw new Error(
+                    error.response?.data?.message || 'Error updating offers'
                 )
             } else {
                 throw new Error('An unknown error occurred')

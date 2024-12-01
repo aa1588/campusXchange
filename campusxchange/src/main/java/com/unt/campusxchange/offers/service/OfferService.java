@@ -124,10 +124,6 @@ public class OfferService {
         // Check if the item exists and if the user is the owner
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item not found"));
 
-        if (!item.getUser().equals(user)) {
-            throw new SecurityException("User is not the owner of this item.");
-        }
-
         // Fetch all offers for the item
         List<Offer> offers = offerRepository.findByItem(item);
 

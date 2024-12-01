@@ -18,23 +18,26 @@ import {
 import LayoutHeading from '../../../layout/LayoutHeading'
 import itemservice from '../service/itemservice'
 import Cookies from 'js-cookie'
+import {Link} from "react-router-dom";
 
 const ItemDetail: React.FC = () => {
-    const { id } = useParams<{ id: string }>()
-    const [itemDetails, setItemDetails] = useState<any>(null)
-    const [questions, setQuestions] = useState<any[]>([])
-    const [newQuestion, setNewQuestion] = useState<string>('')
-    const [answerText, setAnswerText] = useState<{ [key: number]: string }>({})
-    const navigate = useNavigate()
-    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false)
-    const [showOfferModal, setShowOfferModal] = useState<boolean>(false)
-    const [offerAmount, setOfferAmount] = useState<string>('')
-    const [loading, setLoading] = useState<boolean>(false) // State to manage loading spinner
-    const [myitems, setMyitems] = useState<any[]>([])
-    const [selectedItems, setSelectedItems] = useState<{
-        [key: number]: number
-    }>({}) // Stores selected item IDs and their quantities
-    const [activeTab, setActiveTab] = useState<string>('offer')
+    const { id } = useParams<{ id: string }>();
+    const [itemDetails, setItemDetails] = useState<any>(null);
+    const [questions, setQuestions] = useState<any[]>([]);
+    const [newQuestion, setNewQuestion] = useState<string>('');
+    const [answerText, setAnswerText] = useState<{ [key: number]: string }>({});
+    const navigate = useNavigate();
+    const [ownerLoggedIn, setOwnerLoggedIn] = useState<boolean>(false);
+    const [showOfferModal, setShowOfferModal] = useState<boolean>(false);
+    const [offerAmount, setOfferAmount] = useState<string>('');
+    const [offerDescription, setOfferDescription] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [myitems, setMyitems] = useState<any[]>([]);
+    const [userHasMadeOffer, setUserHasMadeOffer] = useState<boolean>(false);
+    const [userOfferDetails, setUserOfferDetails] = useState<any>(null);
+    const [selectedItems, setSelectedItems] = useState<{ [key: number]: number }>({});
+    const [activeTab, setActiveTab] = useState<string>('offer');
+
 
     useEffect(() => {
         const fetchItemDetails = async () => {
@@ -49,11 +52,27 @@ const ItemDetail: React.FC = () => {
                 }
             }
         }
-
+        checkUserOfferStatus()
         fetchMyItems()
         fetchItemDetails()
         fetchQuestions()
     }, [id])
+
+    const checkUserOfferStatus = async () => {
+        const offers = await OfferService.getOfferForItem(parseInt(id!));
+        const userId = JSON.parse(localStorage.getItem('user') || '{}').userId;
+
+        const userOffer = offers.find((offer: any) => offer.offeredBy.id === userId);
+
+        if (userOffer) {
+            setUserHasMadeOffer(true);
+            setUserOfferDetails(userOffer);
+        } else {
+            setUserHasMadeOffer(false);
+            setUserOfferDetails(null);
+        }
+    };
+    
 
     const fetchMyItems = async () => {
         const token = Cookies.get('authToken')
@@ -85,10 +104,6 @@ const ItemDetail: React.FC = () => {
         fetchQuestions() // Refresh the list of questions and answers
     }
 
-    const toggleTradeItemSelection = async (itemid: number) => {
-        debugger
-    }
-
     const updateItemQuantity = (itemId: number, quantity: number) => {
         setSelectedItems((prev) => ({
             ...prev,
@@ -98,41 +113,81 @@ const ItemDetail: React.FC = () => {
 
     const handleOfferSubmit = async () => {
         if (!offerAmount.trim()) {
-            alert('Please enter an amount.')
-            return
+            alert('Please enter an amount.');
+            return;
         }
-
-        const parsedAmount = parseFloat(offerAmount)
+    
+        const parsedAmount = parseFloat(offerAmount);
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
-            alert('Please enter a valid amount greater than 0.')
-            return
+            alert('Please enter a valid amount greater than 0.');
+            return;
         }
-
-        setLoading(true) // Show spinner
-
+    
+        setLoading(true);
+    
         try {
-            const formData: any = { amount: parsedAmount }
-
+            const formData: any = {
+                amount: parsedAmount,
+                offerType: activeTab === 'offer' ? 'OFFER' : 'TRADE',
+            };
+    
             if (activeTab === 'trade') {
                 const offerItems = Object.entries(selectedItems).map(
                     ([itemId, quantity]) => ({
                         itemId: parseInt(itemId),
                         quantity,
                     })
-                )
-                formData.offerItems = offerItems
+                );
+                formData.offerItems = offerItems;
             }
 
-            await OfferService.makeAnOffer(parseInt(id ?? '0'), formData)
-            setShowOfferModal(false) // Close the modal
-            setOfferAmount('')
-            setSelectedItems({})
+            if (offerDescription) {
+                formData.description = offerDescription;
+            }
+
+            let response;
+    
+            if(userOfferDetails != null){
+                response =  await OfferService.updateOffer(parseInt(userOfferDetails.id ?? '0'), formData);
+            }
+            else{
+                response = await OfferService.makeAnOffer(parseInt(id ?? '0'), formData);
+
+            }
+    
+            // Update the UI immediately after a successful offer submission
+            setUserHasMadeOffer(true);
+            setUserOfferDetails(response.data);
+    
+            setShowOfferModal(false);
+            setOfferAmount('');
+            setSelectedItems({});
         } catch (error) {
-            console.error('Error submitting offer:', error)
+            console.error('Error submitting offer:', error);
         } finally {
-            setLoading(false) // Hide spinner
+            setLoading(false);
         }
-    }
+    };
+    
+    const handleEditOffer = (offerDetails: any) => {
+        // Set the existing offer details in the state
+        setOfferAmount(offerDetails.amount.toString());
+        setOfferDescription(userOfferDetails.description || ''); 
+        setSelectedItems(
+            offerDetails.offerItems.reduce((acc: any, item: any) => {
+                acc[item.itemId] = item.quantity;
+                return acc;
+            }, {})
+        );
+    
+        // Set the active tab based on the offerType
+        setActiveTab(offerDetails.offerType === "TRADE" ? "trade" : "offer");
+    
+        // Open the modal to edit the offer
+        setShowOfferModal(true);
+    };
+    
+    
 
     if (!itemDetails) {
         return <div>Loading...</div>
@@ -162,17 +217,15 @@ const ItemDetail: React.FC = () => {
             <Row className="align-items-stretch">
                 <Col md={4} className="d-flex">
                     <Carousel className="flex-fill">
-                        {itemDetails.imageUrls.map(
-                            (imageUrl: string, index: number) => (
-                                <Carousel.Item key={index}>
-                                    <img
-                                        className="d-block w-100"
-                                        src={imageUrl}
-                                        alt={`Slide ${index + 1}`}
-                                    />
-                                </Carousel.Item>
-                            )
-                        )}
+                        {itemDetails.imageUrls.map((imageUrl: string, index: number) => (
+                            <Carousel.Item key={index}>
+                                <img
+                                    className="d-block w-100"
+                                    src={imageUrl}
+                                    alt={`Slide ${index + 1}`}
+                                />
+                            </Carousel.Item>
+                        ))}
                     </Carousel>
                 </Col>
                 <Col md={8} className="d-flex">
@@ -182,31 +235,78 @@ const ItemDetail: React.FC = () => {
                                 {itemDetails.title}
                             </Card.Title>
                             <Card.Text>
-                                <strong>Quantity:</strong>{' '}
-                                {itemDetails.quantity}
+                                <strong>Quantity:</strong> {itemDetails.quantity}
                                 <br />
-                                <strong>Description:</strong>{' '}
-                                {itemDetails.description}
+                                <strong>Description:</strong> {itemDetails.description}
                                 <br />
-                                <strong>Price:</strong> $
-                                {itemDetails.price.toFixed(2)}
+                                <strong>Price:</strong> ${itemDetails.price.toFixed(2)}
                                 <br />
-                                <strong>Category:</strong>{' '}
-                                {itemDetails.category}
+                                <strong>Category:</strong> {itemDetails.category}
                                 <br />
                                 <strong>Created At:</strong>{' '}
-                                {new Date(
-                                    itemDetails.createdAt
-                                ).toLocaleString()}
+                                {new Date(itemDetails.createdAt).toLocaleString()}
                                 <br />
                             </Card.Text>
                             {!ownerLoggedIn && (
-                                <Button
-                                    variant="warning"
-                                    onClick={() => setShowOfferModal(true)}
-                                >
-                                    Make an Offer
-                                </Button>
+                                <>
+                                    {!userHasMadeOffer ? (
+                                        <Button
+                                            variant="warning"
+                                            onClick={() => setShowOfferModal(true)}
+                                        >
+                                            Make an Offer
+                                        </Button>
+                                    ) : (
+                                        userOfferDetails && (
+                                            <div className="mt-4">
+                                                <h5>Your Offer Details</h5>
+                                                <Table striped bordered hover>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Offer ID</th>
+                                                            <th>Amount</th>
+                                                            <th>Offer Type</th>
+                                                            <th>Description</th>
+                                                            <th>Offer Items</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>{userOfferDetails.id}</td>
+                                                            <td>${userOfferDetails.amount.toFixed(2)}</td>
+                                                            <td>{userOfferDetails.offerType}</td>
+                                                            <td>{userOfferDetails.description}</td>
+                                                            <td>
+                                                                {userOfferDetails.offerItems && userOfferDetails.offerItems.length > 0 ? (
+                                                                    <ul>
+                                                                        {userOfferDetails.offerItems.map((item: any) => (
+                                                                            <li key={item.itemId}>
+                                                                                <Link to={`/items/${item.itemId}`} target="_blank">
+                                                                                    {item.itemId}
+                                                                                </Link> - Quantity: {item.quantity}
+                                                                            </li>
+                                                                        ))}
+                                                                    </ul>
+                                                                ) : (
+                                                                    'N/A'
+                                                                )}
+                                                            </td>
+                                                            <td>
+                                                                <Button
+                                                                    variant="info"
+                                                                    onClick={() => handleEditOffer(userOfferDetails)}
+                                                                >
+                                                                    Edit
+                                                                </Button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </Table>
+                                            </div>
+                                        )
+                                    )}
+                                </>
                             )}
                         </Card.Body>
                     </Card>
@@ -217,22 +317,24 @@ const ItemDetail: React.FC = () => {
             <Row className="mt-4">
                 <Col>
                     <h5>Questions & Answers</h5>
-                    <Form.Group controlId="questionInput">
-                        <Form.Label>Ask a Question:</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Type your question here"
-                            value={newQuestion}
-                            onChange={(e) => setNewQuestion(e.target.value)}
-                        />
-                        <Button
-                            variant="primary"
-                            onClick={handleQuestionSubmit}
-                            className="mt-2"
-                        >
-                            Submit Question
-                        </Button>
-                    </Form.Group>
+                    {!ownerLoggedIn && (
+                        <Form.Group controlId="questionInput">
+                            <Form.Label>Ask a Question:</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Type your question here"
+                                value={newQuestion}
+                                onChange={(e) => setNewQuestion(e.target.value)}
+                            />
+                            <Button
+                                variant="primary"
+                                onClick={handleQuestionSubmit}
+                                className="mt-2"
+                            >
+                                Submit Question
+                            </Button>
+                        </Form.Group>
+                    )}
 
                     <div className="mt-4">
                         {questions.length > 0 ? (
@@ -316,7 +418,7 @@ const ItemDetail: React.FC = () => {
                 onHide={() => setShowOfferModal(false)}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Make an Offer</Modal.Title>
+                    <Modal.Title>{userOfferDetails ? 'Edit Offer' : 'Make an Offer'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Tabs
@@ -328,17 +430,13 @@ const ItemDetail: React.FC = () => {
                         {/* Offer Tab */}
                         <Tab eventKey="offer" title="Offer">
                             <Form.Group controlId="offerInput">
-                                <Form.Label>
-                                    Enter your offer amount:
-                                </Form.Label>
+                                <Form.Label>Enter your offer amount:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     step="0.01"
                                     placeholder="Enter amount"
                                     value={offerAmount}
-                                    onChange={(e) =>
-                                        setOfferAmount(e.target.value)
-                                    }
+                                    onChange={(e) => setOfferAmount(e.target.value)}
                                     disabled={loading}
                                 />
                             </Form.Group>
@@ -347,17 +445,13 @@ const ItemDetail: React.FC = () => {
                         {/* Trade Tab */}
                         <Tab eventKey="trade" title="Trade">
                             <Form.Group controlId="tradeAmountInput">
-                                <Form.Label>
-                                    Enter your trade amount:
-                                </Form.Label>
+                                <Form.Label>Enter your trade amount:</Form.Label>
                                 <Form.Control
                                     type="number"
                                     step="0.01"
                                     placeholder="Enter amount"
                                     value={offerAmount}
-                                    onChange={(e) =>
-                                        setOfferAmount(e.target.value)
-                                    }
+                                    onChange={(e) => setOfferAmount(e.target.value)}
                                     disabled={loading}
                                 />
                             </Form.Group>
@@ -368,10 +462,7 @@ const ItemDetail: React.FC = () => {
                                         type="checkbox"
                                         label={`${item.title} (Available: ${item.quantity})`}
                                         onChange={(e) =>
-                                            toggleItemSelection(
-                                                item.id,
-                                                e.target.checked
-                                            )
+                                            toggleItemSelection(item.id, e.target.checked)
                                         }
                                     />
                                     {selectedItems[item.id] !== undefined && (
@@ -382,11 +473,7 @@ const ItemDetail: React.FC = () => {
                                             max={item.quantity}
                                             value={selectedItems[item.id]}
                                             onChange={(e) =>
-                                                updateItemQuantity(
-                                                    item.id,
-                                                    parseInt(e.target.value) ||
-                                                        1
-                                                )
+                                                updateItemQuantity(item.id, parseInt(e.target.value) || 1)
                                             }
                                             className="mt-2"
                                         />
@@ -395,6 +482,19 @@ const ItemDetail: React.FC = () => {
                             ))}
                         </Tab>
                     </Tabs>
+
+                    {/* Description Field (common to both tabs) */}
+                    <Form.Group controlId="descriptionInput" className="mt-3">
+                        <Form.Label>Description (Optional):</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            placeholder="Enter a description for your offer"
+                            value={offerDescription}
+                            onChange={(e) => setOfferDescription(e.target.value)}
+                            disabled={loading}
+                        />
+                    </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -424,6 +524,8 @@ const ItemDetail: React.FC = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+
         </div>
     )
 }
