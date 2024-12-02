@@ -18,6 +18,7 @@ interface Notification {
 }
 
 const MyTestNavBar: React.FC = () => {
+    console.log("BACKEND_BASE_URL"+BACKEND_BASE_URL);
     const userData = JSON.parse(localStorage.getItem('user') || '{}')
     const isAuthenticated = Boolean(userData.subject)
 
