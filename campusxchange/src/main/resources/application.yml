@@ -52,3 +52,7 @@ management:
         allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
         allowed-methods: GET,OPTIONS
         allowed-headers: '*'
+
+logging:
+  level:
+    org.springframework.security: DEBUG 
