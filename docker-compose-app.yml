@@ -1,8 +1,8 @@
-version: '3.8'
+-version: '3.8'
 services:
   campusxchange-api:
     container_name: campusxchange-api
-    image: campusxchange/api-campusxchange:latest
+    image: campusxchange/campusxchange-api:latest
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/campusxchange
       SPRING_DATASOURCE_USERNAME: admin
@@ -14,3 +14,16 @@ services:
     restart: always
     depends_on:
       - postgres-db
+
+  campusxchange-ui:
+    container_name: campusxchange-ui
+    build:
+      context: ./campusxchange-ui
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_BACKEND_URL=http://campusxchange-api:8080
+    ports:
+      - "3000:80" # Serve React on port 3000 through Nginx
+    restart: always
+    depends_on:
+      - campusxchange-api
