@@ -34,45 +34,83 @@ const MyTestNavBar: React.FC = () => {
     // Notifications state
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [unreadCount, setUnreadCount] = useState(0)
+    const [authToken, setAuthToken] = useState<string | undefined>(undefined)
 
+    // useEffect(() => {
+    //     const savedNotifications = localStorage.getItem('notifications')
+    //     if (savedNotifications) {
+    //         setNotifications(JSON.parse(savedNotifications))
+    //     }
+    //     const token: string | undefined = Cookies.get('authToken')
+    //     const eventSourceUrl = `${BACKEND_BASE_URL}/api/notifications/subscribe?token=${token}`
+    //
+    //     // Connect to SSE for real-time notifications
+    //     const eventSource = new EventSource(eventSourceUrl)
+    //
+    //     // Listen for new notifications
+    //     eventSource.addEventListener('notification', (event) => {
+    //         const newNotification: Notification = JSON.parse(event.data)
+    //         /* Test for SSE-Notification System */
+    //
+    //         console.log('New SSE- Notification Received: ', newNotification)
+    //
+    //         /* Test for SSE-Notification System */
+    //
+    //         // Update state and save to localStorage
+    //         setNotifications((prevState) => {
+    //             const updatedNotifications = [newNotification, ...prevState]
+    //             localStorage.setItem(
+    //                 'notifications',
+    //                 JSON.stringify(updatedNotifications)
+    //             )
+    //             return updatedNotifications
+    //         })
+    //
+    //         setUnreadCount((prevCount) => prevCount + 1)
+    //     })
+    //
+    //     // Cleanup on component unmount
+    //     return () => {
+    //         eventSource.close()
+    //     }
+    // }, [])
+    // First useEffect to check for authToken
     useEffect(() => {
-        const savedNotifications = localStorage.getItem('notifications')
-        if (savedNotifications) {
-            setNotifications(JSON.parse(savedNotifications))
+        const token = Cookies.get('authToken')
+        if (token) {
+            setAuthToken(token)
         }
-        const token: string | undefined = Cookies.get('authToken')
-        const eventSourceUrl = `${BACKEND_BASE_URL}/api/notifications/subscribe?token=${token}`
+    }, []) // Run once on component mount
 
-        // Connect to SSE for real-time notifications
-        const eventSource = new EventSource(eventSourceUrl)
+    // Second useEffect to setup SSE only after authToken is available
+    useEffect(() => {
+        if (authToken) {
+            const eventSourceUrl = `${BACKEND_BASE_URL}/api/notifications/subscribe?token=${authToken}`
 
-        // Listen for new notifications
-        eventSource.addEventListener('notification', (event) => {
-            const newNotification: Notification = JSON.parse(event.data)
-            /* Test for SSE-Notification System */
+            // Connect to SSE for real-time notifications
+            const eventSource = new EventSource(eventSourceUrl)
 
-            console.log('New SSE- Notification Received: ', newNotification)
+            // Listen for new notifications
+            eventSource.addEventListener('notification', (event) => {
+                const newNotification: Notification = JSON.parse(event.data)
+                console.log('New SSE- Notification Received: ', newNotification)
 
-            /* Test for SSE-Notification System */
+                // Update state and save to localStorage
+                setNotifications((prevState) => {
+                    const updatedNotifications = [newNotification, ...prevState]
+                    localStorage.setItem('notifications', JSON.stringify(updatedNotifications))
+                    return updatedNotifications
+                })
 
-            // Update state and save to localStorage
-            setNotifications((prevState) => {
-                const updatedNotifications = [newNotification, ...prevState]
-                localStorage.setItem(
-                    'notifications',
-                    JSON.stringify(updatedNotifications)
-                )
-                return updatedNotifications
+                setUnreadCount((prevCount) => prevCount + 1)
             })
 
-            setUnreadCount((prevCount) => prevCount + 1)
-        })
-
-        // Cleanup on component unmount
-        return () => {
-            eventSource.close()
+            // Cleanup on component unmount
+            return () => {
+                eventSource.close()
+            }
         }
-    }, [])
+    }, [authToken]) // This will run only when authToken is set
 
     // When the user clicks the bell, reset unread count
     const handleBellClick = () => {
