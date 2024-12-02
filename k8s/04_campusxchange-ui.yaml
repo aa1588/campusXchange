@@ -29,9 +29,9 @@ spec:
     spec:
       containers:
         - name: campusxchange-ui
-          image: campusxchange/campusxchange-ui:fc680c507db674f71d350713d0a5efce6a277eda
+          image: campusxchange/campusxchange-ui:b8fa09b0ef1fb89910c5fefff3232384b103b9ce
           ports:
             - containerPort: 80
           env:
             - name: REACT_APP_BACKEND_URL
-              value: http://campusxchange-api-svc:8080
+              value: "http://44.195.45.219:30090"

@@ -63,3 +63,5 @@ spec:
                 secretKeyRef:
                   key: postgres_password
                   name: campusxchange-secrets
+            - name: ALLOWED_ORIGINS
+              value: "http://44.195.45.219:30080"
