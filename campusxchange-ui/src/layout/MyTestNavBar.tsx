@@ -77,8 +77,10 @@ const MyTestNavBar: React.FC = () => {
     // }, [])
     // First useEffect to check for authToken
     useEffect(() => {
+        console.log("Looking for authToken...")
         const token = Cookies.get('authToken')
         if (token) {
+            console.log("authToken...Found")
             setAuthToken(token)
         }
     }, []) // Run once on component mount
