@@ -39,7 +39,7 @@ logging:
   level:
     org:
       springframework:
-        security: DEBUG
+        security: TRACE
 # frontend url
 cors:
   allowed-origin: ${ALLOWED_ORIGINS:http://localhost:3000}
