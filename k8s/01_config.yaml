@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: campusxchange-config
+data:
+  postgres_host: postgres-svc
+  postgres_port: "5432"
+  postgres_dbname: campusxchange
+  mail_password: lnsp qawp llmm jbzn
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: campusxchange-secrets
+type: Opaque
+data:
+  postgres_username: YWRtaW4=
+  postgres_password: cGFzc3dvcmQ=

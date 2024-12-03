@@ -1,18 +1,54 @@
+# Application PORT
+server:
+  port: 8080
+  shutdown: graceful
 spring:
   application:
     name: campusxchange-api
+  #Datasource Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/campusxchange
-    username: admin
-    password: password
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_DATABASE:campusxchange}
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-server:
-  port: 8080
-
+    show-sql: true  # Show SQL queries in the console
+  # Mail Properties
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: campusxchange24@gmail.com
+    password:  ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+#JWT Keys Configuration
+jwt:
+  public-key: classpath:app.pub
+  private-key: classpath:app.key
+#Spring Security Log Level Debug
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+# frontend url
+cors:
+  allowed-origin: ${ALLOWED_ORIGINS:http://localhost:3000}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+      cors:
+        allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+        allowed-methods: GET,OPTIONS
+        allowed-headers: '*'

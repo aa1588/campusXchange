@@ -1,0 +1,49 @@
+.sidebar {
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    height: 100vh;
+    width: 250px;
+    border-right: 1px solid #ddd;
+    margin: 0;
+}
+
+/* Admin Panel Header */
+.admin-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.admin-panel-header i {
+    font-size: 24px;
+    color: #034a31;
+    font-weight: bolder;
+}
+
+.admin-panel-header h3 {
+    font-size: 20px;
+    color: #333;
+    margin: 0;
+}
+
+/* Nav Item Styles */
+.nav-link {
+    padding: 10px;
+    font-size: 18px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: #ccd6d3;
+    color: white;
+}
+
+.nav-link.active {
+    background-color: #025a3d;
+    color: white;
+    font-weight: bold;
+}

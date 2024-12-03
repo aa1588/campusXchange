@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: campusxchange-ui-svc
+spec:
+  type: NodePort
+  selector:
+    app: campusxchange-ui-pod
+  ports:
+    - name: app-port-mapping
+      protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: campusxchange-ui-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: campusxchange-ui-pod
+  template:
+    metadata:
+      labels:
+        app: campusxchange-ui-pod
+    spec:
+      containers:
+        - name: campusxchange-ui
+          image: campusxchange/campusxchange-ui:b8fa09b0ef1fb89910c5fefff3232384b103b9ce
+          ports:
+            - containerPort: 80
+          env:
+            - name: REACT_APP_BACKEND_URL
+              value: "http://44.195.45.219:30090"
