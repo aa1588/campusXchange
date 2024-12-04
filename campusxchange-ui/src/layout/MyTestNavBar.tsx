@@ -5,8 +5,6 @@ import {
     Nav,
     NavDropdown,
     Container,
-    Dropdown,
-    Toast,
 } from 'react-bootstrap'
 import AuthService from '../modules/auth/service/authservice'
 import Cookies from 'js-cookie'

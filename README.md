@@ -1,5 +1,7 @@
 # CampusXchange
 
+![CampusXchange-Banner](./images/CampusXchange-Banner.png)
+
 A Campus-Focused Marketplace Addressing UNT student needs.
 
 ---
@@ -13,10 +15,13 @@ This project consists of two main parts:
 2. [Development Platform](#development-platform)
 3. [Technologies Used](#technologies-used)
 4. [System Requirements](#system-requirements)
-5. [Setup Guide](#setup-guide)
+5. [Application Architecture](#application-architecture)
+6. [CI/CD Architecture](#cicd-architecture)
+7. [Deployment Architecture](#deployment-architecture)
+8. [Setup Guide](#setup-guide)
     - [Frontend Setup](#frontend-setup)
     - [Backend Setup](#backend-setup)
-6. [Modules](#modules)
+9. [Modules](#modules)
    - [Users Module](#users-module)
    - [Items Module](#items-module)
    - [Wishlist Module](#wishlist-module)
@@ -24,11 +29,11 @@ This project consists of two main parts:
    - [Notifications Module](#notifications-module)
    - [Recommendations Module](#recommendations-module)
    - [Admin Module](#admin-module)
-7. [Testing](#testing)
-8. [Deployment](#deployment)
-9. [Contributing Backend](#contributing-backend)
-10. [Contributing Frontend](#contributing-frontend)
-11. [License](#license)
+10. [Testing](#testing)
+11. [Deployment](#deployment)
+12. [Contributing Backend](#contributing-backend)
+13. [Contributing Frontend](#contributing-frontend)
+14. [License](#license)
 
 ---
 ## Product Vision
@@ -77,6 +82,21 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 
 ---
 
+## Application Architecture
+3-Tier (Layered) Architecture
+![Application-Architecture](./images/Application-Architecture.png)
+
+---
+## CI/CD Architecture
+
+![CI/CD-Architecture](./images/CI-CD_Architecture.png)
+
+---
+## Deployment Architecture
+
+![Deployment-Architecture](./images/Deployment-Architecture.png)
+
+---
 ## Setup Guide
 - Clone the repository 
 ### Frontend Setup
