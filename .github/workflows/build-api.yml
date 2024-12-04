@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - "campusxchange/**"
-    branches: ["develop"]
+    branches: ["develop","main"]
   pull_request:
     paths:
       - "campusxchange/**"

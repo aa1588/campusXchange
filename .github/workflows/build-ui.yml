@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "campusxchange-ui/**"
-    branches: ["develop"]
+    branches: ["develop","main"]
   pull_request:
     paths:
       - "campusxchange-ui/**"
