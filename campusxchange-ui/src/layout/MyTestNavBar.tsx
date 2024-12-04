@@ -131,7 +131,7 @@ const MyTestNavBar: React.FC = () => {
                         to={'/home'}
                         className="text-white text-decoration-none"
                     >
-                        <i className="bi bi-shop me-1"></i>CampusXchangee
+                        <i className="bi bi-shop me-1"></i>CampusXchange
                         Marketplace
                     </Link>
                 </Navbar.Brand>
