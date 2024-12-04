@@ -52,5 +52,23 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/campusxchange-ui:${{ github.sha }} .
           echo "Pushing Docker Image to Docker Hub..."
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/campusxchange-ui:${{ github.sha }}
-          echo "Done!"
+          echo "****Done!***"
 
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Update kubeconfig for EKS
+        run: |
+          echo "Setting up kubeconfig for EKS cluster..."
+          aws eks update-kubeconfig --region us-east-1 --name test-cluster
+          echo "kubeconfig set up successfully."
+
+      - name: Deploy to EKS
+        run: |
+          echo "Updating Kubernetes Deployment..."
+          kubectl set image deployment/campusxchange-ui-deployment campusxchange-ui=${{ secrets.DOCKERHUB_USERNAME }}/campusxchange-ui:${{ github.sha }}
+          echo "Deployment updated successfully!"
