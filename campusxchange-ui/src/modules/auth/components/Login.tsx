@@ -100,7 +100,7 @@ const Login: React.FC<Props> = ({ updateUser }) => {
                                     <span className="spinner-border spinner-border-sm"></span>
                                 )}
 
-                                <span>Login</span>
+                                <span>Loginn</span>
                             </button>
                         </div>
 
