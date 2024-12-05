@@ -4,6 +4,8 @@
 
 A Campus-Focused Marketplace Addressing UNT student needs.
 
+[CampusXchange Application URL](http://campusxchange.amritadhikari.com:30080/)
+
 ---
 
 This project consists of two main parts:
@@ -18,10 +20,12 @@ This project consists of two main parts:
 5. [Application Architecture](#application-architecture)
 6. [CI/CD Architecture](#cicd-architecture)
 7. [Deployment Architecture](#deployment-architecture)
-8. [Setup Guide](#setup-guide)
+8. [Log Monitoring using EFK](#log-monitoring-using-efk-)
+9. [Kubernetes Cluster Management using Lens IDE](#kubernetes-cluster-management-using-lens-ide)
+10. [Setup Guide](#setup-guide)
     - [Frontend Setup](#frontend-setup)
     - [Backend Setup](#backend-setup)
-9. [Modules](#modules)
+11. [Modules](#modules)
    - [Users Module](#users-module)
    - [Items Module](#items-module)
    - [Wishlist Module](#wishlist-module)
@@ -29,11 +33,11 @@ This project consists of two main parts:
    - [Notifications Module](#notifications-module)
    - [Recommendations Module](#recommendations-module)
    - [Admin Module](#admin-module)
-10. [Testing](#testing)
-11. [Deployment](#deployment)
-12. [Contributing Backend](#contributing-backend)
-13. [Contributing Frontend](#contributing-frontend)
-14. [License](#license)
+12. [Testing](#testing)
+13. [Deployment](#deployment)
+14. [Contributing Backend](#contributing-backend)
+15. [Contributing Frontend](#contributing-frontend)
+16. [License](#license)
 
 ---
 ## Product Vision
@@ -97,6 +101,15 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 ![Deployment-Architecture](./images/Deployment-Architecture.png)
 
 ---
+## Log Monitoring using EFK 
+
+![EFK-Log-Monitoring](./images/EFK-stack.ppm)
+
+---
+## Kubernetes Cluster Management using Lens IDE
+
+![Kubernetes Cluster Management IDE using Lens](./images/Lens-IDE.png)
+
 ## Setup Guide
 - Clone the repository 
 ### Frontend Setup
