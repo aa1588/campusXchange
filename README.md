@@ -4,6 +4,8 @@
 
 A Campus-Focused Marketplace Addressing UNT student needs.
 
+[CampusXchange Application URL](http://campusxchange.amritadhikari.com:30080/)
+
 ---
 
 This project consists of two main parts:
