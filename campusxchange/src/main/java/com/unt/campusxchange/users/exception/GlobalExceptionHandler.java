@@ -7,9 +7,12 @@ import com.unt.campusxchange.wishlist.exception.WishlistItemNotFoundException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -150,4 +153,33 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("fieldErrors", fieldErrors);
         return ResponseEntity.badRequest().body(problemDetail);
     }
+
+    @ExceptionHandler(MailAuthenticationException.class)
+    public ResponseEntity<ProblemDetail> handleMailAuthenticationException(MailAuthenticationException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED, "Mail authentication error"
+        );
+        problemDetail.setType(URI.create("https://example.com/problems/mail-authentication"));
+        problemDetail.setTitle("Mail Authentication");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.BAD_REQUEST.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ProblemDetail> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT, "Data Integrity violation"
+        );
+        problemDetail.setType(URI.create("https://example.com/problems/data-integrity-violation"));
+        problemDetail.setTitle("Data Integrity Violation");
+        problemDetail.setDetail(ex.getMessage());
+        problemDetail.setProperty("status", HttpStatus.CONFLICT.value());
+        Map<String, String> fieldErrors = new HashMap<>();
+        problemDetail.setProperty("fieldErrors", fieldErrors);
+        return ResponseEntity.badRequest().body(problemDetail);
+    }
+
 }
