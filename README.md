@@ -21,7 +21,7 @@ This project consists of two main parts:
 6. [CI/CD Architecture](#cicd-architecture)
 7. [Deployment Architecture](#deployment-architecture)
 8. [Log Monitoring using EFK](#log-monitoring-using-efk-)
-9. [Kubernetes Cluster Management IDE using Lens](#kubernetes-cluster-management-ide-using-lens)
+9. [Kubernetes Cluster Management using Lens IDE](#kubernetes-cluster-management-using-lens-ide)
 10. [Setup Guide](#setup-guide)
     - [Frontend Setup](#frontend-setup)
     - [Backend Setup](#backend-setup)
@@ -106,7 +106,7 @@ FOR UNT students WHO are seeking an easy, quick, and secure way to buy, sell or 
 ![EFK-Log-Monitoring](./images/EFK-stack.ppm)
 
 ---
-## Kubernetes Cluster Management IDE using Lens
+## Kubernetes Cluster Management using Lens IDE
 
 ![Kubernetes Cluster Management IDE using Lens](./images/Lens-IDE.png)
 
