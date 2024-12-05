@@ -55,15 +55,19 @@ public class AuthService {
         user.setAccountStatus(AccountStatus.INACTIVE);
         var otp = generateOTP();
         user.setOtp(otp);
+        logger.debug("Sending OTP to email: {}", registerRequest.email());
         emailService.sendEmailWithOTP(registerRequest.email(), otp);
         return userRepository.save(user).getId();
     }
 
     public String getOTP(Integer id) {
+        logger.info("Retrieving OTP for user id: {}", id);
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
+            logger.debug("OTP retrieved for user id: {}", id);
             return user.get().getOtp();
         }
+        logger.error("User not found with id: {}", id);
         throw new UserNotFoundException("User Not found with given id: " + id);
     }
 
@@ -73,6 +77,7 @@ public class AuthService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with given id: " + id));
 
         if (!user.getOtp().equals(otp)) {
+            logger.warn("Invalid OTP provided for user id: {}", id);
             throw new InvalidOTPException("Provided OTP " + otp + " doesn't match our records");
         }
 
@@ -90,6 +95,7 @@ public class AuthService {
             String token = jwtProvider.createToken(authentication);
             return new LoginResponse("SUCCESS", token);
         }
+        logger.warn("Login failed due to inactive account for email: {}", loginRequest.email());
         throw new InactiveAccountException("Can't login because account is INACTIVE.");
     }
 }
