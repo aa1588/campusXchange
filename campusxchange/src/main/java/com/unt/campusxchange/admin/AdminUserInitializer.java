@@ -1,6 +1,5 @@
 package com.unt.campusxchange.admin;
 
-import com.unt.campusxchange.users.controller.AuthController;
 import com.unt.campusxchange.users.entity.AccountStatus;
 import com.unt.campusxchange.users.entity.ROLE;
 import com.unt.campusxchange.users.entity.User;
