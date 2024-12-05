@@ -28,7 +28,11 @@ public class WishlistController {
             logger.info("Item with ID {} added to wishlist for user {}", itemId, currentUsername);
             return new ResponseEntity<>("Item added to wishlist.", HttpStatus.CREATED);
         } catch (Exception e) {
-            logger.error("Error adding item with ID {} to wishlist for user {}: {}", itemId, principal.getName(), e.getMessage());
+            logger.error(
+                    "Error adding item with ID {} to wishlist for user {}: {}",
+                    itemId,
+                    principal.getName(),
+                    e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -56,7 +60,11 @@ public class WishlistController {
             logger.info("Item with ID {} removed from wishlist for user {}", itemId, currentUsername);
             return new ResponseEntity<>("Item removed from the wishlist.", HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Error removing item with ID {} from wishlist for user {}: {}", itemId, principal.getName(), e.getMessage());
+            logger.error(
+                    "Error removing item with ID {} from wishlist for user {}: {}",
+                    itemId,
+                    principal.getName(),
+                    e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

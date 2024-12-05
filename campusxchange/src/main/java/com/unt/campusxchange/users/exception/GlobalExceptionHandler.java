@@ -7,7 +7,6 @@ import com.unt.campusxchange.wishlist.exception.WishlistItemNotFoundException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -156,9 +155,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MailAuthenticationException.class)
     public ResponseEntity<ProblemDetail> handleMailAuthenticationException(MailAuthenticationException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.UNAUTHORIZED, "Mail authentication error"
-        );
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Mail authentication error");
         problemDetail.setType(URI.create("https://example.com/problems/mail-authentication"));
         problemDetail.setTitle("Mail Authentication");
         problemDetail.setDetail(ex.getMessage());
@@ -170,9 +168,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ProblemDetail> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.CONFLICT, "Data Integrity violation"
-        );
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Data Integrity violation");
         problemDetail.setType(URI.create("https://example.com/problems/data-integrity-violation"));
         problemDetail.setTitle("Data Integrity Violation");
         problemDetail.setDetail(ex.getMessage());
@@ -181,5 +177,4 @@ public class GlobalExceptionHandler {
         problemDetail.setProperty("fieldErrors", fieldErrors);
         return ResponseEntity.badRequest().body(problemDetail);
     }
-
 }
